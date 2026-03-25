@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About STL — Saint Louis Chess Club</title>
+<style>
+@font-face { font-family:'Geist'; src:url('Geist.ttf') format('truetype'); font-weight:100 900; }
+@font-face { font-family:'GeistMono'; src:url('GeistMono.ttf') format('truetype'); font-weight:100 900; }
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --black:#0a0a0a; --cream:#f4f3ef; --white:#ffffff;
+  --g1:#eceae4; --g2:#c8c6be; --g3:#8a8a82; --g4:#4a4a44;
+  --light:300; --med:500;
+}
+html { scroll-behavior:smooth; }
+body { background:var(--cream); color:var(--black); font-family:'Geist',sans-serif; font-weight:300; min-height:100vh; }
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  opacity:0.032; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.outer { max-width:1200px; margin:0 auto; border-left:1px solid var(--black); border-right:1px solid var(--black); min-height:100vh; }
+
+/* bg variants */
+.bg-cream { background:var(--cream); color:var(--black); }
+.bg-black  { background:var(--black); color:var(--cream); }
+.bg-white  { background:var(--white); color:var(--black); }
+
+/* shared */
+.sec-hdr { padding:32px 80px; border-bottom:1px solid currentColor; display:flex; align-items:baseline; justify-content:space-between; }
+.bg-cream .sec-hdr, .bg-white .sec-hdr { border-bottom-color:var(--black); }
+.bg-black .sec-hdr { border-bottom-color:rgba(244,243,239,0.2); }
+.sec-title { font-weight:var(--med); font-size:32px; letter-spacing:-0.02em; }
+.sec-idx   { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); }
+.bg-black .sec-idx { color:rgba(244,243,239,0.4); }
+.mono-sm   { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); }
+.bg-black .mono-sm { color:rgba(244,243,239,0.4); }
+
+/* ── HERO (cream) ── */
+.hero { padding:64px 80px 80px; border-bottom:1px solid var(--black); }
+.hero-eyebrow { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); margin-bottom:20px; }
+.hero-top { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:end; margin-bottom:64px; }
+.hero-title { font-weight:var(--light); font-size:72px; letter-spacing:-0.03em; line-height:0.95; }
+.hero-title em { font-style:italic; font-weight:var(--light); }
+.hero-right { display:flex; flex-direction:column; gap:20px; }
+.hero-desc { font-family:'GeistMono',monospace; font-size:13px; letter-spacing:0.05em; line-height:1.6; color:var(--g3); }
+.hero-stats { display:flex; gap:40px; border-top:1px solid rgba(10,10,10,0.13); padding-top:40px; }
+.stat-num { font-size:48px; font-weight:400; letter-spacing:-0.02em; display:block; line-height:1; margin-bottom:6px; }
+.stat-lbl { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); }
+
+/* ── CATCHPHRASE (black) ── */
+.catchphrase {
+  padding:64px 80px; border-bottom:1px solid rgba(244,243,239,0.15);
+  display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+}
+.catch-main { font-family:'GeistMono',monospace; font-weight:700; font-size:52px; letter-spacing:-0.01em; line-height:1.05; }
+.catch-right { display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; }
+.catch-rule { width:1px; height:36px; background:rgba(244,243,239,0.18); margin:0 auto; }
+.catch-sub { font-family:'GeistMono',monospace; font-size:13px; letter-spacing:0.07em; line-height:1.8; color:rgba(244,243,239,0.52); text-transform:uppercase; }
+
+/* ── LOGO (white) ── */
+.logo-section { padding:64px 80px; border-bottom:1px solid var(--black); display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; }
+.logo-display { display:flex; gap:40px; align-items:flex-end; }
+.logo-piece { display:flex; flex-direction:column; align-items:center; gap:0; }
+.logo-piece img { height:148px; width:auto; display:block; margin-bottom:20px; }
+.logo-piece-letter { font-family:'Geist',sans-serif; font-weight:700; font-size:80px; letter-spacing:-0.04em; line-height:1; color:var(--black); }
+.logo-piece-sub { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--g3); margin-top:8px; }
+.logo-div { width:1px; height:100px; background:rgba(10,10,10,0.12); align-self:center; margin-bottom:64px; }
+.logo-info-eyebrow { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); margin-bottom:16px; }
+.logo-info h3 { font-weight:var(--med); font-size:28px; letter-spacing:-0.02em; line-height:1.15; margin-bottom:16px; }
+.logo-info p { font-size:15px; font-weight:300; line-height:1.7; color:var(--g4); margin-bottom:28px; }
+.logo-breakdown { display:flex; flex-direction:column; gap:14px; border-top:1px solid rgba(10,10,10,0.1); padding-top:22px; }
+.brow { display:grid; grid-template-columns:32px 1fr; gap:16px; align-items:baseline; }
+.blet { font-weight:700; font-size:22px; letter-spacing:-0.02em; }
+.bdesc { font-size:14px; font-weight:300; color:var(--g4); line-height:1.55; }
+.bdesc strong { font-weight:500; color:var(--black); }
+
+/* ── HISTORY (black) ── */
+.history-grid { display:grid; grid-template-columns:240px 1fr; }
+.history-left { padding:48px 40px; border-right:1px solid rgba(244,243,239,0.15); display:flex; flex-direction:column; justify-content:space-between; gap:40px; }
+.history-left-title { font-size:48px; font-weight:var(--light); letter-spacing:-0.03em; line-height:1; }
+.history-left-sub { font-family:'GeistMono',monospace; font-size:12px; letter-spacing:0.05em; color:rgba(244,243,239,0.4); line-height:1.6; }
+.timeline { display:flex; flex-direction:column; }
+.trow { display:grid; grid-template-columns:96px 1fr; border-bottom:1px solid rgba(244,243,239,0.1); transition:background 0.15s; }
+.trow:last-child { border-bottom:none; }
+.trow:hover { background:rgba(255,255,255,0.04); }
+.tyear { padding:22px 24px; font-family:'GeistMono',monospace; font-size:12px; font-weight:500; letter-spacing:0.03em; color:rgba(244,243,239,0.38); border-right:1px solid rgba(244,243,239,0.1); display:flex; align-items:center; }
+.tcontent { padding:22px 32px; }
+.tevent { font-weight:var(--med); font-size:15px; letter-spacing:-0.01em; margin-bottom:4px; }
+.tdetail { font-size:14px; font-weight:300; color:rgba(244,243,239,0.55); line-height:1.55; }
+
+/* ── CONTACT (cream) ── */
+.contact-grid { display:grid; grid-template-columns:repeat(3,1fr); }
+.ccard { padding:44px 48px; border-right:1px solid var(--black); display:flex; flex-direction:column; gap:14px; transition:background 0.15s; }
+.ccard:last-child { border-right:none; }
+.ccard:hover { background:var(--g1); }
+.ctype { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--g3); }
+.cvalue { font-weight:var(--med); font-size:17px; letter-spacing:-0.01em; line-height:1.3; }
+.cnote { font-family:'GeistMono',monospace; font-size:12px; letter-spacing:0.03em; line-height:1.6; color:var(--g3); }
+.cbot { border-top:1px solid var(--black); display:grid; grid-template-columns:1fr 1fr; }
+.cbcell { padding:30px 48px; display:flex; align-items:center; gap:20px; transition:background 0.15s; }
+.cbcell:first-child { border-right:1px solid var(--black); }
+.cbcell:hover { background:var(--g1); }
+.cbval { font-size:15px; font-weight:500; letter-spacing:-0.01em; }
+
+/* ── EVENT (white) ── */
+.event-inner { display:grid; grid-template-columns:1fr 1fr; }
+.event-left { padding:64px 80px; border-right:1px solid var(--black); display:flex; flex-direction:column; gap:28px; }
+.ev-eyebrow { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--g3); }
+.ev-title { font-weight:var(--light); font-size:52px; letter-spacing:-0.03em; line-height:0.95; }
+.ev-title em { font-style:italic; }
+.ev-desc { font-size:15px; font-weight:300; line-height:1.7; color:var(--g4); }
+.ev-meta { display:flex; flex-direction:column; gap:10px; border-top:1px solid rgba(10,10,10,0.1); padding-top:24px; }
+.ev-row { display:flex; gap:20px; align-items:baseline; }
+.ev-label { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--g3); min-width:72px; }
+.ev-val { font-size:14px; font-weight:500; letter-spacing:-0.01em; }
+.event-right { padding:64px 60px; background:var(--black); color:var(--cream); display:flex; flex-direction:column; }
+.ev-bracket-label { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(244,243,239,0.35); margin-bottom:32px; }
+.ev-players { flex:1; display:flex; flex-direction:column; }
+.prow { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid rgba(244,243,239,0.08); }
+.prow:last-child { border-bottom:none; }
+.pname { font-size:14px; font-weight:400; letter-spacing:-0.01em; }
+.prating { font-family:'GeistMono',monospace; font-size:11px; color:rgba(244,243,239,0.38); }
+.ev-foot { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:rgba(244,243,239,0.22); padding-top:20px; border-top:1px solid rgba(244,243,239,0.1); margin-top:20px; }
+
+/* ── FOOTER ── */
+.site-footer { padding:32px 80px; border-top:1px solid var(--black); display:flex; justify-content:space-between; align-items:center; }
+.fcopy { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); }
+</style>
+</head>
+<body>
+<div class="outer">
+
+<!-- 01 HERO — cream -->
+<div class="bg-cream">
+  <div class="hero">
+    <div class="hero-eyebrow">About STL</div>
+    <div class="hero-top">
+      <h1 class="hero-title">Saint<br>Louis<br><em>Chess Club</em></h1>
+      <div class="hero-right">
+        <p class="hero-desc">Founded in 2008, the Saint Louis Chess Club has grown into one of the most prestigious chess institutions in the world — hosting elite tournaments, nurturing talent, and building a community where the game is celebrated at every level.</p>
+        <p class="hero-desc" style="color:#4a4a44;">Located in the heart of St. Louis, Missouri, the club serves as both a competitive arena and a cultural hub, welcoming grandmasters and beginners alike under the same roof.</p>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div><span class="stat-num">2008</span><span class="stat-lbl">Founded</span></div>
+      <div><span class="stat-num">16+</span><span class="stat-lbl">Years Active</span></div>
+      <div><span class="stat-num">10K+</span><span class="stat-lbl">Members</span></div>
+      <div><span class="stat-num">∞</span><span class="stat-lbl">Moves Ahead</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 CATCHPHRASE — black -->
+<div class="bg-black">
+  <div class="catchphrase">
+    <div class="catch-main">THINK DEEP.<br>STRIKE ONCE.</div>
+    <div class="catch-right">
+      <div class="catch-rule"></div>
+      <p class="catch-sub">Control the board,<br>command the room.<br><br>Where minds clash<br>and legends rise.</p>
+      <div class="catch-rule"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 LOGO — white -->
+<div class="bg-white">
+  <div class="sec-hdr"><h2 class="sec-title">The Identity</h2><span class="sec-idx">01 / 04</span></div>
+  <div class="logo-section">
+    <div>
+      <div class="logo-display">
+        <div class="logo-piece">
+          <img src="s.svg" alt="S — Knight">
+          <div class="logo-piece-letter">S</div>
+          <div class="logo-piece-sub">Knight</div>
+        </div>
+        <div class="logo-div"></div>
+        <div class="logo-piece">
+          <img src="t.svg" alt="T — King">
+          <div class="logo-piece-letter">T</div>
+          <div class="logo-piece-sub">King</div>
+        </div>
+        <div class="logo-div"></div>
+        <div class="logo-piece">
+          <img src="l.svg" alt="L — Rook">
+          <div class="logo-piece-letter">L</div>
+          <div class="logo-piece-sub">Rook</div>
+        </div>
+      </div>
+    </div>
+    <div class="logo-info">
+      <div>
+        <div class="logo-info-eyebrow">Design Concept</div>
+        <h3>Three letters.<br>Three pieces.<br>One identity.</h3>
+        <p>The STL wordmark is built on a single idea: every letter of our name is drawn from the silhouette of a chess piece. The abbreviation isn't just a shorthand — it's a diagram. Each character encodes the form of the piece it represents, making the logo a visual position in itself.</p>
+      </div>
+      <div class="logo-breakdown">
+        <div class="brow"><div class="blet">S</div><div class="bdesc"><strong>Knight</strong> — The curved, asymmetric profile of the knight's head and neck traces the letterform. The most complex piece for the most expressive letter.</div></div>
+        <div class="brow"><div class="blet">T</div><div class="bdesc"><strong>King</strong> — The cross atop the king directly mirrors the crossbar of the T. The tallest letter for the most important piece.</div></div>
+        <div class="brow"><div class="blet">L</div><div class="bdesc"><strong>Rook</strong> — The battlements of the rook form the stepped silhouette of the L. Structural, angular, unmistakable.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 HISTORY — black -->
+<div class="bg-black">
+  <div class="sec-hdr"><h2 class="sec-title">Club History</h2><span class="sec-idx">02 / 04</span></div>
+  <div class="history-grid">
+    <div class="history-left">
+      <div>
+        <div class="mono-sm" style="margin-bottom:16px;">Est. 2008</div>
+        <div class="history-left-title">16<br>Years<br>of Play</div>
+      </div>
+      <div class="history-left-sub">From a single vision to the most celebrated chess address in North America — the story of STL is the story of chess in America.</div>
+    </div>
+    <div class="timeline">
+      <div class="trow"><div class="tyear">2008</div><div class="tcontent"><div class="tevent">Founding</div><div class="tdetail">Rex Sinquefield establishes the Saint Louis Chess Club in the Central West End neighborhood, with a mission to make chess accessible and elite simultaneously.</div></div></div>
+      <div class="trow"><div class="tyear">2009</div><div class="tcontent"><div class="tevent">World Chess Hall of Fame Partnership</div><div class="tdetail">Close ties formed with the World Chess Hall of Fame, establishing St. Louis as the cultural capital of American chess.</div></div></div>
+      <div class="trow"><div class="tyear">2011</div><div class="tcontent"><div class="tevent">U.S. Chess Championship Arrives</div><div class="tdetail">The U.S. Chess Championship and U.S. Women's Chess Championship move to St. Louis, bringing the nation's premier title events to the club.</div></div></div>
+      <div class="trow"><div class="tyear">2013</div><div class="tcontent"><div class="tevent">Expansion</div><div class="tdetail">The club expands its facilities to accommodate growing membership and tournament demands, cementing its status as a world-class venue.</div></div></div>
+      <div class="trow"><div class="tyear">2014</div><div class="tcontent"><div class="tevent">Sinquefield Cup Inaugurated</div><div class="tdetail">The inaugural Sinquefield Cup draws the world's top players. Magnus Carlsen achieves the highest performance rating in recorded chess history — 3098 ELO — at this event.</div></div></div>
+      <div class="trow"><div class="tyear">2019</div><div class="tcontent"><div class="tevent">Record-Breaking Season</div><div class="tdetail">The Sinquefield Cup continues to attract the world's elite. St. Louis is now considered the global home of elite open chess.</div></div></div>
+      <div class="trow"><div class="tyear">2024</div><div class="tcontent"><div class="tevent">The American Cup — New Format</div><div class="tdetail">A revamped American Cup format introduces knockout brackets to elite play, bringing dramatic head-to-head competition to St. Louis.</div></div></div>
+      <div class="trow"><div class="tyear">2026</div><div class="tcontent"><div class="tevent">Continuing the Legacy</div><div class="tdetail">The club hosts its most ambitious calendar yet — multiple elite events, youth programs, and the ongoing mission to grow chess across all communities.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 CONTACT — cream -->
+<div class="bg-cream">
+  <div class="sec-hdr"><h2 class="sec-title">Information</h2><span class="sec-idx">03 / 04</span></div>
+  <div class="contact-grid">
+    <div class="ccard"><div class="ctype">Call Us</div><div class="cvalue">+1 (314) 361 2437</div><div class="cnote">We're here for you Monday through Friday, 10am–5pm ET.</div></div>
+    <div class="ccard"><div class="ctype">Email Us</div><div class="cvalue">hello@stlcc.com</div><div class="cnote">Our inbox is always open. We respond to email in the order received.</div></div>
+    <div class="ccard"><div class="ctype">Visit Us</div><div class="cvalue">4663 Maryland Ave<br>St. Louis, MO 63108</div><div class="cnote">Central West End — open to the public. Members welcome daily.</div></div>
+  </div>
+  <div class="cbot">
+    <div class="cbcell"><span class="mono-sm">Web</span><span class="cbval">www.saintlouiscc.com</span></div>
+    <div class="cbcell"><span class="mono-sm">Place</span><span class="cbval">Saint Louis, Missouri</span></div>
+  </div>
+</div>
+
+<!-- 06 EVENT — white -->
+<div class="bg-white" style="border-top:2px solid var(--black);">
+  <div class="sec-hdr"><h2 class="sec-title">Featured Event</h2><span class="sec-idx">04 / 04</span></div>
+  <div class="event-inner">
+    <div class="event-left">
+      <div class="ev-eyebrow">Upcoming · 2026</div>
+      <div class="ev-title">The<br><em>American</em><br>Cup</div>
+      <p class="ev-desc">The American Cup is a knockout-format elite invitational held at the Saint Louis Chess Club. The top players in America compete head-to-head in rapid tiebreaks, producing some of the most dramatic chess on the continental calendar.</p>
+      <div class="ev-meta">
+        <div class="ev-row"><span class="ev-label">Format</span><span class="ev-val">Double Elimination Bracket</span></div>
+        <div class="ev-row"><span class="ev-label">Venue</span><span class="ev-val">Saint Louis Chess Club</span></div>
+        <div class="ev-row"><span class="ev-label">Category</span><span class="ev-val">Elite Invitational · Open &amp; Women's</span></div>
+        <div class="ev-row"><span class="ev-label">Live</span><span class="ev-val">chess.com / saintlouiscc.com</span></div>
+      </div>
+    </div>
+    <div class="event-right">
+      <div class="ev-bracket-label">Invitational Field — Top Contenders</div>
+      <div class="ev-players">
+        <div class="prow"><span class="pname">Fabiano Caruana</span><span class="prating">2805</span></div>
+        <div class="prow"><span class="pname">Hikaru Nakamura</span><span class="prating">2794</span></div>
+        <div class="prow"><span class="pname">Wesley So</span><span class="prating">2778</span></div>
+        <div class="prow"><span class="pname">Levon Aronian</span><span class="prating">2745</span></div>
+        <div class="prow"><span class="pname">Sam Shankland</span><span class="prating">2706</span></div>
+        <div class="prow"><span class="pname">Leinier Dominguez</span><span class="prating">2731</span></div>
+        <div class="prow"><span class="pname">Hans Niemann</span><span class="prating">2694</span></div>
+        <div class="prow"><span class="pname">Ray Robson</span><span class="prating">2680</span></div>
+      </div>
+      <div class="ev-foot">Ratings approximate · Field subject to confirmation</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER — cream -->
+<div class="bg-cream">
+  <footer class="site-footer">
+    <span class="fcopy">Saint Louis Chess Club — About STL</span>
+    <span class="fcopy">©2026 · All Rights Reserved</span>
+  </footer>
+</div>
+
+</div>
+</body>
+</html>

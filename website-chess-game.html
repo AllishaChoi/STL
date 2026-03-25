@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+    <style>
+        @font-face {
+            font-family: 'Geist';
+            src: url('Geist.ttf') format('truetype');
+            font-weight: 100 900;
+        }
+        @font-face {
+            font-family: 'Geist Mono';
+            src: url('GeistMono.ttf') format('truetype');
+            font-weight: 100 900;
+        }
+
+        :root {
+            --geist-light: 300;
+            --geist-medium: 500;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Geist', sans-serif;
+            background: #f5f5f5;
+            color: #000;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;          /* 1440 → 1200 */
+            margin: 0 auto;
+            padding: 64px 80px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            border-bottom: 1px solid #000;
+            padding-bottom: 48px;
+            margin-bottom: 64px;
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .hero-left h1 {
+            font-size: 72px;            /* keep */
+            font-weight: var(--geist-light);
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .hero-left h1 .italic {
+            font-style: italic;
+            font-weight: var(--geist-light);
+        }
+
+        .subtitle {
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;            /* 13 → 11 */
+            letter-spacing: 0.05em;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+
+        .hero-right {
+            max-width: 360px;
+            padding-top: 12px;
+        }
+
+        .description {
+            font-family: 'Geist Mono', monospace;
+            font-size: 13px;            /* 15 → 13 */
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item h3 {
+            font-size: 48px;            /* keep */
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-family: 'Geist Mono', monospace;
+            font-size: 10px;            /* 12 → 10 */
+            letter-spacing: 0.05em;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .section-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 32px;            /* keep */
+            font-weight: var(--geist-medium);
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+        .inline-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;            /* 13 → 11 */
+            color: #666;
+        }
+
+        .status-label { color: #999; text-transform: uppercase; letter-spacing: 0.05em; }
+        .status-value { color: #000; font-weight: 500; }
+
+        .divider-v {
+            width: 1px;
+            height: 18px;
+            background: #ddd;
+        }
+
+        button {
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;            /* 12 → 11 */
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 7px 16px;
+            border: 1px solid #000;
+            background: #fff;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover { background: #000; color: #fff; }
+        button:active { transform: scale(0.98); }
+
+        .main-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: stretch;
+        }
+
+        .board-col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .board-label {
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;            /* 13 → 11 */
+            letter-spacing: 0.05em;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        #chessboard {
+            width: 100%;
+            aspect-ratio: 1;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border: 1px solid #000;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        .square {
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .square.light { background: #fff; }
+        .square.dark  { background: #e8e8e8; }
+        .square.selected { background: #d0d0d0 !important; }
+
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 24%; height: 24%;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.15);
+        }
+
+        .square.valid-capture::after {
+            content: '';
+            position: absolute;
+            width: 90%; height: 90%;
+            border: 3px solid rgba(0,0,0,0.15);
+            border-radius: 50%;
+        }
+
+        .piece {
+            width: 70%; height: 70%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Geist', sans-serif;
+            font-size: clamp(11px, 1.8vw, 22px);
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+
+        .piece.white { background: #fff; color: #000; border-color: #000; }
+        .piece.black { background: #000; color: #fff; }
+
+        .moves-strip {
+            flex: 1;
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 14px 18px;
+            overflow-y: auto;
+            min-height: 60px;
+        }
+
+        .moves-list {
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;            /* 12 → 11 */
+            line-height: 1.8;
+            color: #333;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0 14px;
+        }
+
+        .move-entry {
+            display: flex;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .move-number { color: #bbb; }
+
+        .poster-col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .poster-col-label {
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;            /* 13 → 11 */
+            letter-spacing: 0.05em;
+            color: #999;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .poster-frame {
+            width: 97%;
+            margin: 0 auto;
+            aspect-ratio: 2 / 3;
+            background: #060605;
+            border: 1px solid #222;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        #posterCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .export-row {
+            border-top: 1px solid #000;
+            padding-top: 32px;
+            margin-top: 48px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        #btnExport {
+            padding: 11px 28px;
+            font-size: 11px;            /* 13 → 11 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="hero">
+            <div class="hero-left">
+                <div class="subtitle">Interactive Chess</div>
+                <h1>Play<br><span class="italic">Chess</span><br>Game</h1>
+            </div>
+            <div class="hero-right">
+                <p class="description">
+                    Play against an intelligent computer opponent. Each move is calculated
+                    using strategic algorithms to provide a challenging experience.
+                </p>
+                <div class="stats">
+                    <div class="stat-item"><h3>64</h3><div class="stat-label">Squares</div></div>
+                    <div class="stat-item"><h3>32</h3><div class="stat-label">Pieces</div></div>
+                    <div class="stat-item"><h3>∞</h3><div class="stat-label">Moves</div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="game-section">
+        <div class="section-topbar">
+            <h2 class="section-title">Interactive Board</h2>
+            <div class="inline-controls">
+                <div class="status-group">
+                    <span class="status-label">Turn</span>
+                    <span class="status-value" id="turnVal">White</span>
+                </div>
+                <div class="divider-v"></div>
+                <div class="status-group">
+                    <span class="status-label">Status</span>
+                    <span class="status-value" id="statusVal">Ready to play</span>
+                </div>
+                <div class="divider-v"></div>
+                <button onclick="resetGame()">New Game</button>
+                <button onclick="undoMove()">Undo</button>
+            </div>
+        </div>
+
+        <div class="main-columns">
+            <div class="board-col">
+                <div class="board-label">01 — Standard Game</div>
+                <div id="chessboard"></div>
+                <div class="moves-strip">
+                    <div class="moves-list" id="movesList"></div>
+                </div>
+            </div>
+
+            <div class="poster-col">
+                <div class="poster-col-label">
+                    <span>02 — Your Game Journey</span>
+                    <span id="vizProgress" style="color:#bbb; font-size:11px;"></span>
+                </div>
+                <div class="poster-frame">
+                    <canvas id="posterCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="export-row">
+        <button id="btnExport" onclick="exportPoster()">↓ Export Poster (4096px)</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<script>
+let board = [];
+let selectedSquare = null;
+let currentTurn = 'white';
+let moveHistory = [];
+let moveNumber = 1;
+let fullMoveData = [];
+let gameEnded = false;
+
+const pieceSymbols = { K:'K', Q:'Q', R:'R', B:'B', N:'N', P:'P' };
+
+function initBoard() {
+    board = [
+        ['R','N','B','Q','K','B','N','R'],
+        ['P','P','P','P','P','P','P','P'],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        ['p','p','p','p','p','p','p','p'],
+        ['r','n','b','q','k','b','n','r']
+    ];
+    moveHistory = [];
+    moveNumber = 1;
+    currentTurn = 'white';
+    updateStatus();
+}
+
+function createBoardUI() {
+    const el = document.getElementById('chessboard');
+    el.innerHTML = '';
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const sq = document.createElement('div');
+            sq.className = 'square ' + ((row+col)%2===0 ? 'light' : 'dark');
+            sq.dataset.row = row; sq.dataset.col = col;
+            sq.onclick = () => handleSquareClick(row, col);
+            const piece = board[row][col];
+            if (piece) {
+                const p = document.createElement('div');
+                p.className = 'piece ' + (piece===piece.toUpperCase() ? 'black' : 'white');
+                p.textContent = pieceSymbols[piece.toUpperCase()];
+                sq.appendChild(p);
+            }
+            el.appendChild(sq);
+        }
+    }
+}
+
+function handleSquareClick(row, col) {
+    if (currentTurn !== 'white') return;
+    const piece = board[row][col];
+    if (selectedSquare && isValidMove(selectedSquare.row, selectedSquare.col, row, col)) {
+        makeMove(selectedSquare.row, selectedSquare.col, row, col);
+        selectedSquare = null;
+        clearHighlights();
+        setTimeout(() => { if (currentTurn==='black') makeComputerMove(); }, 500);
+    } else if (piece && piece===piece.toLowerCase()) {
+        selectedSquare = {row, col};
+        highlightValidMoves(row, col);
+    } else {
+        selectedSquare = null;
+        clearHighlights();
+    }
+}
+
+function highlightValidMoves(row, col) {
+    clearHighlights();
+    const sqs = document.querySelectorAll('.square');
+    sqs[row*8+col].classList.add('selected');
+    for (let r=0;r<8;r++) for (let c=0;c<8;c++) {
+        if (isValidMove(row,col,r,c)) {
+            sqs[r*8+c].classList.add(board[r][c] ? 'valid-capture' : 'valid-move');
+        }
+    }
+}
+
+function clearHighlights() {
+    document.querySelectorAll('.square').forEach(s => s.classList.remove('selected','valid-move','valid-capture'));
+}
+
+function isValidMove(fr,fc,tr,tc) {
+    if (fr===tr&&fc===tc) return false;
+    const piece=board[fr][fc], target=board[tr][tc];
+    if (!piece) return false;
+    if (target && (piece===piece.toLowerCase())===(target===target.toLowerCase())) return false;
+    const pt=piece.toUpperCase(), isW=piece===piece.toLowerCase();
+    const rd=tr-fr, cd=tc-fc;
+    switch(pt) {
+        case 'P': {
+            const dir=isW?-1:1, sr=isW?6:1;
+            if (cd===0&&!target) { if(rd===dir) return true; if(fr===sr&&rd===2*dir&&!board[fr+dir][fc]) return true; }
+            if (Math.abs(cd)===1&&rd===dir&&target) return true;
+            return false;
+        }
+        case 'R': if(rd!==0&&cd!==0) return false; return isPathClear(fr,fc,tr,tc);
+        case 'N': return (Math.abs(rd)===2&&Math.abs(cd)===1)||(Math.abs(rd)===1&&Math.abs(cd)===2);
+        case 'B': if(Math.abs(rd)!==Math.abs(cd)) return false; return isPathClear(fr,fc,tr,tc);
+        case 'Q': if(rd!==0&&cd!==0&&Math.abs(rd)!==Math.abs(cd)) return false; return isPathClear(fr,fc,tr,tc);
+        case 'K': return Math.abs(rd)<=1&&Math.abs(cd)<=1;
+    }
+    return false;
+}
+
+function isPathClear(fr,fc,tr,tc) {
+    const rs=tr>fr?1:tr<fr?-1:0, cs=tc>fc?1:tc<fc?-1:0;
+    let r=fr+rs, c=fc+cs;
+    while(r!==tr||c!==tc) { if(board[r][c]) return false; r+=rs; c+=cs; }
+    return true;
+}
+
+function makeMove(fr,fc,tr,tc) {
+    const piece=board[fr][fc], captured=board[tr][tc];
+    board[tr][tc]=piece; board[fr][fc]=null;
+    fullMoveData.push({ fromRow:fr, fromCol:fc, toRow:tr, toCol:tc, side:currentTurn, piece:piece.toUpperCase() });
+    const notation=getMoveNotation(piece,fr,fc,tr,tc,captured);
+    addMoveToHistory(notation);
+    currentTurn=currentTurn==='white'?'black':'white';
+    updateStatus();
+    createBoardUI();
+    checkGameEnd();
+    if (vizP5) vizNeedsUpdate = true;
+}
+
+function getMoveNotation(piece,fr,fc,tr,tc,captured) {
+    const files='abcdefgh';
+    const ps=piece.toUpperCase()==='P'?'':piece.toUpperCase();
+    return ps+(captured?'x':'')+files[tc]+(8-tr);
+}
+
+function addMoveToHistory(notation) {
+    const ml=document.getElementById('movesList');
+    if (currentTurn==='white') {
+        const entry=document.createElement('div');
+        entry.className='move-entry';
+        entry.innerHTML=`<span class="move-number">${moveNumber}.</span><span>${notation}</span><span id="bm-${moveNumber}"></span>`;
+        ml.appendChild(entry);
+        moveHistory.push({notation, side:'white'});
+    } else {
+        const bm=document.getElementById(`bm-${moveNumber}`);
+        if(bm) bm.textContent=' '+notation;
+        moveHistory.push({notation, side:'black'});
+        moveNumber++;
+    }
+    ml.scrollTop=ml.scrollHeight;
+}
+
+function makeComputerMove() {
+    const valid=[];
+    for(let fr=0;fr<8;fr++) for(let fc=0;fc<8;fc++) {
+        const p=board[fr][fc];
+        if(p&&p===p.toUpperCase()) {
+            for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++) {
+                if(isValidMove(fr,fc,tr,tc)) valid.push({fr,fc,tr,tc});
+            }
+        }
+    }
+    if(valid.length>0) {
+        const m=valid[Math.floor(Math.random()*valid.length)];
+        makeMove(m.fr,m.fc,m.tr,m.tc);
+    }
+}
+
+function checkGameEnd() {
+    let wk=false, bk=false;
+    for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+        if(board[r][c]==='k') wk=true;
+        if(board[r][c]==='K') bk=true;
+    }
+    if(!wk||!bk) {
+        gameEnded=true;
+        document.getElementById('statusVal').textContent=`Game Over — ${!wk?'Black':'White'} wins!`;
+    }
+}
+
+function updateStatus() {
+    document.getElementById('turnVal').textContent=currentTurn==='white'?'White':'Black';
+    document.getElementById('statusVal').textContent=currentTurn==='white'?'Your turn':'Computer thinking...';
+}
+
+function resetGame() {
+    initBoard();
+    createBoardUI();
+    document.getElementById('movesList').innerHTML='';
+    fullMoveData=[];
+    moveHistory=[];
+    moveNumber=1;
+    gameEnded=false;
+    vizMoveIndex=0;
+    vizLines=[];
+    document.getElementById('vizProgress').textContent='';
+    if(vizP5) { vizP5.clear(); }
+}
+
+function undoMove() {
+    alert('Undo feature: Please start a new game.');
+}
+
+let vizP5 = null;
+let vizLines = [];
+let vizMoveIndex = 0;
+let vizNeedsUpdate = false;
+
+function initViz() {
+    const canvas = document.getElementById('posterCanvas');
+    const frame  = canvas.parentElement;
+
+    vizP5 = new p5(function(p) {
+        let W, H;
+
+        function boardToScreen(col, row) {
+            const BCX=W*0.5, BCY=H*0.36;
+            const BOARD_W=W*0.88, BOARD_TOP_W=W*0.68;
+            const BOARD_H=H*0.46;
+            const BY_BOT=BCY+BOARD_H*0.52, BY_TOP=BCY-BOARD_H*0.48;
+            const t=row/8;
+            const rowY=BY_TOP+(BY_BOT-BY_TOP)*t;
+            const rowWidth=BOARD_TOP_W+(BOARD_W-BOARD_TOP_W)*t;
+            const rowX=BCX-rowWidth/2+(col/8)*rowWidth;
+            return {x:rowX, y:rowY};
+        }
+
+        function cellCenter(c, r) {
+            const tl=boardToScreen(c,r), tr2=boardToScreen(c+1,r);
+            const bl=boardToScreen(c,r+1), br=boardToScreen(c+1,r+1);
+            return {x:(tl.x+tr2.x+bl.x+br.x)/4, y:(tl.y+tr2.y+bl.y+br.y)/4};
+        }
+
+        p.setup = function() {
+            const cv = p.createCanvas(frame.clientWidth, frame.clientHeight);
+            cv.parent(frame);
+            canvas.style.display='none';
+            W=p.width; H=p.height;
+            p.frameRate(12);
+            p.strokeCap(p.ROUND);
+        };
+
+        p.windowResized = function() {
+            p.resizeCanvas(frame.clientWidth, frame.clientHeight);
+            W=p.width; H=p.height;
+        };
+
+        p.draw = function() {
+            p.background(5,5,4);
+            drawBoard(p, boardToScreen);
+
+            if (vizNeedsUpdate && vizMoveIndex < fullMoveData.length) {
+                while (vizMoveIndex < fullMoveData.length) {
+                    const m=fullMoveData[vizMoveIndex];
+                    const from=cellCenter(m.fromCol,m.fromRow);
+                    const to=cellCenter(m.toCol,m.toRow);
+                    vizLines.push({
+                        x1:from.x, y1:from.y, x2:to.x, y2:to.y,
+                        alpha:0, targetAlpha:m.side==='white'?1.0:0.6,
+                        isWhite:m.side==='white'
+                    });
+                    vizMoveIndex++;
+                }
+                vizNeedsUpdate=false;
+                document.getElementById('vizProgress').textContent=
+                    `${vizMoveIndex} move${vizMoveIndex!==1?'s':''}`;
+            }
+
+            vizLines.forEach(l => {
+                if(l.alpha<l.targetAlpha) l.alpha=Math.min(l.targetAlpha, l.alpha+0.12);
+            });
+
+            vizLines.forEach(l => {
+                if(l.alpha<0.01) return;
+                drawGlowLine(p,l.x1,l.y1,l.x2,l.y2,l.alpha,l.isWhite);
+                drawNode(p,l.x1,l.y1,l.alpha*0.5,l.isWhite,W*0.012);
+                drawNode(p,l.x2,l.y2,l.alpha,l.isWhite,W*0.016);
+            });
+
+            drawMovesText(p, W, H);
+        };
+
+        function drawBoard(p, bts) {
+            for(let c=0;c<8;c++) for(let r=0;r<8;r++) {
+                if((c+r)%2===0) {
+                    const tl=bts(c,r), tr2=bts(c+1,r), bl=bts(c,r+1), br=bts(c+1,r+1);
+                    p.beginShape(); p.noStroke(); p.fill(255,255,255,17);
+                    p.vertex(tl.x,tl.y); p.vertex(tr2.x,tr2.y);
+                    p.vertex(br.x,br.y); p.vertex(bl.x,bl.y);
+                    p.endShape(p.CLOSE);
+                }
+            }
+            p.stroke(255,255,255,14); p.strokeWeight(0.5);
+            for(let i=0;i<=8;i++) {
+                const a=bts(i,0),b=bts(i,8); p.line(a.x,a.y,b.x,b.y);
+                const c2=bts(0,i),d=bts(8,i); p.line(c2.x,c2.y,d.x,d.y);
+            }
+            for(let c=0;c<=8;c++) for(let r=0;r<=8;r++) {
+                const pt=bts(c,r);
+                p.stroke(255,255,255,24); p.strokeWeight(0.5);
+                p.line(pt.x-3,pt.y,pt.x+3,pt.y);
+                p.line(pt.x,pt.y-3,pt.x,pt.y+3);
+            }
+            const bk=W*0.03;
+            [[bts(0,0),1,1],[bts(8,0),-1,1],[bts(0,8),1,-1],[bts(8,8),-1,-1]]
+                .forEach(([pt,sx,sy]) => {
+                    p.stroke(255,255,255,70); p.strokeWeight(1);
+                    p.line(pt.x,pt.y,pt.x+sx*bk,pt.y+sy*0.3*bk*0.4);
+                    p.line(pt.x,pt.y,pt.x+sx*0.15*bk,pt.y+sy*bk*0.55);
+                });
+            p.textFont('monospace'); p.textSize(W*0.022); p.noStroke(); p.fill(255,255,255,80);
+            p.textAlign(p.CENTER,p.TOP);
+            const FILES='abcdefgh';
+            for(let c=0;c<8;c++) { const pt=bts(c+0.5,8.5); p.text(FILES[c],pt.x,pt.y); }
+            p.textAlign(p.RIGHT,p.CENTER);
+            for(let r=0;r<8;r++) { const pt=bts(-0.3,r+0.5); p.text(8-r,pt.x,pt.y); }
+        }
+
+        function drawGlowLine(p,x1,y1,x2,y2,alpha,isW) {
+            if(alpha<0.004) return;
+            const wm=isW?1:0.55;
+            p.stroke(255,255,255,alpha*10*wm); p.strokeWeight(10); p.line(x1,y1,x2,y2);
+            p.stroke(255,255,255,alpha*22*wm); p.strokeWeight(4);  p.line(x1,y1,x2,y2);
+            p.stroke(255,255,255,alpha*65*wm); p.strokeWeight(1.6);p.line(x1,y1,x2,y2);
+            p.stroke(255,255,255,alpha*210*wm);p.strokeWeight(0.5);p.line(x1,y1,x2,y2);
+        }
+
+        function drawNode(p,x,y,alpha,isW,r) {
+            if(alpha<0.01) return;
+            const wm=isW?1:0.55;
+            p.noFill();
+            p.stroke(255,255,255,alpha*30*wm); p.strokeWeight(2); p.circle(x,y,r*2.2);
+            p.stroke(255,255,255,alpha*80*wm); p.strokeWeight(0.7);p.circle(x,y,r*1.4);
+            p.noStroke(); p.fill(255,255,255,alpha*215*wm); p.circle(x,y,r*0.45);
+        }
+
+        function drawMovesText(p, W, H) {
+            if(moveHistory.length===0) return;
+            const pairs=[];
+            for(let i=0;i<moveHistory.length;i+=2) {
+                const w=moveHistory[i]?.notation||'';
+                const b=moveHistory[i+1]?.notation||'';
+                pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
+            }
+            const fontSize=W*0.022;
+            p.textFont('monospace'); p.textSize(fontSize); p.noStroke();
+            const startY=H*0.72, colW=W*0.44, cols=2;
+            const rowH=fontSize*1.8;
+            const maxRows=Math.floor((H*0.26)/rowH);
+            p.stroke(255,255,255,35); p.strokeWeight(0.5);
+            p.line(W*0.06, startY-14, W*0.94, startY-14);
+            p.noStroke(); p.fill(255,255,255,90);
+            p.textSize(W*0.018); p.textAlign(p.LEFT, p.BOTTOM);
+            p.text('MOVE LOG', W*0.06, startY-18);
+            p.textSize(fontSize); p.textAlign(p.LEFT, p.TOP);
+            pairs.forEach((txt,i) => {
+                const col=i%cols, row=Math.floor(i/cols);
+                if(row>=maxRows) return;
+                p.fill(255,255,255,140);
+                p.text(txt, W*0.06+col*colW, startY+row*rowH);
+            });
+        }
+    });
+}
+
+function exportPoster() {
+    new p5(function(p) {
+        const W=2048, H=3072;
+
+        function boardToScreen(col,row) {
+            const BCX=W*0.5, BCY=H*0.36;
+            const BOARD_W=W*0.88, BOARD_TOP_W=W*0.68;
+            const BOARD_H=H*0.46;
+            const BY_BOT=BCY+BOARD_H*0.52, BY_TOP=BCY-BOARD_H*0.48;
+            const t=row/8;
+            const rowY=BY_TOP+(BY_BOT-BY_TOP)*t;
+            const rowWidth=BOARD_TOP_W+(BOARD_W-BOARD_TOP_W)*t;
+            const rowX=BCX-rowWidth/2+(col/8)*rowWidth;
+            return {x:rowX, y:rowY};
+        }
+
+        function cellCenter(c,r) {
+            const tl=boardToScreen(c,r), tr2=boardToScreen(c+1,r);
+            const bl=boardToScreen(c,r+1), br=boardToScreen(c+1,r+1);
+            return {x:(tl.x+tr2.x+bl.x+br.x)/4, y:(tl.y+tr2.y+bl.y+br.y)/4};
+        }
+
+        p.setup = function() {
+            const cv=p.createCanvas(W,H);
+            cv.parent(document.body);
+            cv.elt.style.display='none';
+            p.noLoop(); p.strokeCap(p.ROUND);
+        };
+
+        p.draw = function() {
+            p.background(5,5,4);
+            for(let c=0;c<8;c++) for(let r=0;r<8;r++) {
+                if((c+r)%2===0) {
+                    const tl=boardToScreen(c,r), tr2=boardToScreen(c+1,r);
+                    const bl=boardToScreen(c,r+1), br=boardToScreen(c+1,r+1);
+                    p.beginShape(); p.noStroke(); p.fill(255,255,255,17);
+                    p.vertex(tl.x,tl.y); p.vertex(tr2.x,tr2.y);
+                    p.vertex(br.x,br.y); p.vertex(bl.x,bl.y);
+                    p.endShape(p.CLOSE);
+                }
+            }
+            p.stroke(255,255,255,14); p.strokeWeight(1);
+            for(let i=0;i<=8;i++) {
+                const a=boardToScreen(i,0),b=boardToScreen(i,8); p.line(a.x,a.y,b.x,b.y);
+                const c2=boardToScreen(0,i),d=boardToScreen(8,i); p.line(c2.x,c2.y,d.x,d.y);
+            }
+            for(let c=0;c<=8;c++) for(let r=0;r<=8;r++) {
+                const pt=boardToScreen(c,r);
+                p.stroke(255,255,255,24); p.strokeWeight(1);
+                p.line(pt.x-5,pt.y,pt.x+5,pt.y); p.line(pt.x,pt.y-5,pt.x,pt.y+5);
+            }
+            const bk=W*0.03;
+            [[boardToScreen(0,0),1,1],[boardToScreen(8,0),-1,1],
+             [boardToScreen(0,8),1,-1],[boardToScreen(8,8),-1,-1]]
+                .forEach(([pt,sx,sy]) => {
+                    p.stroke(255,255,255,70); p.strokeWeight(2);
+                    p.line(pt.x,pt.y,pt.x+sx*bk,pt.y+sy*0.3*bk*0.4);
+                    p.line(pt.x,pt.y,pt.x+sx*0.15*bk,pt.y+sy*bk*0.55);
+                });
+            const FILES='abcdefgh';
+            p.textFont('monospace'); p.textSize(W*0.022); p.noStroke(); p.fill(255,255,255,80);
+            p.textAlign(p.CENTER,p.TOP);
+            for(let c=0;c<8;c++) { const pt=boardToScreen(c+0.5,8.5); p.text(FILES[c],pt.x,pt.y); }
+            p.textAlign(p.RIGHT,p.CENTER);
+            for(let r=0;r<8;r++) { const pt=boardToScreen(-0.3,r+0.5); p.text(8-r,pt.x,pt.y); }
+
+            fullMoveData.forEach(m => {
+                const from=cellCenter(m.fromCol,m.fromRow);
+                const to=cellCenter(m.toCol,m.toRow);
+                const isW=m.side==='white';
+                const alpha=isW?1.0:0.6, wm=isW?1:0.55;
+                const r=W*0.016;
+                p.stroke(255,255,255,alpha*10*wm); p.strokeWeight(18); p.line(from.x,from.y,to.x,to.y);
+                p.stroke(255,255,255,alpha*22*wm); p.strokeWeight(7);  p.line(from.x,from.y,to.x,to.y);
+                p.stroke(255,255,255,alpha*65*wm); p.strokeWeight(2.5);p.line(from.x,from.y,to.x,to.y);
+                p.stroke(255,255,255,alpha*210*wm);p.strokeWeight(0.8);p.line(from.x,from.y,to.x,to.y);
+                p.noFill();
+                p.stroke(255,255,255,alpha*80*wm); p.strokeWeight(1.5);p.circle(to.x,to.y,r*1.4);
+                p.noStroke(); p.fill(255,255,255,alpha*215*wm); p.circle(to.x,to.y,r*0.45);
+            });
+
+            const pairs=[];
+            for(let i=0;i<moveHistory.length;i+=2) {
+                const w=moveHistory[i]?.notation||'';
+                const b=moveHistory[i+1]?.notation||'';
+                pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
+            }
+            const fontSize=W*0.022;
+            const startY=H*0.72, colW=W*0.44, cols=2, rowH=fontSize*1.8;
+            const maxRows=Math.floor((H*0.26)/rowH);
+            p.stroke(255,255,255,35); p.strokeWeight(1);
+            p.line(W*0.06,startY-20,W*0.94,startY-20);
+            p.noStroke(); p.fill(255,255,255,90);
+            p.textFont('monospace'); p.textSize(W*0.018);
+            p.textAlign(p.LEFT,p.BOTTOM); p.text('MOVE LOG',W*0.06,startY-24);
+            p.textSize(fontSize); p.textAlign(p.LEFT,p.TOP);
+            pairs.forEach((txt,i) => {
+                const col=i%cols, row=Math.floor(i/cols);
+                if(row>=maxRows) return;
+                p.fill(255,255,255,140);
+                p.text(txt, W*0.06+col*colW, startY+row*rowH);
+            });
+
+            const link=document.createElement('a');
+            link.download='chess_game_journey.jpg';
+            link.href=p.canvas.toDataURL('image/jpeg',0.97);
+            link.click();
+            p.remove();
+        };
+    });
+}
+
+initBoard();
+createBoardUI();
+initViz();
+</script>
+</body>
+</html>
