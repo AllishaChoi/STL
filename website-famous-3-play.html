@@ -3,379 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Poster Generator</title>
+    <title>3 FAMOUS GAMES</title>
     <style>
-        @font-face {
-            font-family: 'Geist';
-            src: url('Geist.ttf') format('truetype');
-            font-weight: 100 900;
-        }
-        @font-face {
-            font-family: 'Geist Mono';
-            src: url('GeistMono.ttf') format('truetype');
-            font-weight: 100 900;
-        }
-
-        :root {
-            --geist-light: 300;
-            --geist-regular: 400;
-            --geist-medium: 500;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Geist', sans-serif;
-            background: #060605;
-            color: #fff;
-            position: relative;
-            overflow-x: hidden;
-        }
-
+        @font-face { font-family:'Geist'; src:url('Geist.ttf') format('truetype'); font-weight:100 900; }
+        @font-face { font-family:'Geist Mono'; src:url('GeistMono.ttf') format('truetype'); font-weight:100 900; }
+        :root { --geist-light:300; --geist-regular:400; --geist-medium:500; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body { font-family:'Geist',sans-serif; background:#060605; color:#fff; position:relative; overflow-x:hidden; }
         body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
+            content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none; z-index:1;
         }
+        .container { max-width:1200px; margin:0 auto; padding:64px 80px; position:relative; z-index:2; }
+        header { border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:48px; margin-bottom:64px; }
+        .hero { display:flex; justify-content:space-between; align-items:flex-start; }
+        .hero-left h1 { font-size:72px; font-weight:var(--geist-light); line-height:0.95; letter-spacing:-0.03em; margin-bottom:8px; }
+        .hero-left h1 .italic { font-style:italic; font-weight:var(--geist-light); }
+        .subtitle { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#666; text-transform:uppercase; margin-bottom:32px; }
+        .hero-right { max-width:360px; padding-top:12px; }
+        .description { font-family:'Geist Mono',monospace; font-size:13px; line-height:1.6; color:#999; margin-bottom:32px; }
 
-        .container {
-            max-width: 1200px;      /* 1440 → 1200 */
-            margin: 0 auto;
-            padding: 64px 80px;
-            position: relative;
-            z-index: 2;
-        }
+        /* ── 로고: 28px ── */
+        .hero-logo { margin-top:4px; }
+        .logo-img  { height:28px; width:auto; opacity:0.85; }
 
-        header {
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            padding-bottom: 48px;
-            margin-bottom: 64px;
-        }
+        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:48px; }
+        .section-title { font-size:32px; font-weight:var(--geist-medium); letter-spacing:-0.02em; }
+        .section-info { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#666; }
 
-        .hero {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
+        .controls-bar { display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:48px; }
+        .controls-left { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
 
-        .hero-left h1 {
-            font-size: 72px;            /* keep */
-            font-weight: var(--geist-light);
-            line-height: 0.95;
-            letter-spacing: -0.03em;
-            margin-bottom: 8px;
-        }
+        button { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; padding:7px 14px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:#999; cursor:pointer; transition:all 0.2s; }
+        button:hover { border-color:rgba(255,255,255,0.6); color:#fff; }
+        button:active { transform:scale(0.98); }
+        .btn-nav { border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); color:#777; padding:7px 18px; }
+        .btn-nav:hover { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.45); }
 
-        .hero-left h1 .italic {
-            font-style: italic;
-            font-weight: var(--geist-light);
-        }
+        .controls-sliders { display:flex; flex-direction:row; align-items:center; gap:16px; }
+        .control-group { display:flex; align-items:center; gap:10px; }
+        .control-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#666; text-transform:uppercase; }
+        input[type="range"] { width:72px; accent-color:#666; cursor:pointer; }
+        .value-display { font-family:'Geist Mono',monospace; font-size:11px; color:#999; min-width:18px; text-align:right; }
+        .separator { width:1px; height:14px; background:rgba(255,255,255,0.1); }
 
-        .subtitle {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            letter-spacing: 0.05em;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 32px;
-        }
+        .canvas-wrapper { display:grid; grid-template-columns:1fr 300px; gap:40px; align-items:stretch; height:680px; width:100%; }
+        .canvas-container { display:flex; flex-direction:column; height:680px; min-width:0; }
+        .side-panel { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:28px; height:680px; display:flex; flex-direction:column; overflow:hidden; }
 
-        .hero-right {
-            max-width: 360px;
-            padding-top: 12px;
-        }
-
-        .description {
-            font-family: 'Geist Mono', monospace;
-            font-size: 13px;            /* 15 → 13 */
-            line-height: 1.6;
-            color: #999;
-            margin-bottom: 32px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 48px;
-        }
-
-        .section-title {
-            font-size: 32px;            /* keep */
-            font-weight: var(--geist-medium);
-            letter-spacing: -0.02em;
-        }
-
-        .section-info {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            letter-spacing: 0.05em;
-            color: #666;
-        }
-
-        .controls-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 48px;
-        }
-
-        .controls-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        button {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 12 → 11 */
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            padding: 7px 14px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: transparent;
-            color: #999;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        button:hover {
-            border-color: rgba(255,255,255,0.6);
-            color: #fff;
-        }
-
-        button.primary {
-            background: #fff;
-            color: #060605;
-            border: none;
-            font-weight: 600;
-            padding: 9px 22px;
-        }
-
-        button.primary:hover { opacity: 0.9; }
-
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .control-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            letter-spacing: 0.05em;
-            color: #666;
-            text-transform: uppercase;
-        }
-
-        input[type="range"] {
-            width: 72px;
-            accent-color: #666;
-            cursor: pointer;
-        }
-
-        .value-display {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            color: #999;
-            min-width: 18px;
-            text-align: right;
-        }
-
-        .separator {
-            width: 1px;
-            height: 14px;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .canvas-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 300px;   /* 340 → 300 */
-            gap: 40px;
-            align-items: stretch;
-            height: 680px;
-            width: 100%;
-        }
-
-        .canvas-container {
-            display: flex;
-            flex-direction: column;
-            height: 680px;
-            min-width: 0;
-        }
-
-        .side-panel {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 28px;
-            height: 680px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .panel-eyebrow {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;            /* 12 → 10 */
-            letter-spacing: 0.08em;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .panel-category {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;            /* 12 → 10 */
-            letter-spacing: 0.08em;
-            color: #555;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        .panel-divider {
-            height: 1px;
-            background: rgba(255,255,255,0.1);
-            margin: 20px 0;
-        }
-
-        .panel-game-title {
-            font-size: 24px;            /* 28 → 24 */
-            font-weight: var(--geist-medium);
-            letter-spacing: -0.02em;
-            color: #fff;
-            margin-bottom: 12px;
-            line-height: 1.2;
-        }
-
-        .panel-game-sub {
-            font-family: 'Geist Mono', monospace;
-            font-size: 12px;            /* 14 → 12 */
-            line-height: 1.6;
-            color: #999;
-            margin-bottom: 6px;
-        }
-
-        .panel-game-meta {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .panel-move-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;            /* 12 → 10 */
-            letter-spacing: 0.08em;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .panel-current-move {
-            font-size: 38px;            /* 42 → 38 */
-            font-weight: var(--geist-regular);
-            letter-spacing: -0.02em;
-            color: #fff;
-            margin-bottom: 20px;
-        }
+        .panel-eyebrow { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.08em; color:#666; text-transform:uppercase; margin-bottom:6px; }
+        .panel-category { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.08em; color:#555; text-transform:uppercase; margin-bottom:20px; }
+        .panel-divider { height:1px; background:rgba(255,255,255,0.1); margin:20px 0; }
+        .panel-game-title { font-size:24px; font-weight:var(--geist-medium); letter-spacing:-0.02em; color:#fff; margin-bottom:12px; line-height:1.2; }
+        .panel-game-sub { font-family:'Geist Mono',monospace; font-size:12px; line-height:1.6; color:#999; margin-bottom:6px; }
+        .panel-game-meta { font-family:'Geist Mono',monospace; font-size:11px; color:#666; margin-bottom:20px; }
+        .panel-move-label { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.08em; color:#666; text-transform:uppercase; margin-bottom:10px; }
+        .panel-current-move { font-size:38px; font-weight:var(--geist-regular); letter-spacing:-0.02em; color:#fff; margin-bottom:20px; }
 
         .panel-moves-list {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            line-height: 1.8;
-            color: #777;
-            flex: 1;
-            overflow-y: auto;
+            font-family:'Geist Mono',monospace;
+            font-size:11px;
+            line-height:1.8;
+            color:#777;
+            max-height:calc(11px * 1.8 * 5 + 4px);
+            overflow-y:auto;
+            scrollbar-width:thin;
+            scrollbar-color:rgba(255,255,255,0.12) transparent;
         }
+        .panel-moves-list::-webkit-scrollbar { width:3px; }
+        .panel-moves-list::-webkit-scrollbar-track { background:transparent; }
+        .panel-moves-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:2px; }
+        .panel-moves-list .current-move { color:#fff; }
 
-        .panel-moves-list .current-move { color: #fff; }
+        .game-indicators { display:flex; gap:10px; margin-top:20px; }
+        .game-indicator { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.2); transition:all 0.3s; }
+        .game-indicator.active { background:#fff; transform:scale(1.3); }
 
-        .game-indicators {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        #canvasContainer { position:relative; }
+        #canvasContainer canvas { display:block; border:1px solid rgba(255,255,255,0.1); max-width:100%; }
 
-        .game-indicator {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            transition: all 0.3s;
-        }
+        .nav-row { border-top:1px solid rgba(255,255,255,0.12); padding-top:32px; margin-top:48px; display:flex; justify-content:space-between; align-items:center; }
 
-        .game-indicator.active {
-            background: #fff;
-            transform: scale(1.3);
-        }
+        #toast { position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(8px); background:rgba(255,255,255,0.95); color:#060605; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; padding:7px 20px; opacity:0; pointer-events:none; transition:opacity 0.2s,transform 0.2s; z-index:999; }
+        #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-        #canvasContainer { position: relative; }
-        #canvasContainer canvas {
-            display: block;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* ── MOBILE ── */
+        @media (max-width:768px) {
+            .container { padding:28px 20px 20px; }
+            header { padding-bottom:28px; margin-bottom:32px; }
+            .hero-left h1 { font-size:44px; }
+            .hero-right { display:none; }
 
-        #toast {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%) translateY(8px);
-            background: rgba(255,255,255,0.95);
-            color: #060605;
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            padding: 7px 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s, transform 0.2s;
-            z-index: 999;
-        }
+            /* 로고 22px */
+            .logo-img { height:22px; }
 
-        #toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            .section-header { flex-direction:column; align-items:flex-start; gap:8px; margin-bottom:24px; }
+            .section-title { font-size:22px; }
+
+            .controls-bar { flex-direction:column; align-items:flex-start; gap:14px; padding:14px 0; margin-bottom:24px; }
+
+            .controls-btn-group { display:flex; gap:8px; }
+
+            .controls-sliders { display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
+            .controls-left { gap:10px; }
+            .separator { display:none; }
+            input[type="range"] { width:56px; }
+
+            .canvas-wrapper { grid-template-columns:1fr; height:auto; }
+            .canvas-container { height:auto; }
+            #canvasContainer canvas { width:100% !important; height:auto !important; }
+            .side-panel { height:auto; min-height:280px; }
+            .panel-current-move { font-size:28px; }
+            .panel-game-title { font-size:18px; }
+
+            .nav-row { padding-top:20px; margin-top:32px; }
+            .btn-nav { padding:10px 14px; flex:1; text-align:center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="hero">
-                <div class="hero-left">
-                    <div class="subtitle">Poster Generator</div>
-                    <h1>
-                        Chess<br>
-                        <span class="italic">Long</span><br>
-                        Exposure
-                    </h1>
-                </div>
-                <div class="hero-right">
-                    <p class="description">
-                        Visualize historic chess games as elegant long-exposure posters. 
-                        Three legendary matches from 1851–1858 animated in continuous flow.
-                    </p>
-                </div>
+<div class="container">
+    <header>
+        <div class="hero">
+            <div class="hero-left">
+                <div class="subtitle">LONG EXPOSURE</div>
+                <h1>3 Famous<br><span class="italic">Chess</span><br>Games</h1>
             </div>
-        </header>
-
-        <section class="main-section">
-            <div class="section-header">
-                <h2 class="section-title">Live Preview</h2>
-                <div class="section-info" id="gameInfo">Game 1 / 3</div>
+            <div class="hero-right">
+                <p class="description">Visualize historic chess games as elegant long-exposure posters. Three legendary matches from 1851–1858 animated in continuous flow.</p>
             </div>
+            <div class="hero-logo">
+                <a href="index.html"><img src="logo.png" alt="STL" class="logo-img"></a>
+            </div>
+        </div>
+    </header>
 
-            <div class="controls-bar">
-                <div class="controls-left">
+    <section class="main-section">
+        <div class="section-header">
+            <h2 class="section-title">Live Preview</h2>
+            <div class="section-info" id="gameInfo">Game 1 / 3</div>
+        </div>
+
+        <div class="controls-bar">
+            <div class="controls-left">
+                <div class="controls-btn-group">
                     <button id="pauseBtn">⏸ Pause</button>
                     <button id="resetBtn">↺ Reset</button>
-                    <div class="separator"></div>
+                </div>
+                <div class="separator"></div>
+                <div class="controls-sliders">
                     <div class="control-group">
                         <span class="control-label">Speed</span>
                         <input type="range" id="speedSlider" min="1" max="30" value="4">
@@ -393,242 +170,224 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="canvas-wrapper">
-                <div class="canvas-container">
-                    <div id="canvasContainer"></div>
-                </div>
-                <div class="side-panel">
-                    <div class="panel-eyebrow" id="panelEyebrow">FIG 01/03</div>
-                    <div class="panel-category">[CHESS HISTORY]</div>
-                    <div class="panel-divider"></div>
-                    <h3 class="panel-game-title" id="panelTitle">THE IMMORTAL GAME</h3>
-                    <div class="panel-game-sub" id="panelSub">Anderssen vs Kieseritzky</div>
-                    <div class="panel-game-meta" id="panelMeta">LONDON  1851</div>
-                    <div class="panel-divider"></div>
-                    <div class="panel-move-label">MOVE</div>
-                    <div class="panel-current-move" id="panelCurrentMove">1. e4</div>
-                    <div class="panel-divider"></div>
-                    <div class="panel-moves-list" id="panelMovesList"></div>
-                    <div class="game-indicators">
-                        <div class="game-indicator active" id="indicator0"></div>
-                        <div class="game-indicator" id="indicator1"></div>
-                        <div class="game-indicator" id="indicator2"></div>
-                    </div>
+        <div class="canvas-wrapper">
+            <div class="canvas-container">
+                <div id="canvasContainer"></div>
+            </div>
+            <div class="side-panel">
+                <div class="panel-eyebrow" id="panelEyebrow">FIG 01/03</div>
+                <div class="panel-category">[CHESS HISTORY]</div>
+                <div class="panel-divider"></div>
+                <h3 class="panel-game-title" id="panelTitle">THE IMMORTAL GAME</h3>
+                <div class="panel-game-sub" id="panelSub">Anderssen vs Kieseritzky</div>
+                <div class="panel-game-meta" id="panelMeta">LONDON  1851</div>
+                <div class="panel-divider"></div>
+                <div class="panel-move-label">MOVE</div>
+                <div class="panel-current-move" id="panelCurrentMove">1. e4</div>
+                <div class="panel-divider"></div>
+                <div class="panel-moves-list" id="panelMovesList"></div>
+                <div class="game-indicators">
+                    <div class="game-indicator active" id="indicator0"></div>
+                    <div class="game-indicator" id="indicator1"></div>
+                    <div class="game-indicator" id="indicator2"></div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+
+    <div class="nav-row">
+        <button class="btn-nav" onclick="window.location.href='index.html'">← Go Home</button>
+        <button class="btn-nav" onclick="window.location.href='website-strategy.html'">Next Game →</button>
     </div>
+</div>
 
-    <div id="toast"></div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<script>
+const GAMES=[
+  {title:'THE IMMORTAL GAME',sub:'Anderssen vs Kieseritzky',loc:'LONDON',year:'1851',end:'23. Be7#',
+   moves:[{fc:4,fr:6,tc:4,tr:4,s:'w',n:'1. e4'},{fc:4,fr:1,tc:4,tr:3,s:'b',n:'1...e5'},{fc:5,fr:6,tc:5,tr:4,s:'w',n:'2. f4'},{fc:4,fr:3,tc:5,tr:4,s:'b',n:'2...exf4'},{fc:5,fr:7,tc:2,tr:4,s:'w',n:'3. Bc4'},{fc:3,fr:0,tc:7,tr:4,s:'b',n:'3...Qh4+'},{fc:4,fr:7,tc:5,tr:7,s:'w',n:'4. Kf1'},{fc:1,fr:1,tc:1,tr:3,s:'b',n:'4...b5'},{fc:2,fr:4,tc:1,tr:3,s:'w',n:'5. Bxb5'},{fc:6,fr:0,tc:5,tr:2,s:'b',n:'5...Nf6'},{fc:6,fr:7,tc:5,tr:5,s:'w',n:'6. Nf3'},{fc:7,fr:4,tc:7,tr:2,s:'b',n:'6...Qh6'},{fc:3,fr:6,tc:3,tr:5,s:'w',n:'7. d3'},{fc:5,fr:2,tc:7,tr:3,s:'b',n:'7...Nh5'},{fc:5,fr:5,tc:7,tr:4,s:'w',n:'8. Nh4'},{fc:7,fr:2,tc:6,tr:3,s:'b',n:'8...Qg5'},{fc:7,fr:4,tc:5,tr:3,s:'w',n:'9. Nf5'},{fc:2,fr:1,tc:2,tr:2,s:'b',n:'9...c6'},{fc:6,fr:6,tc:6,tr:4,s:'w',n:'10. g4'},{fc:7,fr:3,tc:5,tr:2,s:'b',n:'10...Nf6'},{fc:7,fr:7,tc:6,tr:7,s:'w',n:'11. Rg1'},{fc:2,fr:2,tc:1,tr:3,s:'b',n:'11...cxb5'},{fc:7,fr:6,tc:7,tr:4,s:'w',n:'12. h4'},{fc:6,fr:3,tc:6,tr:2,s:'b',n:'12...Qg6'},{fc:7,fr:4,tc:7,tr:3,s:'w',n:'13. h5'},{fc:6,fr:2,tc:6,tr:3,s:'b',n:'13...Qg5'},{fc:3,fr:7,tc:5,fr:5,s:'w',n:'14. Qf3'},{fc:5,fr:2,tc:6,tr:0,s:'b',n:'14...Ng8'},{fc:2,fr:7,tc:5,tr:4,s:'w',n:'15. Bxf4'},{fc:6,fr:3,tc:5,tr:2,s:'b',n:'15...Qf6'},{fc:1,fr:7,tc:2,tr:5,s:'w',n:'16. Nc3'},{fc:5,fr:0,tc:2,tr:3,s:'b',n:'16...Bc5'},{fc:2,fr:5,tc:3,tr:3,s:'w',n:'17. Nd5'},{fc:5,fr:2,tc:1,tr:6,s:'b',n:'17...Qxb2'},{fc:5,fr:4,tc:3,tr:2,s:'w',n:'18. Bd6'},{fc:2,fr:3,tc:6,tr:7,s:'b',n:'18...Bxg1'},{fc:4,fr:4,tc:4,tr:3,s:'w',n:'19. e5'},{fc:1,fr:6,tc:0,tr:7,s:'b',n:'19...Qxa1+'},{fc:5,fr:7,tc:4,tr:6,s:'w',n:'20. Ke2'},{fc:1,fr:0,tc:0,tr:2,s:'b',n:'20...Na6'},{fc:5,fr:3,tc:6,tr:1,s:'w',n:'21. Nxg7+'},{fc:4,fr:0,tc:3,tr:0,s:'b',n:'21...Kd8'},{fc:5,fr:5,tc:5,tr:2,s:'w',n:'22. Qf6+'},{fc:6,fr:0,tc:5,tr:2,s:'b',n:'22...Nxf6'},{fc:3,fr:2,tc:4,tr:1,s:'w',n:'23. Be7#'}]},
+  {title:'THE OPERA GAME',sub:'Morphy vs Allies',loc:'PARIS',year:'1858',end:'17. Rd8#',
+   moves:[{fc:4,fr:6,tc:4,tr:4,s:'w',n:'1. e4'},{fc:4,fr:1,tc:4,tr:3,s:'b',n:'1...e5'},{fc:6,fr:7,tc:5,tr:5,s:'w',n:'2. Nf3'},{fc:3,fr:1,tc:3,tr:2,s:'b',n:'2...d6'},{fc:3,fr:6,tc:3,tr:4,s:'w',n:'3. d4'},{fc:2,fr:0,tc:6,tr:4,s:'b',n:'3...Bg4'},{fc:3,fr:4,tc:4,tr:3,s:'w',n:'4. dxe5'},{fc:6,fr:4,tc:5,tr:5,s:'b',n:'4...Bxf3'},{fc:3,fr:7,tc:5,tr:5,s:'w',n:'5. Qxf3'},{fc:3,fr:2,tc:4,tr:3,s:'b',n:'5...dxe5'},{fc:5,fr:7,tc:2,tr:4,s:'w',n:'6. Bc4'},{fc:6,fr:0,tc:5,tr:2,s:'b',n:'6...Nf6'},{fc:5,fr:5,tc:1,tr:5,s:'w',n:'7. Qb3'},{fc:3,fr:0,tc:4,tr:1,s:'b',n:'7...Qe7'},{fc:1,fr:7,tc:2,tr:5,s:'w',n:'8. Nc3'},{fc:2,fr:1,tc:2,tr:2,s:'b',n:'8...c6'},{fc:2,fr:7,tc:6,tr:3,s:'w',n:'9. Bg5'},{fc:1,fr:1,tc:1,tr:3,s:'b',n:'9...b5'},{fc:2,fr:5,tc:1,tr:3,s:'w',n:'10. Nxb5'},{fc:2,fr:2,tc:1,tr:3,s:'b',n:'10...cxb5'},{fc:2,fr:4,tc:1,tr:3,s:'w',n:'11. Bxb5+'},{fc:1,fr:0,tc:3,tr:1,s:'b',n:'11...Nbd7'},{fc:4,fr:7,tc:2,tr:7,s:'w',n:'12. O-O-O'},{fc:0,fr:0,tc:3,tr:0,s:'b',n:'12...Rd8'},{fc:3,fr:7,tc:3,tr:1,s:'w',n:'13. Rxd7'},{fc:3,fr:0,tc:3,tr:1,s:'b',n:'13...Rxd7'},{fc:7,fr:7,tc:3,tr:7,s:'w',n:'14. Rd1'},{fc:4,fr:1,tc:4,tr:2,s:'b',n:'14...Qe6'},{fc:1,fr:3,tc:3,tr:1,s:'w',n:'15. Bxd7+'},{fc:5,fr:2,tc:3,tr:1,s:'b',n:'15...Nxd7'},{fc:1,fr:5,tc:1,tr:0,s:'w',n:'16. Qb8+'},{fc:3,fr:1,tc:1,tr:0,s:'b',n:'16...Nxb8'},{fc:3,fr:7,tc:3,tr:0,s:'w',n:'17. Rd8#'}]},
+  {title:'THE EVERGREEN GAME',sub:'Anderssen vs Dufresne',loc:'BERLIN',year:'1852',end:'24. Bxe7#',
+   moves:[{fc:4,fr:6,tc:4,tr:4,s:'w',n:'1. e4'},{fc:4,fr:1,tc:4,tr:3,s:'b',n:'1...e5'},{fc:6,fr:7,tc:5,tr:5,s:'w',n:'2. Nf3'},{fc:1,fr:0,tc:2,tr:2,s:'b',n:'2...Nc6'},{fc:5,fr:7,tc:2,tr:4,s:'w',n:'3. Bc4'},{fc:5,fr:0,tc:2,tr:3,s:'b',n:'3...Bc5'},{fc:1,fr:6,tc:1,tr:4,s:'w',n:'4. b4'},{fc:2,fr:3,tc:1,tr:4,s:'b',n:'4...Bxb4'},{fc:2,fr:6,tc:2,tr:5,s:'w',n:'5. c3'},{fc:1,fr:4,tc:0,tr:3,s:'b',n:'5...Ba5'},{fc:3,fr:6,tc:3,tr:4,s:'w',n:'6. d4'},{fc:4,fr:3,tc:3,tr:4,s:'b',n:'6...exd4'},{fc:4,fr:7,tc:6,tr:7,s:'w',n:'7. O-O'},{fc:3,fr:4,tc:3,tr:5,s:'b',n:'7...d3'},{fc:3,fr:7,tc:1,tr:5,s:'w',n:'8. Qb3'},{fc:3,fr:0,tc:5,tr:2,s:'b',n:'8...Qf6'},{fc:4,fr:4,tc:4,tr:3,s:'w',n:'9. e5'},{fc:5,fr:2,tc:6,tr:2,s:'b',n:'9...Qg6'},{fc:5,fr:7,tc:4,tr:7,s:'w',n:'10. Re1'},{fc:6,fr:0,tc:4,tr:1,s:'b',n:'10...Nge7'},{fc:2,fr:7,tc:0,tr:5,s:'w',n:'11. Ba3'},{fc:1,fr:1,tc:1,tr:3,s:'b',n:'11...b5'},{fc:1,fr:5,tc:1,tr:3,s:'w',n:'12. Qxb5'},{fc:0,fr:0,tc:1,tr:0,s:'b',n:'12...Rb8'},{fc:1,fr:3,tc:0,tr:4,s:'w',n:'13. Qa4'},{fc:0,fr:3,tc:1,tr:2,s:'b',n:'13...Bb6'},{fc:1,fr:7,tc:3,tr:6,s:'w',n:'14. Nbd2'},{fc:2,fr:0,tc:1,tr:1,s:'b',n:'14...Bb7'},{fc:3,fr:6,tc:4,tr:4,s:'w',n:'15. Ne4'},{fc:6,fr:2,tc:5,tr:3,s:'b',n:'15...Qf5'},{fc:2,fr:4,tc:3,tr:5,s:'w',n:'16. Bxd3'},{fc:5,fr:3,tc:7,tr:3,s:'b',n:'16...Qh5'},{fc:4,fr:4,tc:5,tr:2,s:'w',n:'17. Nf6+'},{fc:6,fr:1,tc:5,tr:2,s:'b',n:'17...gxf6'},{fc:4,fr:3,tc:5,tr:2,s:'w',n:'18. exf6'},{fc:7,fr:0,tc:6,tr:0,s:'b',n:'18...Rg8'},{fc:0,fr:7,tc:3,tr:7,s:'w',n:'19. Rad1'},{fc:7,fr:3,tc:5,tr:5,s:'b',n:'19...Qxf3'},{fc:4,fr:7,tc:4,tr:1,s:'w',n:'20. Rxe7+'},{fc:2,fr:2,tc:4,tr:1,s:'b',n:'20...Nxe7'},{fc:0,fr:4,tc:3,tr:1,s:'w',n:'21. Qxd7+'},{fc:4,fr:0,tc:3,tr:1,s:'b',n:'21...Kxd7'},{fc:3,fr:5,tc:5,tr:3,s:'w',n:'22. Bf5+'},{fc:3,fr:1,tc:4,tr:0,s:'b',n:'22...Ke8'},{fc:5,fr:3,tc:3,tr:1,s:'w',n:'23. Bd7+'},{fc:4,fr:0,tc:5,tr:0,s:'b',n:'23...Kf8'},{fc:0,fr:5,tc:4,tr:1,s:'w',n:'24. Bxe7#'}]}
+];
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <script>
-        const GAMES=[
-            {title:'THE IMMORTAL GAME',sub:'Anderssen vs Kieseritzky',loc:'LONDON',year:'1851',end:'23. Be7#',
-             moves:[{fc:4,fr:6,tc:4,tr:4,s:'w',n:'1. e4'},{fc:4,fr:1,tc:4,tr:3,s:'b',n:'1...e5'},{fc:5,fr:6,tc:5,tr:4,s:'w',n:'2. f4'},{fc:4,fr:3,tc:5,tr:4,s:'b',n:'2...exf4'},{fc:5,fr:7,tc:2,tr:4,s:'w',n:'3. Bc4'},{fc:3,fr:0,tc:7,tr:4,s:'b',n:'3...Qh4+'},{fc:4,fr:7,tc:5,tr:7,s:'w',n:'4. Kf1'},{fc:1,fr:1,tc:1,tr:3,s:'b',n:'4...b5'},{fc:2,fr:4,tc:1,tr:3,s:'w',n:'5. Bxb5'},{fc:6,fr:0,tc:5,tr:2,s:'b',n:'5...Nf6'},{fc:6,fr:7,tc:5,tr:5,s:'w',n:'6. Nf3'},{fc:7,fr:4,tc:7,tr:2,s:'b',n:'6...Qh6'},{fc:3,fr:6,tc:3,tr:5,s:'w',n:'7. d3'},{fc:5,fr:2,tc:7,tr:3,s:'b',n:'7...Nh5'},{fc:5,fr:5,tc:7,tr:4,s:'w',n:'8. Nh4'},{fc:7,fr:2,tc:6,tr:3,s:'b',n:'8...Qg5'},{fc:7,fr:4,tc:5,tr:3,s:'w',n:'9. Nf5'},{fc:2,fr:1,tc:2,tr:2,s:'b',n:'9...c6'},{fc:6,fr:6,tc:6,tr:4,s:'w',n:'10. g4'},{fc:7,fr:3,tc:5,tr:2,s:'b',n:'10...Nf6'},{fc:7,fr:7,tc:6,tr:7,s:'w',n:'11. Rg1'},{fc:2,fr:2,tc:1,tr:3,s:'b',n:'11...cxb5'},{fc:7,fr:6,tc:7,tr:4,s:'w',n:'12. h4'},{fc:6,fr:3,tc:6,tr:2,s:'b',n:'12...Qg6'},{fc:7,fr:4,tc:7,tr:3,s:'w',n:'13. h5'},{fc:6,fr:2,tc:6,tr:3,s:'b',n:'13...Qg5'},{fc:3,fr:7,tc:5,fr:5,s:'w',n:'14. Qf3'},{fc:5,fr:2,tc:6,tr:0,s:'b',n:'14...Ng8'},{fc:2,fr:7,tc:5,tr:4,s:'w',n:'15. Bxf4'},{fc:6,fr:3,tc:5,tr:2,s:'b',n:'15...Qf6'},{fc:1,fr:7,tc:2,tr:5,s:'w',n:'16. Nc3'},{fc:5,fr:0,tc:2,tr:3,s:'b',n:'16...Bc5'},{fc:2,fr:5,tc:3,tr:3,s:'w',n:'17. Nd5'},{fc:5,fr:2,tc:1,tr:6,s:'b',n:'17...Qxb2'},{fc:5,fr:4,tc:3,tr:2,s:'w',n:'18. Bd6'},{fc:2,fr:3,tc:6,tr:7,s:'b',n:'18...Bxg1'},{fc:4,fr:4,tc:4,tr:3,s:'w',n:'19. e5'},{fc:1,fr:6,tc:0,tr:7,s:'b',n:'19...Qxa1+'},{fc:5,fr:7,tc:4,tr:6,s:'w',n:'20. Ke2'},{fc:1,fr:0,tc:0,tr:2,s:'b',n:'20...Na6'},{fc:5,fr:3,tc:6,tr:1,s:'w',n:'21. Nxg7+'},{fc:4,fr:0,tc:3,tr:0,s:'b',n:'21...Kd8'},{fc:5,fr:5,tc:5,tr:2,s:'w',n:'22. Qf6+'},{fc:6,fr:0,tc:5,tr:2,s:'b',n:'22...Nxf6'},{fc:3,fr:2,tc:4,tr:1,s:'w',n:'23. Be7#'}]},
-            {title:'THE OPERA GAME',sub:'Morphy vs Allies',loc:'PARIS',year:'1858',end:'17. Rd8#',
-             moves:[{fc:4,fr:6,tc:4,tr:4,s:'w',n:'1. e4'},{fc:4,fr:1,tc:4,tr:3,s:'b',n:'1...e5'},{fc:6,fr:7,tc:5,tr:5,s:'w',n:'2. Nf3'},{fc:3,fr:1,tc:3,tr:2,s:'b',n:'2...d6'},{fc:3,fr:6,tc:3,tr:4,s:'w',n:'3. d4'},{fc:2,fr:0,tc:6,tr:4,s:'b',n:'3...Bg4'},{fc:3,fr:4,tc:4,tr:3,s:'w',n:'4. dxe5'},{fc:6,fr:4,tc:5,tr:5,s:'b',n:'4...Bxf3'},{fc:3,fr:7,tc:5,tr:5,s:'w',n:'5. Qxf3'},{fc:3,fr:2,tc:4,tr:3,s:'b',n:'5...dxe5'},{fc:5,fr:7,tc:2,tr:4,s:'w',n:'6. Bc4'},{fc:6,fr:0,tc:5,tr:2,s:'b',n:'6...Nf6'},{fc:5,fr:5,tc:1,tr:5,s:'w',n:'7. Qb3'},{fc:3,fr:0,tc:4,tr:1,s:'b',n:'7...Qe7'},{fc:1,fr:7,tc:2,tr:5,s:'w',n:'8. Nc3'},{fc:2,fr:1,tc:2,tr:2,s:'b',n:'8...c6'},{fc:2,fr:7,tc:6,tr:3,s:'w',n:'9. Bg5'},{fc:1,fr:1,tc:1,tr:3,s:'b',n:'9...b5'},{fc:2,fr:5,tc:1,tr:3,s:'w',n:'10. Nxb5'},{fc:2,fr:2,tc:1,tr:3,s:'b',n:'10...cxb5'},{fc:2,fr:4,tc:1,tr:3,s:'w',n:'11. Bxb5+'},{fc:1,fr:0,tc:3,tr:1,s:'b',n:'11...Nbd7'},{fc:4,fr:7,tc:2,tr:7,s:'w',n:'12. O-O-O'},{fc:0,fr:0,tc:3,tr:0,s:'b',n:'12...Rd8'},{fc:3,fr:7,tc:3,tr:1,s:'w',n:'13. Rxd7'},{fc:3,fr:0,tc:3,tr:1,s:'b',n:'13...Rxd7'},{fc:7,fr:7,tc:3,tr:7,s:'w',n:'14. Rd1'},{fc:4,fr:1,tc:4,tr:2,s:'b',n:'14...Qe6'},{fc:1,fr:3,tc:3,tr:1,s:'w',n:'15. Bxd7+'},{fc:5,fr:2,tc:3,tr:1,s:'b',n:'15...Nxd7'},{fc:1,fr:5,tc:1,tr:0,s:'w',n:'16. Qb8+'},{fc:3,fr:1,tc:1,tr:0,s:'b',n:'16...Nxb8'},{fc:3,fr:7,tc:3,tr:0,s:'w',n:'17. Rd8#'}]},
-            {title:'THE EVERGREEN GAME',sub:'Anderssen vs Dufresne',loc:'BERLIN',year:'1852',end:'24. Bxe7#',
-             moves:[{fc:4,fr:6,tc:4,tr:4,s:'w',n:'1. e4'},{fc:4,fr:1,tc:4,tr:3,s:'b',n:'1...e5'},{fc:6,fr:7,tc:5,tr:5,s:'w',n:'2. Nf3'},{fc:1,fr:0,tc:2,tr:2,s:'b',n:'2...Nc6'},{fc:5,fr:7,tc:2,tr:4,s:'w',n:'3. Bc4'},{fc:5,fr:0,tc:2,tr:3,s:'b',n:'3...Bc5'},{fc:1,fr:6,tc:1,tr:4,s:'w',n:'4. b4'},{fc:2,fr:3,tc:1,tr:4,s:'b',n:'4...Bxb4'},{fc:2,fr:6,tc:2,tr:5,s:'w',n:'5. c3'},{fc:1,fr:4,tc:0,tr:3,s:'b',n:'5...Ba5'},{fc:3,fr:6,tc:3,tr:4,s:'w',n:'6. d4'},{fc:4,fr:3,tc:3,tr:4,s:'b',n:'6...exd4'},{fc:4,fr:7,tc:6,tr:7,s:'w',n:'7. O-O'},{fc:3,fr:4,tc:3,tr:5,s:'b',n:'7...d3'},{fc:3,fr:7,tc:1,tr:5,s:'w',n:'8. Qb3'},{fc:3,fr:0,tc:5,tr:2,s:'b',n:'8...Qf6'},{fc:4,fr:4,tc:4,tr:3,s:'w',n:'9. e5'},{fc:5,fr:2,tc:6,tr:2,s:'b',n:'9...Qg6'},{fc:5,fr:7,tc:4,tr:7,s:'w',n:'10. Re1'},{fc:6,fr:0,tc:4,tr:1,s:'b',n:'10...Nge7'},{fc:2,fr:7,tc:0,tr:5,s:'w',n:'11. Ba3'},{fc:1,fr:1,tc:1,tr:3,s:'b',n:'11...b5'},{fc:1,fr:5,tc:1,tr:3,s:'w',n:'12. Qxb5'},{fc:0,fr:0,tc:1,tr:0,s:'b',n:'12...Rb8'},{fc:1,fr:3,tc:0,tr:4,s:'w',n:'13. Qa4'},{fc:0,fr:3,tc:1,tr:2,s:'b',n:'13...Bb6'},{fc:1,fr:7,tc:3,tr:6,s:'w',n:'14. Nbd2'},{fc:2,fr:0,tc:1,tr:1,s:'b',n:'14...Bb7'},{fc:3,fr:6,tc:4,tr:4,s:'w',n:'15. Ne4'},{fc:6,fr:2,tc:5,tr:3,s:'b',n:'15...Qf5'},{fc:2,fr:4,tc:3,tr:5,s:'w',n:'16. Bxd3'},{fc:5,fr:3,tc:7,tr:3,s:'b',n:'16...Qh5'},{fc:4,fr:4,tc:5,tr:2,s:'w',n:'17. Nf6+'},{fc:6,fr:1,tc:5,tr:2,s:'b',n:'17...gxf6'},{fc:4,fr:3,tc:5,tr:2,s:'w',n:'18. exf6'},{fc:7,fr:0,tc:6,tr:0,s:'b',n:'18...Rg8'},{fc:0,fr:7,tc:3,tr:7,s:'w',n:'19. Rad1'},{fc:7,fr:3,tc:5,tr:5,s:'b',n:'19...Qxf3'},{fc:4,fr:7,tc:4,tr:1,s:'w',n:'20. Rxe7+'},{fc:2,fr:2,tc:4,tr:1,s:'b',n:'20...Nxe7'},{fc:0,fr:4,tc:3,tr:1,s:'w',n:'21. Qxd7+'},{fc:4,fr:0,tc:3,tr:1,s:'b',n:'21...Kxd7'},{fc:3,fr:5,tc:5,tr:3,s:'w',n:'22. Bf5+'},{fc:3,fr:1,tc:4,tr:0,s:'b',n:'22...Ke8'},{fc:5,fr:3,tc:3,tr:1,s:'w',n:'23. Bd7+'},{fc:4,fr:0,tc:5,tr:0,s:'b',n:'23...Kf8'},{fc:0,fr:5,tc:4,tr:1,s:'w',n:'24. Bxe7#'}]}
-        ];
+const FILES='abcdefgh';
 
-        const FILES = 'abcdefgh';
+document.getElementById('speedSlider').addEventListener('input',e=>{document.getElementById('speedValue').textContent=e.target.value;});
+document.getElementById('trailSlider').addEventListener('input',e=>{document.getElementById('trailValue').textContent=e.target.value;});
+document.getElementById('bloomSlider').addEventListener('input',e=>{document.getElementById('bloomValue').textContent=e.target.value;});
 
-        document.getElementById('speedSlider').addEventListener('input', e => {
-            document.getElementById('speedValue').textContent = e.target.value;
+new p5(sk=>{
+    const W=700,H=680;
+    const BOARD_SIZE=Math.min(W,H)*0.85;
+    const BOARD_X=(W-BOARD_SIZE)/2;
+    const BOARD_Y=(H-BOARD_SIZE)/2;
+    const CS=BOARD_SIZE/8;
+
+    function cx(col){return BOARD_X+col*CS+CS/2;}
+    function cy(row){return BOARD_Y+row*CS+CS/2;}
+
+    const BASE_MS=1600;
+    let history=[],animating=null;
+    let gameIdx=0,moveIdx=0,lastT=-9999;
+    let paused=false,pauseOff=0,pauseStart=0;
+    let spd,fadeSlider,bloomSlider;
+
+    function now(){return sk.millis()-pauseOff;}
+    function interval(){return BASE_MS/Math.max(1,+spd.value());}
+    function getFade(){return +fadeSlider.value();}
+    function getBloom(){return +bloomSlider.value();}
+
+    function updateInfo(){
+        const g=GAMES[gameIdx];
+        document.getElementById('gameInfo').textContent=`${g.title}  ·  Move ${moveIdx} / ${g.moves.length}`;
+        document.getElementById('panelEyebrow').textContent=`FIG 0${gameIdx+1}/03`;
+        document.getElementById('panelTitle').textContent=g.title;
+        document.getElementById('panelSub').textContent=g.sub;
+        document.getElementById('panelMeta').textContent=`${g.loc}  ${g.year}`;
+        document.getElementById('panelCurrentMove').textContent=moveIdx>0?g.moves[moveIdx-1].n:'—';
+
+        const ml=document.getElementById('panelMovesList');
+        const allMoves=g.moves.slice(0,moveIdx);
+        ml.innerHTML=allMoves.map((m,i)=>`<div class="${i===allMoves.length-1?'current-move':''}">${m.n}</div>`).join('');
+        ml.scrollTop=ml.scrollHeight;
+
+        for(let i=0;i<3;i++) document.getElementById(`indicator${i}`).classList.toggle('active',i===gameIdx);
+    }
+
+    function resetAll(){
+        history=[];animating=null;gameIdx=0;moveIdx=0;
+        lastT=now();paused=false;pauseOff=0;
+        document.getElementById('pauseBtn').textContent='⏸ Pause';
+        updateInfo();
+    }
+
+    function fireMove(){
+        const g=GAMES[gameIdx];
+        if(moveIdx>=g.moves.length){
+            if(now()-lastT>Math.min(interval()*1.4,600)){gameIdx=(gameIdx+1)%GAMES.length;moveIdx=0;lastT=now();updateInfo();}
+            return;
+        }
+        const m=g.moves[moveIdx];
+        history.forEach(h=>h.age++);
+        history.push({m,age:0});
+        history=history.filter(h=>h.age<=getFade()+6);
+        animating={m,startT:now()};
+        moveIdx++;lastT=now();updateInfo();
+    }
+
+    function getAlpha(age){
+        if(age===0)return 1;
+        const f=getFade();
+        return Math.pow(0.74,age)*(1-age/Math.max(f,1));
+    }
+
+    function glowLine(x1,y1,x2,y2,alpha,isW,bm){
+        if(alpha<0.005)return;
+        const a=alpha,wm=isW?1:0.55;
+        sk.stroke(255,255,255,a*10*wm*bm);sk.strokeWeight(12);sk.line(x1,y1,x2,y2);
+        sk.stroke(255,255,255,a*22*wm*bm);sk.strokeWeight(5);sk.line(x1,y1,x2,y2);
+        sk.stroke(255,255,255,a*65*wm*bm);sk.strokeWeight(1.8);sk.line(x1,y1,x2,y2);
+        sk.stroke(255,255,255,a*210*wm);sk.strokeWeight(0.6);sk.line(x1,y1,x2,y2);
+    }
+
+    function dot(x,y,alpha,isW,r){
+        if(alpha<0.01)return;
+        const a=alpha,wm=isW?1:0.55;
+        sk.noFill();
+        sk.stroke(255,255,255,a*35*wm);sk.strokeWeight(3);sk.circle(x,y,r*2.4);
+        sk.stroke(255,255,255,a*90*wm);sk.strokeWeight(1);sk.circle(x,y,r*1.4);
+        sk.noStroke();sk.fill(255,255,255,a*220*wm);sk.circle(x,y,r*0.5);
+    }
+
+    function xhair(x,y,alpha,isW){
+        if(alpha<0.05)return;
+        const hw=CS*0.07,gap=CS*0.02,a=alpha,wm=isW?1:0.55;
+        sk.stroke(255,255,255,a*140*wm);sk.strokeWeight(0.5);
+        sk.line(x-hw,y,x-gap,y);sk.line(x+gap,y,x+hw,y);
+        sk.line(x,y-hw,x,y-gap);sk.line(x,y+gap,x,y+hw);
+    }
+
+    function drawGrid(){
+        for(let c=0;c<8;c++)for(let r=0;r<8;r++){
+            if((c+r)%2===0){sk.noStroke();sk.fill(255,255,255,3);sk.rect(BOARD_X+c*CS,BOARD_Y+r*CS,CS,CS);}
+        }
+        sk.stroke(255,255,255,9);sk.strokeWeight(0.4);
+        for(let i=0;i<=8;i++){
+            sk.line(BOARD_X+i*CS,BOARD_Y,BOARD_X+i*CS,BOARD_Y+BOARD_SIZE);
+            sk.line(BOARD_X,BOARD_Y+i*CS,BOARD_X+BOARD_SIZE,BOARD_Y+i*CS);
+        }
+        for(let c=0;c<=8;c++)for(let r=0;r<=8;r++){
+            const x=BOARD_X+c*CS,y=BOARD_Y+r*CS;
+            sk.stroke(255,255,255,22);sk.strokeWeight(0.5);
+            sk.line(x-4,y,x+4,y);sk.line(x,y-4,x,y+4);
+        }
+        const bk=CS*0.12;
+        sk.stroke(255,255,255,70);sk.strokeWeight(1);
+        [[BOARD_X,BOARD_Y,1,1],[BOARD_X+BOARD_SIZE,BOARD_Y,-1,1],
+         [BOARD_X,BOARD_Y+BOARD_SIZE,1,-1],[BOARD_X+BOARD_SIZE,BOARD_Y+BOARD_SIZE,-1,-1]]
+            .forEach(([x,y,sx,sy])=>{sk.line(x,y,x+sx*bk,y);sk.line(x,y,x,y+sy*bk);});
+        sk.textFont('monospace');sk.textSize(CS*0.11);sk.noStroke();
+        for(let i=0;i<8;i++){
+            sk.fill(255,255,255,120);
+            sk.textAlign(sk.CENTER,sk.TOP);sk.text(FILES[i],BOARD_X+i*CS+CS/2,BOARD_Y+BOARD_SIZE+6);
+            sk.textAlign(sk.RIGHT,sk.CENTER);sk.text(8-i,BOARD_X-8,BOARD_Y+i*CS+CS/2);
+        }
+    }
+
+    sk.setup=()=>{
+        const cv=sk.createCanvas(W,H);
+        cv.parent(document.getElementById('canvasContainer'));
+        sk.frameRate(60);sk.strokeCap(sk.ROUND);
+        spd=sk.select('#speedSlider');
+        fadeSlider=sk.select('#trailSlider');
+        bloomSlider=sk.select('#bloomSlider');
+        document.getElementById('pauseBtn').addEventListener('click',()=>{
+            paused=!paused;
+            document.getElementById('pauseBtn').textContent=paused?'▶ Play':'⏸ Pause';
+            if(paused)pauseStart=sk.millis();else pauseOff+=sk.millis()-pauseStart;
         });
-        document.getElementById('trailSlider').addEventListener('input', e => {
-            document.getElementById('trailValue').textContent = e.target.value;
-        });
-        document.getElementById('bloomSlider').addEventListener('input', e => {
-            document.getElementById('bloomValue').textContent = e.target.value;
-        });
+        document.getElementById('resetBtn').addEventListener('click',resetAll);
+        updateInfo();
+    };
 
-        new p5(sk => {
-            const W = 700, H = 680;
-            const BOARD_SIZE = Math.min(W, H) * 0.85;
-            const BOARD_X = (W - BOARD_SIZE) / 2;
-            const BOARD_Y = (H - BOARD_SIZE) / 2;
-            const CS = BOARD_SIZE / 8;
-
-            function cx(col) { return BOARD_X + col * CS + CS / 2; }
-            function cy(row) { return BOARD_Y + row * CS + CS / 2; }
-
-            const BASE_MS = 1600;
-            let history = [], animating = null;
-            let gameIdx = 0, moveIdx = 0, lastT = -9999;
-            let paused = false, pauseOff = 0, pauseStart = 0;
-            let spd, fadeSlider, bloomSlider;
-
-            function now() { return sk.millis() - pauseOff; }
-            function interval() { return BASE_MS / Math.max(1, +spd.value()); }
-            function getFade() { return +fadeSlider.value(); }
-            function getBloom() { return +bloomSlider.value(); }
-
-            function updateInfo() {
-                const g = GAMES[gameIdx];
-                document.getElementById('gameInfo').textContent =
-                    `${g.title}  ·  Move ${moveIdx} / ${g.moves.length}`;
-                document.getElementById('panelEyebrow').textContent = `FIG 0${gameIdx + 1}/03`;
-                document.getElementById('panelTitle').textContent = g.title;
-                document.getElementById('panelSub').textContent = g.sub;
-                document.getElementById('panelMeta').textContent = `${g.loc}  ${g.year}`;
-                if (moveIdx > 0) {
-                    document.getElementById('panelCurrentMove').textContent = g.moves[moveIdx - 1].n;
-                } else {
-                    document.getElementById('panelCurrentMove').textContent = '—';
-                }
-                const movesList = document.getElementById('panelMovesList');
-                const recentMoves = g.moves.slice(Math.max(0, moveIdx - 20), moveIdx);
-                movesList.innerHTML = recentMoves.map((m, i) => {
-                    const isLast = i === recentMoves.length - 1;
-                    return `<div class="${isLast ? 'current-move' : ''}">${m.n}</div>`;
-                }).join('');
-                for (let i = 0; i < 3; i++) {
-                    document.getElementById(`indicator${i}`).classList.toggle('active', i === gameIdx);
-                }
-            }
-
-            function resetAll() {
-                history = []; animating = null; gameIdx = 0; moveIdx = 0;
-                lastT = now(); paused = false; pauseOff = 0;
-                document.getElementById('pauseBtn').textContent = '⏸ Pause';
-                updateInfo();
-            }
-
-            function fireMove() {
-                const g = GAMES[gameIdx];
-                if (moveIdx >= g.moves.length) {
-                    if (now() - lastT > Math.min(interval() * 1.4, 600)) {
-                        gameIdx = (gameIdx + 1) % GAMES.length;
-                        moveIdx = 0; lastT = now(); updateInfo();
-                    }
-                    return;
-                }
-                const m = g.moves[moveIdx];
-                history.forEach(h => h.age++);
-                history.push({ m, age: 0 });
-                history = history.filter(h => h.age <= getFade() + 6);
-                animating = { m, startT: now() };
-                moveIdx++; lastT = now(); updateInfo();
-            }
-
-            function getAlpha(age) {
-                if (age === 0) return 1;
-                const f = getFade();
-                return Math.pow(0.74, age) * (1 - age / Math.max(f, 1));
-            }
-
-            function glowLine(x1, y1, x2, y2, alpha, isW, bloomMult) {
-                if (alpha < 0.005) return;
-                const a = alpha, wm = isW ? 1 : 0.55, bm = bloomMult;
-                sk.stroke(255, 255, 255, a * 10 * wm * bm); sk.strokeWeight(12); sk.line(x1, y1, x2, y2);
-                sk.stroke(255, 255, 255, a * 22 * wm * bm); sk.strokeWeight(5);  sk.line(x1, y1, x2, y2);
-                sk.stroke(255, 255, 255, a * 65 * wm * bm); sk.strokeWeight(1.8);sk.line(x1, y1, x2, y2);
-                sk.stroke(255, 255, 255, a * 210 * wm);      sk.strokeWeight(0.6);sk.line(x1, y1, x2, y2);
-            }
-
-            function dot(x, y, alpha, isW, r) {
-                if (alpha < 0.01) return;
-                const a = alpha, wm = isW ? 1 : 0.55;
-                sk.noFill();
-                sk.stroke(255, 255, 255, a * 35 * wm); sk.strokeWeight(3);  sk.circle(x, y, r * 2.4);
-                sk.stroke(255, 255, 255, a * 90 * wm); sk.strokeWeight(1);  sk.circle(x, y, r * 1.4);
-                sk.noStroke(); sk.fill(255, 255, 255, a * 220 * wm); sk.circle(x, y, r * 0.5);
-            }
-
-            function xhair(x, y, alpha, isW) {
-                if (alpha < 0.05) return;
-                const hw = CS * 0.07, gap = CS * 0.02, a = alpha, wm = isW ? 1 : 0.55;
-                sk.stroke(255, 255, 255, a * 140 * wm); sk.strokeWeight(0.5);
-                sk.line(x - hw, y, x - gap, y); sk.line(x + gap, y, x + hw, y);
-                sk.line(x, y - hw, x, y - gap); sk.line(x, y + gap, x, y + hw);
-            }
-
-            function drawGrid() {
-                for (let c = 0; c < 8; c++) for (let r = 0; r < 8; r++) {
-                    if ((c + r) % 2 === 0) {
-                        sk.noStroke(); sk.fill(255, 255, 255, 3);
-                        sk.rect(BOARD_X + c * CS, BOARD_Y + r * CS, CS, CS);
-                    }
-                }
-                sk.stroke(255, 255, 255, 9); sk.strokeWeight(0.4);
-                for (let i = 0; i <= 8; i++) {
-                    sk.line(BOARD_X + i * CS, BOARD_Y, BOARD_X + i * CS, BOARD_Y + BOARD_SIZE);
-                    sk.line(BOARD_X, BOARD_Y + i * CS, BOARD_X + BOARD_SIZE, BOARD_Y + i * CS);
-                }
-                for (let c = 0; c <= 8; c++) for (let r = 0; r <= 8; r++) {
-                    const x = BOARD_X + c * CS, y = BOARD_Y + r * CS;
-                    sk.stroke(255, 255, 255, 22); sk.strokeWeight(0.5);
-                    sk.line(x - 4, y, x + 4, y); sk.line(x, y - 4, x, y + 4);
-                }
-                const bk = CS * 0.12;
-                sk.stroke(255, 255, 255, 70); sk.strokeWeight(1);
-                [[BOARD_X, BOARD_Y, 1, 1], [BOARD_X + BOARD_SIZE, BOARD_Y, -1, 1],
-                 [BOARD_X, BOARD_Y + BOARD_SIZE, 1, -1], [BOARD_X + BOARD_SIZE, BOARD_Y + BOARD_SIZE, -1, -1]]
-                    .forEach(([x, y, sx, sy]) => { sk.line(x, y, x + sx * bk, y); sk.line(x, y, x, y + sy * bk); });
-                sk.textFont('monospace'); sk.textSize(CS * 0.11); sk.noStroke();
-                for (let i = 0; i < 8; i++) {
-                    sk.fill(255, 255, 255, 120);
-                    sk.textAlign(sk.CENTER, sk.TOP);
-                    sk.text(FILES[i], BOARD_X + i * CS + CS / 2, BOARD_Y + BOARD_SIZE + 6);
-                    sk.textAlign(sk.RIGHT, sk.CENTER);
-                    sk.text(8 - i, BOARD_X - 8, BOARD_Y + i * CS + CS / 2);
-                }
-            }
-
-            sk.setup = () => {
-                const cv = sk.createCanvas(W, H);
-                cv.parent(document.getElementById('canvasContainer'));
-                sk.frameRate(60); sk.strokeCap(sk.ROUND);
-                spd = sk.select('#speedSlider');
-                fadeSlider = sk.select('#trailSlider');
-                bloomSlider = sk.select('#bloomSlider');
-
-                document.getElementById('pauseBtn').addEventListener('click', () => {
-                    paused = !paused;
-                    document.getElementById('pauseBtn').textContent = paused ? '▶ Play' : '⏸ Pause';
-                    if (paused) pauseStart = sk.millis(); else pauseOff += sk.millis() - pauseStart;
-                });
-                document.getElementById('resetBtn').addEventListener('click', resetAll);
-                updateInfo();
-            };
-
-            sk.draw = () => {
-                const t = now();
-                if (!paused && t - lastT > interval()) fireMove();
-                sk.background(6, 6, 5);
-                drawGrid();
-                const bm = getBloom() / 5;
-                const sorted = [...history].sort((a, b) => b.age - a.age);
-                for (const { m, age } of sorted) {
-                    const al = getAlpha(age); if (al < 0.005) continue;
-                    const x1 = cx(m.fc), y1 = cy(m.fr), x2 = cx(m.tc), y2 = cy(m.tr);
-                    const isW = m.s === 'w';
-                    glowLine(x1, y1, x2, y2, al, isW, bm);
-                    dot(x1, y1, al * 0.45, isW, CS * 0.06);
-                    dot(x2, y2, al, isW, CS * 0.08);
-                    if (age <= 2) xhair(x2, y2, al, isW);
-                }
-                if (animating) {
-                    const dt = t - animating.startT;
-                    const dur = Math.max(50, Math.min(interval() * 0.78, 320));
-                    const prog = sk.constrain(dt / dur, 0, 1);
-                    const ease = 1 - Math.pow(1 - prog, 3);
-                    const m = animating.m, isW = m.s === 'w';
-                    const x1 = cx(m.fc), y1 = cy(m.fr), x2 = cx(m.tc), y2 = cy(m.tr);
-                    const px = sk.lerp(x1, x2, ease), py = sk.lerp(y1, y2, ease);
-                    glowLine(x1, y1, px, py, 1, isW, bm * 1.5);
-                    sk.noStroke();
-                    [[CS * 0.22, isW ? 7 : 4], [CS * 0.13, isW ? 18 : 10], [CS * 0.08, isW ? 50 : 28],
-                     [CS * 0.045, isW ? 115 : 60], [CS * 0.018, 255]].forEach(([r, a]) => {
-                        sk.fill(255, 255, 255, a); sk.circle(px, py, r * 2);
-                    });
-                    if (prog >= 1) animating = null;
-                }
-            };
-        });
-    </script>
+    sk.draw=()=>{
+        const t=now();
+        if(!paused&&t-lastT>interval())fireMove();
+        sk.background(6,6,5);
+        drawGrid();
+        const bm=getBloom()/5;
+        const sorted=[...history].sort((a,b)=>b.age-a.age);
+        for(const{m,age}of sorted){
+            const al=getAlpha(age);if(al<0.005)continue;
+            const x1=cx(m.fc),y1=cy(m.fr),x2=cx(m.tc),y2=cy(m.tr),isW=m.s==='w';
+            glowLine(x1,y1,x2,y2,al,isW,bm);
+            dot(x1,y1,al*0.45,isW,CS*0.06);
+            dot(x2,y2,al,isW,CS*0.08);
+            if(age<=2)xhair(x2,y2,al,isW);
+        }
+        if(animating){
+            const dt=t-animating.startT;
+            const dur=Math.max(50,Math.min(interval()*0.78,320));
+            const prog=sk.constrain(dt/dur,0,1);
+            const ease=1-Math.pow(1-prog,3);
+            const m=animating.m,isW=m.s==='w';
+            const x1=cx(m.fc),y1=cy(m.fr),x2=cx(m.tc),y2=cy(m.tr);
+            const px=sk.lerp(x1,x2,ease),py=sk.lerp(y1,y2,ease);
+            glowLine(x1,y1,px,py,1,isW,bm*1.5);
+            sk.noStroke();
+            [[CS*0.22,isW?7:4],[CS*0.13,isW?18:10],[CS*0.08,isW?50:28],
+             [CS*0.045,isW?115:60],[CS*0.018,255]].forEach(([r,a])=>{
+                sk.fill(255,255,255,a);sk.circle(px,py,r*2);
+            });
+            if(prog>=1)animating=null;
+        }
+    };
+});
+</script>
 </body>
 </html>

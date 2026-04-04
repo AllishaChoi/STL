@@ -5,327 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess</title>
     <style>
-        @font-face {
-            font-family: 'Geist';
-            src: url('Geist.ttf') format('truetype');
-            font-weight: 100 900;
-        }
-        @font-face {
-            font-family: 'Geist Mono';
-            src: url('GeistMono.ttf') format('truetype');
-            font-weight: 100 900;
-        }
-
-        :root {
-            --geist-light: 300;
-            --geist-medium: 500;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @font-face { font-family:'Geist'; src:url('Geist.ttf') format('truetype'); font-weight:100 900; }
+        @font-face { font-family:'Geist Mono'; src:url('GeistMono.ttf') format('truetype'); font-weight:100 900; }
+        :root { --geist-light:300; --geist-medium:500; }
+        *{margin:0;padding:0;box-sizing:border-box;}
 
         body {
-            font-family: 'Geist', sans-serif;
-            background: #f5f5f5;
-            color: #000;
-            position: relative;
-            overflow-x: hidden;
+            font-family:'Geist',sans-serif;
+            background:#060605; color:#fff;
+            position:relative; overflow-x:hidden;
         }
-
         body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
+            content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none; z-index:1;
         }
 
-        .container {
-            max-width: 1200px;          /* 1440 → 1200 */
-            margin: 0 auto;
-            padding: 64px 80px;
-            position: relative;
-            z-index: 2;
-        }
+        .container { max-width:1400px; margin:0 auto; padding:40px 48px; position:relative; z-index:2; }
 
-        header {
-            border-bottom: 1px solid #000;
-            padding-bottom: 48px;
-            margin-bottom: 64px;
-        }
+        /* ── HEADER ── */
+        header { border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:28px; margin-bottom:32px; }
+        .hero { display:flex; justify-content:space-between; align-items:flex-start; }
+        .hero-left h1 { font-size:72px; font-weight:var(--geist-light); line-height:0.95; letter-spacing:-0.03em; margin-bottom:8px; }
+        .hero-left h1 .italic { font-style:italic; font-weight:var(--geist-light); }
+        .subtitle { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#555; text-transform:uppercase; margin-bottom:32px; }
+        .hero-right { max-width:360px; padding-top:12px; }
+        .description { font-family:'Geist Mono',monospace; font-size:13px; line-height:1.6; color:#666; margin-bottom:32px; }
+        .stats { display:flex; gap:40px; }
+        .stat-item h3 { font-size:48px; font-weight:400; letter-spacing:-0.02em; margin-bottom:4px; }
+        .stat-label { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.05em; color:#555; text-transform:uppercase; }
+        .logo-img { height:28px; width:auto; opacity:0.85; }
 
-        .hero {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
+        /* ── TOPBAR ── */
+        .section-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:16px; }
+        .section-title { font-size:32px; font-weight:var(--geist-medium); letter-spacing:-0.02em; }
+        .inline-controls { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+        .status-group { display:flex; align-items:center; gap:8px; font-family:'Geist Mono',monospace; font-size:11px; color:#666; }
+        .status-label { color:#555; text-transform:uppercase; letter-spacing:0.05em; }
+        .status-value { color:#fff; font-weight:500; }
+        .divider-v { width:1px; height:18px; background:rgba(255,255,255,0.15); }
 
-        .hero-left h1 {
-            font-size: 72px;            /* keep */
-            font-weight: var(--geist-light);
-            line-height: 0.95;
-            letter-spacing: -0.03em;
-            margin-bottom: 8px;
-        }
-
-        .hero-left h1 .italic {
-            font-style: italic;
-            font-weight: var(--geist-light);
-        }
-
-        .subtitle {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            letter-spacing: 0.05em;
-            color: #999;
-            text-transform: uppercase;
-            margin-bottom: 32px;
-        }
-
-        .hero-right {
-            max-width: 360px;
-            padding-top: 12px;
-        }
-
-        .description {
-            font-family: 'Geist Mono', monospace;
-            font-size: 13px;            /* 15 → 13 */
-            line-height: 1.6;
-            color: #666;
-            margin-bottom: 32px;
-        }
-
-        .stats {
-            display: flex;
-            gap: 40px;
-        }
-
-        .stat-item h3 {
-            font-size: 48px;            /* keep */
-            font-weight: 400;
-            letter-spacing: -0.02em;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;            /* 12 → 10 */
-            letter-spacing: 0.05em;
-            color: #999;
-            text-transform: uppercase;
-        }
-
-        .section-topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .section-title {
-            font-size: 32px;            /* keep */
-            font-weight: var(--geist-medium);
-            letter-spacing: -0.02em;
-            white-space: nowrap;
-        }
-
-        .inline-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .status-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            color: #666;
-        }
-
-        .status-label { color: #999; text-transform: uppercase; letter-spacing: 0.05em; }
-        .status-value { color: #000; font-weight: 500; }
-
-        .divider-v {
-            width: 1px;
-            height: 18px;
-            background: #ddd;
-        }
-
+        /* ── BUTTONS ── */
         button {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 12 → 11 */
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            padding: 7px 16px;
-            border: 1px solid #000;
-            background: #fff;
-            color: #000;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase;
+            padding:7px 16px; border:1px solid rgba(255,255,255,0.25); background:transparent;
+            color:#999; cursor:pointer; transition:all 0.2s;
         }
+        button:hover { background:rgba(255,255,255,0.08); color:#fff; border-color:rgba(255,255,255,0.5); }
+        button:active { transform:scale(0.98); }
 
-        button:hover { background: #000; color: #fff; }
-        button:active { transform: scale(0.98); }
+        .btn-nav { border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); color:#777; padding:7px 18px; }
+        .btn-nav:hover { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.45); }
 
-        .main-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: stretch;
+        .btn-export {
+            background:rgba(255,255,255,0.06); color:#ccc;
+            border:1px solid rgba(255,255,255,0.22); padding:9px 22px; font-size:11px;
         }
+        .btn-export:hover { background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.5); }
 
-        .board-col {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .board-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            letter-spacing: 0.05em;
-            color: #999;
-            text-transform: uppercase;
-        }
-
+        /* ── BOARD ── */
+        .main-columns { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:stretch; }
+        .board-col { display:flex; flex-direction:column; gap:12px; }
+        /* poster-col stretches to match board-col, poster-frame fills remaining space */
+        .poster-col { display:flex; flex-direction:column; gap:12px; }
+        .board-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#555; text-transform:uppercase; }
         #chessboard {
-            width: 100%;
-            aspect-ratio: 1;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            border: 1px solid #000;
-            background: #fff;
-            flex-shrink: 0;
+            width:100%; aspect-ratio:1; display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(8,1fr);
+            border:1px solid rgba(255,255,255,0.15); background:#060605; flex-shrink:0;
         }
+        .square { position:relative; cursor:pointer; transition:background-color 0.15s; display:flex; align-items:center; justify-content:center; }
+        .square.light { background:rgba(255,255,255,0.04); }
+        .square.dark  { background:rgba(255,255,255,0.09); }
+        .square.selected { background:rgba(255,255,255,0.2) !important; }
+        .square.valid-move::after { content:''; position:absolute; width:24%; height:24%; border-radius:50%; background:rgba(255,255,255,0.2); }
+        .square.valid-capture::after { content:''; position:absolute; width:90%; height:90%; border:3px solid rgba(255,255,255,0.2); border-radius:50%; }
+        .piece { width:70%; height:70%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Geist',sans-serif; font-size:clamp(11px,1.8vw,22px); font-weight:600; border:2px solid transparent; }
+        .piece.white { background:#fff; color:#000; border-color:rgba(255,255,255,0.6); }
+        .piece.black { background:#1a1a18; color:#fff; border-color:rgba(255,255,255,0.25); }
+        .moves-strip { border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.02); padding:14px 18px; overflow-y:auto; min-height:60px; max-height:120px; }
+        .moves-list { font-family:'Geist Mono',monospace; font-size:11px; line-height:1.8; color:#666; display:flex; flex-wrap:wrap; gap:0 14px; }
+        .move-entry { display:flex; gap:4px; white-space:nowrap; }
+        .move-number { color:#333; }
 
-        .square {
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* ── POSTER ── */
+        .poster-col-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#555; text-transform:uppercase; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+        /* poster-frame: no aspect-ratio — fills whatever height the board-col occupies */
+        .poster-frame { width:100%; flex:1; min-height:0; background:#060605; border:1px solid rgba(255,255,255,0.15); position:relative; overflow:hidden; }
+        #posterCanvas { position:absolute; top:0; left:0; width:100%; height:100%; }
 
-        .square.light { background: #fff; }
-        .square.dark  { background: #e8e8e8; }
-        .square.selected { background: #d0d0d0 !important; }
-
-        .square.valid-move::after {
-            content: '';
-            position: absolute;
-            width: 24%; height: 24%;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.15);
-        }
-
-        .square.valid-capture::after {
-            content: '';
-            position: absolute;
-            width: 90%; height: 90%;
-            border: 3px solid rgba(0,0,0,0.15);
-            border-radius: 50%;
-        }
-
-        .piece {
-            width: 70%; height: 70%;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Geist', sans-serif;
-            font-size: clamp(11px, 1.8vw, 22px);
-            font-weight: 600;
-            border: 2px solid transparent;
-        }
-
-        .piece.white { background: #fff; color: #000; border-color: #000; }
-        .piece.black { background: #000; color: #fff; }
-
-        .moves-strip {
-            flex: 1;
-            border: 1px solid #ddd;
-            background: #fff;
-            padding: 14px 18px;
-            overflow-y: auto;
-            min-height: 60px;
-        }
-
-        .moves-list {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 12 → 11 */
-            line-height: 1.8;
-            color: #333;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0 14px;
-        }
-
-        .move-entry {
-            display: flex;
-            gap: 4px;
-            white-space: nowrap;
-        }
-
-        .move-number { color: #bbb; }
-
-        .poster-col {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .poster-col-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;            /* 13 → 11 */
-            letter-spacing: 0.05em;
-            color: #999;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .poster-frame {
-            width: 97%;
-            margin: 0 auto;
-            aspect-ratio: 2 / 3;
-            background: #060605;
-            border: 1px solid #222;
-            position: relative;
-            overflow: hidden;
-            flex: 1;
-        }
-
-        #posterCanvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-        }
-
+        /* ── EXPORT ROW (포스터/타임랩스 — 보드 바로 아래) ── */
         .export-row {
-            border-top: 1px solid #000;
-            padding-top: 32px;
-            margin-top: 48px;
-            display: flex;
-            justify-content: flex-end;
+            display:flex; gap:12px; margin-top:24px;
         }
+        .export-row .btn-export { flex:1; padding:12px; text-align:center; }
 
-        #btnExport {
-            padding: 11px 28px;
-            font-size: 11px;            /* 13 → 11 */
+        /* ── NAV ROW (화면 맨 아래 full-width) ── */
+        .nav-row {
+            border-top:1px solid rgba(255,255,255,0.08);
+            margin-top:64px; padding-top:28px;
+            display:flex; gap:12px;
+        }
+        .nav-row .btn-nav { flex:1; padding:12px; text-align:center; }
+
+        /* ── BOTTOM SHEET ── */
+        .sheet-backdrop {
+            position:fixed; inset:0; background:rgba(0,0,0,0.6);
+            z-index:200; opacity:0; pointer-events:none;
+            transition:opacity 0.3s; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+        }
+        .sheet-backdrop.active { opacity:1; pointer-events:all; }
+
+        .bottom-sheet {
+            position:fixed; bottom:0; left:50%;
+            transform:translateX(-50%) translateY(100%);
+            width:min(480px,100%);
+            background:#111110;
+            border:1px solid rgba(255,255,255,0.12); border-bottom:none;
+            border-radius:18px 18px 0 0;
+            z-index:201;
+            transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);
+            padding:0 28px 40px;
+        }
+        .bottom-sheet.active { transform:translateX(-50%) translateY(0); }
+
+        .sheet-handle { width:36px; height:4px; background:rgba(255,255,255,0.18); border-radius:2px; margin:14px auto 28px; }
+
+        .sheet-header { margin-bottom:6px; }
+        .sheet-title { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:#888; display:block; margin-bottom:4px; }
+        .sheet-meta { font-family:'Geist Mono',monospace; font-size:13px; color:#ccc; letter-spacing:-0.01em; display:block; min-height:20px; }
+
+        .sheet-cards { display:flex; gap:16px; margin-top:24px; }
+
+        .ratio-card {
+            flex:1; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.03);
+            padding:22px 16px 18px; display:flex; flex-direction:column; align-items:center; gap:12px;
+            cursor:pointer; transition:all 0.18s; border-radius:4px;
+        }
+        .ratio-card:hover { background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.35); }
+        .ratio-card.selected { border-color:rgba(255,255,255,0.55); background:rgba(255,255,255,0.08); }
+        .ratio-card.disabled { opacity:0.35; pointer-events:none; }
+
+        .ratio-box {
+            border:1px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.06);
+            flex-shrink:0;
+        }
+        .ratio-box.r916 { width:44px; height:78px; }
+        .ratio-box.r45  { width:48px; height:60px; }
+
+        .ratio-label { font-family:'Geist Mono',monospace; font-size:15px; letter-spacing:-0.01em; color:#ddd; font-weight:500; }
+        .ratio-type  { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#666; }
+
+        /* Render progress */
+        .render-progress { display:none; flex-direction:column; align-items:center; gap:10px; margin-top:24px; }
+        .render-progress.active { display:flex; }
+        .progress-bar-track { width:100%; height:2px; background:rgba(255,255,255,0.1); border-radius:1px; overflow:hidden; }
+        .progress-bar-fill { height:100%; background:rgba(255,255,255,0.5); border-radius:1px; width:0%; transition:width 0.1s linear; }
+        .progress-label { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#666; }
+
+        /* Share + cancel */
+        .sheet-bottom { margin-top:24px; display:flex; flex-direction:column; gap:10px; }
+        .btn-sheet-share {
+            width:100%; padding:13px; font-family:'Geist Mono',monospace; font-size:11px;
+            letter-spacing:0.08em; text-transform:uppercase; background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.25); color:#ccc; cursor:pointer; transition:all 0.2s;
+            display:none;
+        }
+        .btn-sheet-share.visible { display:block; }
+        .btn-sheet-share:hover { background:rgba(255,255,255,0.14); color:#fff; border-color:rgba(255,255,255,0.5); }
+        .btn-sheet-cancel {
+            width:100%; padding:10px; font-family:'Geist Mono',monospace; font-size:10px;
+            letter-spacing:0.08em; text-transform:uppercase; background:transparent;
+            border:none; color:#444; cursor:pointer; transition:color 0.2s;
+        }
+        .btn-sheet-cancel:hover { color:#888; background:transparent; border:none; transform:none; }
+
+        /* ── TOAST ── */
+        #toast {
+            position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(8px);
+            background:rgba(255,255,255,0.95); color:#060605;
+            font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+            padding:8px 22px; opacity:0; pointer-events:none; z-index:300;
+            transition:opacity 0.2s, transform 0.2s;
+        }
+        #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+        /* ── MOBILE ── */
+        @media (max-width:768px) {
+            .container { padding:20px 16px 20px; }
+
+            header { padding-bottom:20px; margin-bottom:20px; }
+            .hero { gap:0; }
+            .hero-left h1 { font-size:44px; }
+            .hero-right { display:none; }
+            .hero-logo { margin-top:4px; }
+            .logo-img { height:22px; }
+
+            .section-topbar { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:16px; }
+            .section-title { font-size:22px; }
+            /* 모바일: status + 버튼들 한 줄로 */
+            .inline-controls { gap:8px; flex-wrap:nowrap; width:100%; }
+            .status-group { gap:4px; }
+            .divider-v { display:none; }
+            .inline-controls button { flex-shrink:0; padding:7px 12px; font-size:10px; }
+
+            .main-columns { grid-template-columns:1fr; gap:20px; }
+            .board-col { order:1; }
+            #chessboard { aspect-ratio:1; }
+            .poster-col { order:2; }
+            .poster-frame { width:100%; aspect-ratio:2/3; max-height:none; overflow:hidden; flex:none; }
+
+            .export-row { margin-top:14px; }
+            .nav-row { margin-top:36px; padding-top:18px; }
+            .btn-export, .btn-nav { padding:14px; }
+
+            .bottom-sheet { width:100%; border-radius:20px 20px 0 0; }
         }
     </style>
 </head>
 <body>
+
 <div class="container">
     <header>
         <div class="hero">
@@ -334,15 +232,15 @@
                 <h1>Play<br><span class="italic">Chess</span><br>Game</h1>
             </div>
             <div class="hero-right">
-                <p class="description">
-                    Play against an intelligent computer opponent. Each move is calculated
-                    using strategic algorithms to provide a challenging experience.
-                </p>
+                <p class="description">Play against an intelligent computer opponent. Each move is calculated using strategic algorithms to provide a challenging experience.</p>
                 <div class="stats">
                     <div class="stat-item"><h3>64</h3><div class="stat-label">Squares</div></div>
                     <div class="stat-item"><h3>32</h3><div class="stat-label">Pieces</div></div>
                     <div class="stat-item"><h3>∞</h3><div class="stat-label">Moves</div></div>
                 </div>
+            </div>
+            <div class="hero-logo">
+                <a href="index.html"><img src="logo.png" alt="Chess STL" class="logo-img"></a>
             </div>
         </div>
     </header>
@@ -370,30 +268,72 @@
             <div class="board-col">
                 <div class="board-label">01 — Standard Game</div>
                 <div id="chessboard"></div>
-                <div class="moves-strip">
-                    <div class="moves-list" id="movesList"></div>
-                </div>
+                <div class="moves-strip"><div class="moves-list" id="movesList"></div></div>
             </div>
-
             <div class="poster-col">
                 <div class="poster-col-label">
                     <span>02 — Your Game Journey</span>
-                    <span id="vizProgress" style="color:#bbb; font-size:11px;"></span>
+                    <span id="vizProgress" style="color:#444;font-size:11px;"></span>
                 </div>
-                <div class="poster-frame">
-                    <canvas id="posterCanvas"></canvas>
-                </div>
+                <div class="poster-frame"><canvas id="posterCanvas"></canvas></div>
             </div>
+        </div>
+
+        <!-- 포스터 / 타임랩스: 보드 바로 아래 -->
+        <div class="export-row">
+            <button class="btn-export" onclick="openSheet('poster')">↓ Poster</button>
+            <button class="btn-export" onclick="openSheet('timelapse')">▷ Timelapse</button>
         </div>
     </section>
 
-    <div class="export-row">
-        <button id="btnExport" onclick="exportPoster()">↓ Export Poster (4096px)</button>
+    <!-- 내비게이션: 화면 맨 아래 full-width -->
+    <div class="nav-row">
+        <button class="btn-nav" onclick="window.location.href='index.html'">← Go Home</button>
+        <button class="btn-nav" onclick="window.location.href='website-famous-3-play.html'">Next Game →</button>
     </div>
 </div>
 
+<!-- Bottom Sheet -->
+<div id="sheetBackdrop" class="sheet-backdrop" onclick="closeSheet()"></div>
+<div id="bottomSheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+        <span class="sheet-title" id="sheetTitle">Save Poster</span>
+        <span class="sheet-meta" id="sheetMeta">Choose a format</span>
+    </div>
+
+    <div class="sheet-cards" id="sheetCards">
+        <div class="ratio-card" id="card916" onclick="handleRatioSelect('916')">
+            <div class="ratio-box r916"></div>
+            <span class="ratio-label">9:16</span>
+            <span class="ratio-type">Story</span>
+        </div>
+        <div class="ratio-card" id="card45" onclick="handleRatioSelect('45')">
+            <div class="ratio-box r45"></div>
+            <span class="ratio-label">4:5</span>
+            <span class="ratio-type">Post</span>
+        </div>
+    </div>
+
+    <div class="render-progress" id="renderProgress">
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <span class="progress-label" id="progressLabel">Rendering…</span>
+    </div>
+
+    <div class="sheet-bottom">
+        <button class="btn-sheet-share" id="btnSheetShare" onclick="shareLastContent()">↑ Share</button>
+        <button class="btn-sheet-cancel" onclick="closeSheet()">Cancel</button>
+    </div>
+</div>
+
+<div id="toast"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 <script>
+
+// ─────────────────────────────────────────────
+//  CHESS GAME STATE
+// ─────────────────────────────────────────────
 let board = [];
 let selectedSquare = null;
 let currentTurn = 'white';
@@ -402,7 +342,7 @@ let moveNumber = 1;
 let fullMoveData = [];
 let gameEnded = false;
 
-const pieceSymbols = { K:'K', Q:'Q', R:'R', B:'B', N:'N', P:'P' };
+const pieceSymbols = { K:'K',Q:'Q',R:'R',B:'B',N:'N',P:'P' };
 
 function initBoard() {
     board = [
@@ -415,239 +355,490 @@ function initBoard() {
         ['p','p','p','p','p','p','p','p'],
         ['r','n','b','q','k','b','n','r']
     ];
-    moveHistory = [];
-    moveNumber = 1;
-    currentTurn = 'white';
-    updateStatus();
+    moveHistory=[]; moveNumber=1; currentTurn='white'; updateStatus();
 }
 
 function createBoardUI() {
-    const el = document.getElementById('chessboard');
-    el.innerHTML = '';
-    for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
-            const sq = document.createElement('div');
-            sq.className = 'square ' + ((row+col)%2===0 ? 'light' : 'dark');
-            sq.dataset.row = row; sq.dataset.col = col;
-            sq.onclick = () => handleSquareClick(row, col);
-            const piece = board[row][col];
-            if (piece) {
-                const p = document.createElement('div');
-                p.className = 'piece ' + (piece===piece.toUpperCase() ? 'black' : 'white');
-                p.textContent = pieceSymbols[piece.toUpperCase()];
-                sq.appendChild(p);
-            }
-            el.appendChild(sq);
+    const el=document.getElementById('chessboard'); el.innerHTML='';
+    for(let row=0;row<8;row++) for(let col=0;col<8;col++) {
+        const sq=document.createElement('div');
+        sq.className='square '+((row+col)%2===0?'light':'dark');
+        sq.dataset.row=row; sq.dataset.col=col;
+        sq.onclick=()=>handleSquareClick(row,col);
+        const piece=board[row][col];
+        if(piece){
+            const p=document.createElement('div');
+            p.className='piece '+(piece===piece.toUpperCase()?'black':'white');
+            p.textContent=pieceSymbols[piece.toUpperCase()]; sq.appendChild(p);
         }
+        el.appendChild(sq);
     }
 }
 
-function handleSquareClick(row, col) {
-    if (currentTurn !== 'white') return;
-    const piece = board[row][col];
-    if (selectedSquare && isValidMove(selectedSquare.row, selectedSquare.col, row, col)) {
-        makeMove(selectedSquare.row, selectedSquare.col, row, col);
-        selectedSquare = null;
-        clearHighlights();
-        setTimeout(() => { if (currentTurn==='black') makeComputerMove(); }, 500);
-    } else if (piece && piece===piece.toLowerCase()) {
-        selectedSquare = {row, col};
-        highlightValidMoves(row, col);
-    } else {
-        selectedSquare = null;
-        clearHighlights();
-    }
+function handleSquareClick(row,col){
+    if(gameEnded) return;
+    if(currentTurn!=='white') return;
+    const piece=board[row][col];
+    if(selectedSquare&&isValidMove(selectedSquare.row,selectedSquare.col,row,col)){
+        makeMove(selectedSquare.row,selectedSquare.col,row,col);
+        selectedSquare=null; clearHighlights();
+        setTimeout(()=>{ if(currentTurn==='black') makeComputerMove(); },500);
+    } else if(piece&&piece===piece.toLowerCase()){
+        selectedSquare={row,col}; highlightValidMoves(row,col);
+    } else { selectedSquare=null; clearHighlights(); }
 }
 
-function highlightValidMoves(row, col) {
+function highlightValidMoves(row,col){
     clearHighlights();
-    const sqs = document.querySelectorAll('.square');
+    const sqs=document.querySelectorAll('.square');
     sqs[row*8+col].classList.add('selected');
-    for (let r=0;r<8;r++) for (let c=0;c<8;c++) {
-        if (isValidMove(row,col,r,c)) {
-            sqs[r*8+c].classList.add(board[r][c] ? 'valid-capture' : 'valid-move');
-        }
-    }
+    for(let r=0;r<8;r++) for(let c=0;c<8;c++)
+        if(isValidMove(row,col,r,c)) sqs[r*8+c].classList.add(board[r][c]?'valid-capture':'valid-move');
 }
+function clearHighlights(){ document.querySelectorAll('.square').forEach(s=>s.classList.remove('selected','valid-move','valid-capture')); }
 
-function clearHighlights() {
-    document.querySelectorAll('.square').forEach(s => s.classList.remove('selected','valid-move','valid-capture'));
-}
-
-function isValidMove(fr,fc,tr,tc) {
-    if (fr===tr&&fc===tc) return false;
-    const piece=board[fr][fc], target=board[tr][tc];
-    if (!piece) return false;
-    if (target && (piece===piece.toLowerCase())===(target===target.toLowerCase())) return false;
-    const pt=piece.toUpperCase(), isW=piece===piece.toLowerCase();
-    const rd=tr-fr, cd=tc-fc;
-    switch(pt) {
-        case 'P': {
-            const dir=isW?-1:1, sr=isW?6:1;
-            if (cd===0&&!target) { if(rd===dir) return true; if(fr===sr&&rd===2*dir&&!board[fr+dir][fc]) return true; }
-            if (Math.abs(cd)===1&&rd===dir&&target) return true;
-            return false;
-        }
-        case 'R': if(rd!==0&&cd!==0) return false; return isPathClear(fr,fc,tr,tc);
-        case 'N': return (Math.abs(rd)===2&&Math.abs(cd)===1)||(Math.abs(rd)===1&&Math.abs(cd)===2);
-        case 'B': if(Math.abs(rd)!==Math.abs(cd)) return false; return isPathClear(fr,fc,tr,tc);
-        case 'Q': if(rd!==0&&cd!==0&&Math.abs(rd)!==Math.abs(cd)) return false; return isPathClear(fr,fc,tr,tc);
-        case 'K': return Math.abs(rd)<=1&&Math.abs(cd)<=1;
+function isValidMove(fr,fc,tr,tc){
+    if(fr===tr&&fc===tc) return false;
+    const piece=board[fr][fc],target=board[tr][tc];
+    if(!piece) return false;
+    if(target&&(piece===piece.toLowerCase())===(target===target.toLowerCase())) return false;
+    const pt=piece.toUpperCase(),isW=piece===piece.toLowerCase();
+    const rd=tr-fr,cd=tc-fc;
+    switch(pt){
+        case 'P':{const dir=isW?-1:1,sr=isW?6:1;
+            if(cd===0&&!target){if(rd===dir)return true;if(fr===sr&&rd===2*dir&&!board[fr+dir][fc])return true;}
+            if(Math.abs(cd)===1&&rd===dir&&target)return true;return false;}
+        case 'R':if(rd!==0&&cd!==0)return false;return isPathClear(fr,fc,tr,tc);
+        case 'N':return(Math.abs(rd)===2&&Math.abs(cd)===1)||(Math.abs(rd)===1&&Math.abs(cd)===2);
+        case 'B':if(Math.abs(rd)!==Math.abs(cd))return false;return isPathClear(fr,fc,tr,tc);
+        case 'Q':if(rd!==0&&cd!==0&&Math.abs(rd)!==Math.abs(cd))return false;return isPathClear(fr,fc,tr,tc);
+        case 'K':return Math.abs(rd)<=1&&Math.abs(cd)<=1;
     }
     return false;
 }
-
-function isPathClear(fr,fc,tr,tc) {
-    const rs=tr>fr?1:tr<fr?-1:0, cs=tc>fc?1:tc<fc?-1:0;
-    let r=fr+rs, c=fc+cs;
-    while(r!==tr||c!==tc) { if(board[r][c]) return false; r+=rs; c+=cs; }
-    return true;
+function isPathClear(fr,fc,tr,tc){
+    const rs=tr>fr?1:tr<fr?-1:0,cs=tc>fc?1:tc<fc?-1:0;
+    let r=fr+rs,c=fc+cs;
+    while(r!==tr||c!==tc){if(board[r][c])return false;r+=rs;c+=cs;}return true;
 }
 
-function makeMove(fr,fc,tr,tc) {
-    const piece=board[fr][fc], captured=board[tr][tc];
+function makeMove(fr,fc,tr,tc){
+    const piece=board[fr][fc],captured=board[tr][tc];
     board[tr][tc]=piece; board[fr][fc]=null;
-    fullMoveData.push({ fromRow:fr, fromCol:fc, toRow:tr, toCol:tc, side:currentTurn, piece:piece.toUpperCase() });
-    const notation=getMoveNotation(piece,fr,fc,tr,tc,captured);
-    addMoveToHistory(notation);
+    fullMoveData.push({fromRow:fr,fromCol:fc,toRow:tr,toCol:tc,side:currentTurn,piece:piece.toUpperCase()});
+    addMoveToHistory(getMoveNotation(piece,fr,fc,tr,tc,captured));
     currentTurn=currentTurn==='white'?'black':'white';
-    updateStatus();
-    createBoardUI();
-    checkGameEnd();
-    if (vizP5) vizNeedsUpdate = true;
+    updateStatus(); createBoardUI(); checkGameEnd();
+    if(vizP5) vizNeedsUpdate=true;
 }
-
-function getMoveNotation(piece,fr,fc,tr,tc,captured) {
-    const files='abcdefgh';
-    const ps=piece.toUpperCase()==='P'?'':piece.toUpperCase();
+function getMoveNotation(piece,fr,fc,tr,tc,captured){
+    const files='abcdefgh',ps=piece.toUpperCase()==='P'?'':piece.toUpperCase();
     return ps+(captured?'x':'')+files[tc]+(8-tr);
 }
-
-function addMoveToHistory(notation) {
+function addMoveToHistory(notation){
     const ml=document.getElementById('movesList');
-    if (currentTurn==='white') {
-        const entry=document.createElement('div');
-        entry.className='move-entry';
+    if(currentTurn==='white'){
+        const entry=document.createElement('div'); entry.className='move-entry';
         entry.innerHTML=`<span class="move-number">${moveNumber}.</span><span>${notation}</span><span id="bm-${moveNumber}"></span>`;
-        ml.appendChild(entry);
-        moveHistory.push({notation, side:'white'});
+        ml.appendChild(entry); moveHistory.push({notation,side:'white'});
     } else {
         const bm=document.getElementById(`bm-${moveNumber}`);
         if(bm) bm.textContent=' '+notation;
-        moveHistory.push({notation, side:'black'});
-        moveNumber++;
+        moveHistory.push({notation,side:'black'}); moveNumber++;
     }
     ml.scrollTop=ml.scrollHeight;
 }
-
-function makeComputerMove() {
+function makeComputerMove(){
     const valid=[];
-    for(let fr=0;fr<8;fr++) for(let fc=0;fc<8;fc++) {
+    for(let fr=0;fr<8;fr++) for(let fc=0;fc<8;fc++){
         const p=board[fr][fc];
-        if(p&&p===p.toUpperCase()) {
-            for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++) {
-                if(isValidMove(fr,fc,tr,tc)) valid.push({fr,fc,tr,tc});
-            }
-        }
+        if(p&&p===p.toUpperCase()) for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++)
+            if(isValidMove(fr,fc,tr,tc)) valid.push({fr,fc,tr,tc});
     }
-    if(valid.length>0) {
-        const m=valid[Math.floor(Math.random()*valid.length)];
-        makeMove(m.fr,m.fc,m.tr,m.tc);
-    }
+    if(valid.length>0){const m=valid[Math.floor(Math.random()*valid.length)];makeMove(m.fr,m.fc,m.tr,m.tc);}
 }
-
-function checkGameEnd() {
-    let wk=false, bk=false;
-    for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
-        if(board[r][c]==='k') wk=true;
-        if(board[r][c]==='K') bk=true;
-    }
-    if(!wk||!bk) {
+function checkGameEnd(){
+    let wk=false,bk=false;
+    for(let r=0;r<8;r++) for(let c=0;c<8;c++){if(board[r][c]==='k')wk=true;if(board[r][c]==='K')bk=true;}
+    if(!wk||!bk){
         gameEnded=true;
-        document.getElementById('statusVal').textContent=`Game Over — ${!wk?'Black':'White'} wins!`;
+        const winner=!wk?'Black':'White';
+        document.getElementById('turnVal').textContent='—';
+        document.getElementById('statusVal').textContent=`${winner} wins!`;
+        showGameOverOverlay(winner);
+    }
+}
+function showGameOverOverlay(winner){
+    const existing=document.getElementById('gameOverOverlay');
+    if(existing) existing.remove();
+    const overlay=document.createElement('div');
+    overlay.id='gameOverOverlay';
+    overlay.style.cssText=`
+        position:fixed;inset:0;background:rgba(6,6,5,0.88);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        z-index:400;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+        opacity:0;transition:opacity 0.5s;pointer-events:all;
+    `;
+    overlay.innerHTML=`
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:16px;">Game Over</div>
+        <div style="font-family:'Geist',sans-serif;font-size:clamp(36px,6vw,72px);font-weight:300;letter-spacing:-0.03em;color:#fff;margin-bottom:12px;">${winner} <span style="font-style:italic">wins</span></div>
+        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.05em;color:rgba(255,255,255,0.3);margin-bottom:40px;">King captured</div>
+        <div id="overlayTimer" style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.2);">Closing in 3…</div>
+    `;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(()=>{ overlay.style.opacity='1'; });
+    let remaining=3;
+    const timerEl=()=>document.getElementById('overlayTimer');
+    const tick=setInterval(()=>{
+        remaining--;
+        if(timerEl()) timerEl().textContent=`Closing in ${remaining}…`;
+        if(remaining<=0){
+            clearInterval(tick);
+            overlay.style.opacity='0';
+            setTimeout(()=>{ if(overlay.parentNode) overlay.remove(); },500);
+        }
+    },1000);
+    overlay.dataset.tickId=tick;
+}
+function updateStatus(){
+    document.getElementById('turnVal').textContent=currentTurn==='white'?'White':'Black';
+    document.getElementById('statusVal').textContent=currentTurn==='white'?'Your turn':'Computer thinking…';
+}
+function resetGame(){
+    const existing=document.getElementById('gameOverOverlay');
+    if(existing){
+        if(existing.dataset.tickId) clearInterval(Number(existing.dataset.tickId));
+        existing.style.opacity='0';
+        setTimeout(()=>{ if(existing.parentNode) existing.remove(); },500);
+    }
+    initBoard(); createBoardUI();
+    document.getElementById('movesList').innerHTML='';
+    fullMoveData=[]; moveHistory=[]; moveNumber=1; gameEnded=false;
+    vizMoveIndex=0; vizLines=[];
+    document.getElementById('vizProgress').textContent='';
+    if(vizP5) vizNeedsUpdate=true;
+}
+function undoMove(){ showToast('Start a new game to reset.'); }
+
+// ─────────────────────────────────────────────
+//  SHARED POSTER DRAW (raw Canvas 2D)
+//  ※ gBoard/gCell geometry (1728 space) 공유, logo 없음
+// ─────────────────────────────────────────────
+
+function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
+    const count=(maxMoves!==undefined)?Math.min(maxMoves,movesData.length):movesData.length;
+    const SS=W/1080;
+
+    // ── 레이아웃 존 — 9:16 vs 4:5 비율별 분기 ──
+    const is916 = (H/W) > 1.6;   // 9:16 ≈ 1.78, 4:5 = 1.25
+    const MARGIN    = W * 0.05;
+    const TITLE_TOP = is916 ? H * 0.10 : H * 0.08;   // 9:16은 상단 UI 공간 더 확보
+    const TITLE_H   = is916 ? H * 0.055 : H * 0.07;
+    const BOARD_TOP = TITLE_TOP + TITLE_H + (is916 ? H*0.010 : H*0.015); // 보드와 가깝게
+    const BOARD_H   = is916 ? H * 0.66 : H * 0.65;
+    const LOG_TOP   = BOARD_TOP + BOARD_H + H * 0.018;
+    const LOG_H     = H - LOG_TOP - H * 0.02;
+
+    // ── board geometry remapping: GW×GH → BOARD 존 내부 ──
+    // gBoard returns coords in GW×GH space; we map that into BOARD_TOP ~ BOARD_TOP+BOARD_H
+    const bScaleX = (W - MARGIN*2) / GW;
+    const bScaleY = BOARD_H / GH;
+    const bScale  = Math.min(bScaleX, bScaleY);
+    const bOffX   = (W - GW * bScale) / 2;
+    const bOffY   = BOARD_TOP + (BOARD_H - GH * bScale) / 2;
+
+    function bd(col,row){ const p=gBoard(col,row); return{x:bOffX+p.x*bScale, y:bOffY+p.y*bScale}; }
+    function cl(c,r){     const p=gCell(c,r);      return{x:bOffX+p.x*bScale, y:bOffY+p.y*bScale}; }
+
+    // ── Background ──
+    ctx.fillStyle='rgb(5,5,4)'; ctx.fillRect(0,0,W,H);
+
+    // ── 타이틀 존 — center aligned, Instagram safe top margin ──
+    const titleFontSize = is916 ? 49*SS : 46*SS;   // 9:16은 3pt 더 크게
+    ctx.font=`300 ${titleFontSize}px Geist, "Helvetica Neue", Arial, sans-serif`;
+
+    // "Your Game Journey" 와 ": STL" 합친 전체 너비 측정
+    const t1 = 'Your Game Journey ';
+    const t2 = ': STL';
+    const t1W = ctx.measureText(t1).width;
+    const t2W = ctx.measureText(t2).width;
+    const totalTitleW = t1W + t2W;
+    const titleX = (W - totalTitleW) / 2;
+
+    // separator line 위
+    ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1*SS; ctx.lineCap='butt';
+    ctx.beginPath(); ctx.moveTo(W*0.1, TITLE_TOP-H*0.014); ctx.lineTo(W*0.9, TITLE_TOP-H*0.014); ctx.stroke();
+
+    // 타이틀 텍스트 센터
+    ctx.textBaseline='top';
+    ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.textAlign='left';
+    ctx.fillText(t1, titleX, TITLE_TOP);
+    ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.fillText(t2, titleX + t1W, TITLE_TOP);
+
+    // 무브 카운트 — 타이틀 아래 센터
+    ctx.fillStyle='rgba(255,255,255,0.30)';
+    ctx.font=`${(is916 ? 26 : 24)*SS}px monospace`;
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(`${count} moves`, W/2, TITLE_TOP + titleFontSize*1.25);
+
+    // separator line 아래
+    ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1*SS;
+    ctx.beginPath(); ctx.moveTo(W*0.1, BOARD_TOP-H*0.012); ctx.lineTo(W*0.9, BOARD_TOP-H*0.012); ctx.stroke();
+
+    // ── 보드 그리기 ──
+    // alternating cell fill
+    for(let c=0;c<8;c++) for(let r=0;r<8;r++) if((c+r)%2===0){
+        const tl=bd(c,r),tr2=bd(c+1,r),bl=bd(c,r+1),br=bd(c+1,r+1);
+        ctx.beginPath(); ctx.moveTo(tl.x,tl.y); ctx.lineTo(tr2.x,tr2.y); ctx.lineTo(br.x,br.y); ctx.lineTo(bl.x,bl.y);
+        ctx.closePath(); ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fill();
+    }
+    // grid lines
+    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1.5*bScale; ctx.lineCap='butt';
+    for(let i=0;i<=8;i++){
+        const a=bd(i,0),b=bd(i,8); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        const a2=bd(0,i),b2=bd(8,i); ctx.beginPath(); ctx.moveTo(a2.x,a2.y); ctx.lineTo(b2.x,b2.y); ctx.stroke();
+    }
+    // ticks
+    const tk=12*bScale;
+    ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=1.5*bScale;
+    for(let c=0;c<=8;c++) for(let r=0;r<=8;r++){
+        const pt=bd(c,r);
+        ctx.beginPath(); ctx.moveTo(pt.x-tk,pt.y); ctx.lineTo(pt.x+tk,pt.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pt.x,pt.y-tk); ctx.lineTo(pt.x,pt.y+tk); ctx.stroke();
+    }
+    // corner brackets
+    const bk=92*bScale;
+    [[bd(0,0),1,1],[bd(8,0),-1,1],[bd(0,8),1,-1],[bd(8,8),-1,-1]].forEach(([pt,sx,sy])=>{
+        ctx.strokeStyle='rgba(255,255,255,0.55)'; ctx.lineWidth=3*bScale;
+        ctx.beginPath(); ctx.moveTo(pt.x,pt.y); ctx.lineTo(pt.x+sx*bk,pt.y+sy*.12*bk); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pt.x,pt.y); ctx.lineTo(pt.x+sx*.15*bk,pt.y+sy*bk*.55); ctx.stroke();
+    });
+    // coord labels
+    const coordSize=Math.round(50*bScale);
+    ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font=`${coordSize}px monospace`;
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    for(let c=0;c<8;c++){const pt=bd(c+.5,8.24);ctx.fillText(FILES_VIZ[c],pt.x,pt.y);}
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    for(let r=0;r<8;r++){const pt=bd(-.18,r+.5);ctx.fillText(8-r,pt.x,pt.y);}
+    // vanishing point lines
+    const vx=bOffX+GW*.5*bScale, vy=bOffY+GH*.1*bScale;
+    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1.2*bScale;
+    for(let i=0;i<=8;i+=2){const n=bd(i,8);ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(vx,vy);ctx.stroke();}
+
+    // ── 무브 라인 ──
+    ctx.lineCap='round';
+    for(let i=0;i<count;i++){
+        const m=movesData[i];
+        const from=cl(m.fromCol,m.fromRow), to=cl(m.toCol,m.toRow);
+        const isW=m.side==='white', wm=isW?1:0.55;
+        const age=count-1-i;
+        const a=Math.max(0.18,1-age*0.028);
+        const LS=bScale; // line scale
+
+        ctx.strokeStyle=`rgba(255,255,255,${a*0.039*wm})`; ctx.lineWidth=36*LS;
+        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
+        ctx.strokeStyle=`rgba(255,255,255,${a*0.086*wm})`; ctx.lineWidth=15*LS;
+        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
+        ctx.strokeStyle=`rgba(255,255,255,${a*0.255*wm})`; ctx.lineWidth=5.5*LS;
+        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
+        ctx.strokeStyle=`rgba(255,255,255,${a*0.824*wm})`; ctx.lineWidth=1.8*LS;
+        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
+
+        const Rs=28*LS, Re=36*LS;
+        [[from,Rs],[to,Re]].forEach(([pt,R],idx)=>{
+            const aa=idx===0?a*.5:a;
+            ctx.strokeStyle=`rgba(255,255,255,${aa*0.118*wm})`; ctx.lineWidth=7*LS;
+            ctx.beginPath(); ctx.arc(pt.x,pt.y,R*1.1,0,Math.PI*2); ctx.stroke();
+            ctx.strokeStyle=`rgba(255,255,255,${aa*0.314*wm})`; ctx.lineWidth=2.4*LS;
+            ctx.beginPath(); ctx.arc(pt.x,pt.y,R*.7,0,Math.PI*2); ctx.stroke();
+            ctx.fillStyle=`rgba(255,255,255,${aa*0.843*wm})`;
+            ctx.beginPath(); ctx.arc(pt.x,pt.y,R*.24,0,Math.PI*2); ctx.fill();
+        });
+
+        if(a>0.2){
+            const mx=(from.x+to.x)/2, my=(from.y+to.y)/2;
+            const lbl=FILES_VIZ[m.fromCol]+(8-m.fromRow)+'→'+FILES_VIZ[m.toCol]+(8-m.toRow);
+            const oa=a*Math.min(1,a*1.8);
+            const lblSize=Math.round(42*LS);
+            ctx.font=`${lblSize}px monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillStyle=`rgba(0,0,0,${oa*0.627})`; ctx.fillText(lbl,mx+2*LS,my+2*LS);
+            ctx.fillStyle=`rgba(255,255,255,${Math.min(1,oa*1.18)})`; ctx.fillText(lbl,mx,my);
+        }
+    }
+
+    // ── separator before move log ──
+    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1*SS; ctx.lineCap='butt';
+    ctx.beginPath(); ctx.moveTo(MARGIN,LOG_TOP-H*0.010); ctx.lineTo(W-MARGIN,LOG_TOP-H*0.010); ctx.stroke();
+
+    // ── 무브로그 존 (4컬럼) — maxRows 없이 전부 그리기, clip으로 캔버스 밖 방지 ──
+    if(histData&&histData.length>0){
+        const pairs=[]; for(let i=0;i<histData.length;i+=2){
+            const w=histData[i]?.notation||'',b=histData[i+1]?.notation||'';
+            pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
+        }
+        ctx.save();
+        ctx.rect(0, LOG_TOP, W, H-LOG_TOP); ctx.clip();
+
+        ctx.fillStyle='rgba(255,255,255,0.28)';
+        ctx.font=`${19*SS}px monospace`;
+        ctx.textAlign='left'; ctx.textBaseline='top';
+        ctx.fillText('MOVE LOG', MARGIN, LOG_TOP);
+
+        const fs=23*SS, rowH=fs*1.55, cols=4, colW=(W-MARGIN*2)/cols;
+        const labelGap=26*SS;
+        ctx.font=`${fs}px monospace`; ctx.textBaseline='top';
+        pairs.forEach((txt,i)=>{
+            const col=i%cols, row=Math.floor(i/cols);
+            ctx.fillStyle='rgba(255,255,255,0.55)';
+            ctx.textAlign='left';
+            ctx.fillText(txt, MARGIN+col*colW, LOG_TOP+labelGap+row*rowH);
+        });
+        ctx.restore();
     }
 }
 
-function updateStatus() {
-    document.getElementById('turnVal').textContent=currentTurn==='white'?'White':'Black';
-    document.getElementById('statusVal').textContent=currentTurn==='white'?'Your turn':'Computer thinking...';
+// ─────────────────────────────────────────────
+//  P5 LIVE PREVIEW  (Long-Exposure board style)
+// ─────────────────────────────────────────────
+let vizP5=null, vizLines=[], vizMoveIndex=0, vizNeedsUpdate=false;
+
+// ── Global board geometry in 1728×1728 virtual space ──
+const GW=1728, GH=1728;
+const G_BCX=GW*.5,  G_BCY=GH*.5;
+const G_BW =GW*.88, G_BTW=GW*.43;
+const G_BH =GH*.84;
+const G_BYB=G_BCY+G_BH*.52, G_BYT=G_BCY-G_BH*.48;
+const G_VPX=GW*.5,  G_VPY=GH*.1;
+const FILES_VIZ='abcdefgh';
+
+function gBoard(col,row){
+    const t=row/8;
+    const rW=G_BTW+(G_BW-G_BTW)*t;
+    const rY=G_BYT+(G_BYB-G_BYT)*t;
+    return{x:G_BCX-rW/2+(col/8)*rW, y:rY};
+}
+function gCell(c,r){
+    const tl=gBoard(c,r),tr=gBoard(c+1,r),bl=gBoard(c,r+1),br=gBoard(c+1,r+1);
+    return{x:(tl.x+tr.x+bl.x+br.x)/4, y:(tl.y+tr.y+bl.y+br.y)/4};
 }
 
-function resetGame() {
-    initBoard();
-    createBoardUI();
-    document.getElementById('movesList').innerHTML='';
-    fullMoveData=[];
-    moveHistory=[];
-    moveNumber=1;
-    gameEnded=false;
-    vizMoveIndex=0;
-    vizLines=[];
-    document.getElementById('vizProgress').textContent='';
-    if(vizP5) { vizP5.clear(); }
-}
+function initViz(){
+    const canvas=document.getElementById('posterCanvas');
+    const frame=canvas.parentElement;
 
-function undoMove() {
-    alert('Undo feature: Please start a new game.');
-}
+    vizP5=new p5(function(p){
+        let SCALE;
 
-let vizP5 = null;
-let vizLines = [];
-let vizMoveIndex = 0;
-let vizNeedsUpdate = false;
-
-function initViz() {
-    const canvas = document.getElementById('posterCanvas');
-    const frame  = canvas.parentElement;
-
-    vizP5 = new p5(function(p) {
-        let W, H;
-
-        function boardToScreen(col, row) {
-            const BCX=W*0.5, BCY=H*0.36;
-            const BOARD_W=W*0.88, BOARD_TOP_W=W*0.68;
-            const BOARD_H=H*0.46;
-            const BY_BOT=BCY+BOARD_H*0.52, BY_TOP=BCY-BOARD_H*0.48;
-            const t=row/8;
-            const rowY=BY_TOP+(BY_BOT-BY_TOP)*t;
-            const rowWidth=BOARD_TOP_W+(BOARD_W-BOARD_TOP_W)*t;
-            const rowX=BCX-rowWidth/2+(col/8)*rowWidth;
-            return {x:rowX, y:rowY};
+        function setupScale(){
+            SCALE=Math.min(frame.clientWidth/GW, frame.clientHeight/GH);
         }
 
-        function cellCenter(c, r) {
-            const tl=boardToScreen(c,r), tr2=boardToScreen(c+1,r);
-            const bl=boardToScreen(c,r+1), br=boardToScreen(c+1,r+1);
-            return {x:(tl.x+tr2.x+bl.x+br.x)/4, y:(tl.y+tr2.y+bl.y+br.y)/4};
+        // ── draw helpers ──
+        function glowLine(x1,y1,x2,y2,alpha,isW){
+            if(alpha<0.004)return;
+            const wm=isW?1:.55;
+            p.stroke(255,255,255,alpha*10*wm);p.strokeWeight(12);p.line(x1,y1,x2,y2);
+            p.stroke(255,255,255,alpha*22*wm);p.strokeWeight(5);  p.line(x1,y1,x2,y2);
+            p.stroke(255,255,255,alpha*65*wm);p.strokeWeight(1.8);p.line(x1,y1,x2,y2);
+            p.stroke(255,255,255,alpha*210*wm);p.strokeWeight(.6);p.line(x1,y1,x2,y2);
+        }
+        function drawNode(x,y,alpha,isW,r){
+            if(alpha<0.01)return;
+            const wm=isW?1:.55;
+            p.noFill();
+            p.stroke(255,255,255,alpha*30*wm);p.strokeWeight(2.5);p.circle(x,y,r*2.2);
+            p.stroke(255,255,255,alpha*80*wm);p.strokeWeight(.8); p.circle(x,y,r*1.4);
+            p.noStroke();p.fill(255,255,255,alpha*215*wm);        p.circle(x,y,r*.48);
+        }
+        function drawLabel(label,mx,my,alpha){
+            if(alpha<0.12)return;
+            const oa=alpha*Math.min(1,alpha*1.8);
+            p.textFont('monospace');p.noStroke();
+            p.textSize(42);p.textAlign(p.CENTER,p.CENTER);
+            p.fill(0,0,0,oa*160);p.text(label,mx+2,my+2);
+            p.fill(255,255,255,oa*Math.min(255,oa*300));p.text(label,mx,my);
         }
 
-        p.setup = function() {
-            const cv = p.createCanvas(frame.clientWidth, frame.clientHeight);
+        function drawBoard(){
+            // alternating cell fill — opacity 높임 (왼쪽 보드 수준)
+            for(let c=0;c<8;c++) for(let r=0;r<8;r++){
+                if((c+r)%2===0){
+                    const tl=gBoard(c,r),tr=gBoard(c+1,r),bl=gBoard(c,r+1),br=gBoard(c+1,r+1);
+                    p.beginShape();p.noStroke();p.fill(255,255,255,18);
+                    p.vertex(tl.x,tl.y);p.vertex(tr.x,tr.y);p.vertex(br.x,br.y);p.vertex(bl.x,bl.y);
+                    p.endShape(p.CLOSE);
+                }
+            }
+            // grid lines
+            p.stroke(255,255,255,28);p.strokeWeight(.8);
+            for(let i=0;i<=8;i++){
+                const a=gBoard(i,0),b=gBoard(i,8);p.line(a.x,a.y,b.x,b.y);
+                const c=gBoard(0,i),d=gBoard(8,i);p.line(c.x,c.y,d.x,d.y);
+            }
+            // intersection ticks
+            for(let c=0;c<=8;c++) for(let r=0;r<=8;r++){
+                const pt=gBoard(c,r);
+                p.stroke(255,255,255,45);p.strokeWeight(.8);
+                p.line(pt.x-4,pt.y,pt.x+4,pt.y);
+                p.line(pt.x,pt.y-4,pt.x,pt.y+4);
+            }
+            // corner brackets
+            const bk=32;
+            [[gBoard(0,0),1,1],[gBoard(8,0),-1,1],[gBoard(0,8),1,-1],[gBoard(8,8),-1,-1]]
+                .forEach(([pt,sx,sy])=>{
+                    p.stroke(255,255,255,120);p.strokeWeight(1.5);
+                    p.line(pt.x,pt.y,pt.x+sx*bk,pt.y+sy*.12*bk);
+                    p.line(pt.x,pt.y,pt.x+sx*.15*bk,pt.y+sy*bk*.55);
+                });
+            // coord labels — GW 기준 고정 크기 (SCALE 곱하면 너무 작아짐)
+            p.textFont('monospace');p.textSize(50);p.noStroke();p.fill(255,255,255,180);
+            p.textAlign(p.CENTER,p.TOP);
+            for(let c=0;c<8;c++){const pt=gBoard(c+.5,8.3);p.text(FILES_VIZ[c],pt.x,pt.y);}
+            p.textAlign(p.RIGHT,p.CENTER);
+            for(let r=0;r<8;r++){const pt=gBoard(-.25,r+.5);p.text(8-r,pt.x,pt.y);}
+            // vanishing point perspective lines
+            p.stroke(255,255,255,14);p.strokeWeight(.6);
+            for(let i=0;i<=8;i+=2){const n=gBoard(i,8);p.line(n.x,n.y,G_VPX,G_VPY);}
+        }
+
+        p.setup=function(){
+            syncPosterHeight();
+            setupScale();
+            const CW=Math.round(GW*SCALE), CH=Math.round(GH*SCALE);
+            const cv=p.createCanvas(GW,GH);
             cv.parent(frame);
             canvas.style.display='none';
-            W=p.width; H=p.height;
-            p.frameRate(12);
-            p.strokeCap(p.ROUND);
+            // scale canvas element to fit frame
+            cv.canvas.style.width =CW+'px';
+            cv.canvas.style.height=CH+'px';
+            p.frameRate(30);p.strokeCap(p.ROUND);
         };
 
-        p.windowResized = function() {
-            p.resizeCanvas(frame.clientWidth, frame.clientHeight);
-            W=p.width; H=p.height;
+        p.windowResized=function(){
+            syncPosterHeight();
+            setupScale();
+            const CW=Math.round(GW*SCALE), CH=Math.round(GH*SCALE);
+            // keep internal resolution at GW×GH, only change display size
+            vizP5.canvas.style.width =CW+'px';
+            vizP5.canvas.style.height=CH+'px';
         };
 
-        p.draw = function() {
-            p.background(5,5,4);
-            drawBoard(p, boardToScreen);
-
-            if (vizNeedsUpdate && vizMoveIndex < fullMoveData.length) {
-                while (vizMoveIndex < fullMoveData.length) {
+        p.draw=function(){
+            // ingest new moves
+            if(vizNeedsUpdate&&vizMoveIndex<fullMoveData.length){
+                while(vizMoveIndex<fullMoveData.length){
                     const m=fullMoveData[vizMoveIndex];
-                    const from=cellCenter(m.fromCol,m.fromRow);
-                    const to=cellCenter(m.toCol,m.toRow);
+                    const from=gCell(m.fromCol,m.fromRow);
+                    const to  =gCell(m.toCol,  m.toRow);
+                    const lbl =FILES_VIZ[m.fromCol]+(8-m.fromRow)+'→'+FILES_VIZ[m.toCol]+(8-m.toRow);
                     vizLines.push({
-                        x1:from.x, y1:from.y, x2:to.x, y2:to.y,
-                        alpha:0, targetAlpha:m.side==='white'?1.0:0.6,
-                        isWhite:m.side==='white'
+                        x1:from.x,y1:from.y,
+                        x2:to.x,  y2:to.y,
+                        mx:(from.x+to.x)/2, my:(from.y+to.y)/2,
+                        label:lbl,
+                        alpha:0, target:m.side==='white'?1.0:0.65,
+                        isW:m.side==='white', age:0
                     });
                     vizMoveIndex++;
                 }
@@ -656,218 +847,420 @@ function initViz() {
                     `${vizMoveIndex} move${vizMoveIndex!==1?'s':''}`;
             }
 
-            vizLines.forEach(l => {
-                if(l.alpha<l.targetAlpha) l.alpha=Math.min(l.targetAlpha, l.alpha+0.12);
+            // age & fade
+            vizLines.forEach(l=>{
+                l.age++;
+                if(l.alpha<l.target) l.alpha=Math.min(l.target,l.alpha+.08);
             });
 
-            vizLines.forEach(l => {
-                if(l.alpha<0.01) return;
-                drawGlowLine(p,l.x1,l.y1,l.x2,l.y2,l.alpha,l.isWhite);
-                drawNode(p,l.x1,l.y1,l.alpha*0.5,l.isWhite,W*0.012);
-                drawNode(p,l.x2,l.y2,l.alpha,l.isWhite,W*0.016);
-            });
-
-            drawMovesText(p, W, H);
-        };
-
-        function drawBoard(p, bts) {
-            for(let c=0;c<8;c++) for(let r=0;r<8;r++) {
-                if((c+r)%2===0) {
-                    const tl=bts(c,r), tr2=bts(c+1,r), bl=bts(c,r+1), br=bts(c+1,r+1);
-                    p.beginShape(); p.noStroke(); p.fill(255,255,255,17);
-                    p.vertex(tl.x,tl.y); p.vertex(tr2.x,tr2.y);
-                    p.vertex(br.x,br.y); p.vertex(bl.x,bl.y);
-                    p.endShape(p.CLOSE);
-                }
-            }
-            p.stroke(255,255,255,14); p.strokeWeight(0.5);
-            for(let i=0;i<=8;i++) {
-                const a=bts(i,0),b=bts(i,8); p.line(a.x,a.y,b.x,b.y);
-                const c2=bts(0,i),d=bts(8,i); p.line(c2.x,c2.y,d.x,d.y);
-            }
-            for(let c=0;c<=8;c++) for(let r=0;r<=8;r++) {
-                const pt=bts(c,r);
-                p.stroke(255,255,255,24); p.strokeWeight(0.5);
-                p.line(pt.x-3,pt.y,pt.x+3,pt.y);
-                p.line(pt.x,pt.y-3,pt.x,pt.y+3);
-            }
-            const bk=W*0.03;
-            [[bts(0,0),1,1],[bts(8,0),-1,1],[bts(0,8),1,-1],[bts(8,8),-1,-1]]
-                .forEach(([pt,sx,sy]) => {
-                    p.stroke(255,255,255,70); p.strokeWeight(1);
-                    p.line(pt.x,pt.y,pt.x+sx*bk,pt.y+sy*0.3*bk*0.4);
-                    p.line(pt.x,pt.y,pt.x+sx*0.15*bk,pt.y+sy*bk*0.55);
-                });
-            p.textFont('monospace'); p.textSize(W*0.022); p.noStroke(); p.fill(255,255,255,80);
-            p.textAlign(p.CENTER,p.TOP);
-            const FILES='abcdefgh';
-            for(let c=0;c<8;c++) { const pt=bts(c+0.5,8.5); p.text(FILES[c],pt.x,pt.y); }
-            p.textAlign(p.RIGHT,p.CENTER);
-            for(let r=0;r<8;r++) { const pt=bts(-0.3,r+0.5); p.text(8-r,pt.x,pt.y); }
-        }
-
-        function drawGlowLine(p,x1,y1,x2,y2,alpha,isW) {
-            if(alpha<0.004) return;
-            const wm=isW?1:0.55;
-            p.stroke(255,255,255,alpha*10*wm); p.strokeWeight(10); p.line(x1,y1,x2,y2);
-            p.stroke(255,255,255,alpha*22*wm); p.strokeWeight(4);  p.line(x1,y1,x2,y2);
-            p.stroke(255,255,255,alpha*65*wm); p.strokeWeight(1.6);p.line(x1,y1,x2,y2);
-            p.stroke(255,255,255,alpha*210*wm);p.strokeWeight(0.5);p.line(x1,y1,x2,y2);
-        }
-
-        function drawNode(p,x,y,alpha,isW,r) {
-            if(alpha<0.01) return;
-            const wm=isW?1:0.55;
-            p.noFill();
-            p.stroke(255,255,255,alpha*30*wm); p.strokeWeight(2); p.circle(x,y,r*2.2);
-            p.stroke(255,255,255,alpha*80*wm); p.strokeWeight(0.7);p.circle(x,y,r*1.4);
-            p.noStroke(); p.fill(255,255,255,alpha*215*wm); p.circle(x,y,r*0.45);
-        }
-
-        function drawMovesText(p, W, H) {
-            if(moveHistory.length===0) return;
-            const pairs=[];
-            for(let i=0;i<moveHistory.length;i+=2) {
-                const w=moveHistory[i]?.notation||'';
-                const b=moveHistory[i+1]?.notation||'';
-                pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
-            }
-            const fontSize=W*0.022;
-            p.textFont('monospace'); p.textSize(fontSize); p.noStroke();
-            const startY=H*0.72, colW=W*0.44, cols=2;
-            const rowH=fontSize*1.8;
-            const maxRows=Math.floor((H*0.26)/rowH);
-            p.stroke(255,255,255,35); p.strokeWeight(0.5);
-            p.line(W*0.06, startY-14, W*0.94, startY-14);
-            p.noStroke(); p.fill(255,255,255,90);
-            p.textSize(W*0.018); p.textAlign(p.LEFT, p.BOTTOM);
-            p.text('MOVE LOG', W*0.06, startY-18);
-            p.textSize(fontSize); p.textAlign(p.LEFT, p.TOP);
-            pairs.forEach((txt,i) => {
-                const col=i%cols, row=Math.floor(i/cols);
-                if(row>=maxRows) return;
-                p.fill(255,255,255,140);
-                p.text(txt, W*0.06+col*colW, startY+row*rowH);
-            });
-        }
-    });
-}
-
-function exportPoster() {
-    new p5(function(p) {
-        const W=2048, H=3072;
-
-        function boardToScreen(col,row) {
-            const BCX=W*0.5, BCY=H*0.36;
-            const BOARD_W=W*0.88, BOARD_TOP_W=W*0.68;
-            const BOARD_H=H*0.46;
-            const BY_BOT=BCY+BOARD_H*0.52, BY_TOP=BCY-BOARD_H*0.48;
-            const t=row/8;
-            const rowY=BY_TOP+(BY_BOT-BY_TOP)*t;
-            const rowWidth=BOARD_TOP_W+(BOARD_W-BOARD_TOP_W)*t;
-            const rowX=BCX-rowWidth/2+(col/8)*rowWidth;
-            return {x:rowX, y:rowY};
-        }
-
-        function cellCenter(c,r) {
-            const tl=boardToScreen(c,r), tr2=boardToScreen(c+1,r);
-            const bl=boardToScreen(c,r+1), br=boardToScreen(c+1,r+1);
-            return {x:(tl.x+tr2.x+bl.x+br.x)/4, y:(tl.y+tr2.y+bl.y+br.y)/4};
-        }
-
-        p.setup = function() {
-            const cv=p.createCanvas(W,H);
-            cv.parent(document.body);
-            cv.elt.style.display='none';
-            p.noLoop(); p.strokeCap(p.ROUND);
-        };
-
-        p.draw = function() {
             p.background(5,5,4);
-            for(let c=0;c<8;c++) for(let r=0;r<8;r++) {
-                if((c+r)%2===0) {
-                    const tl=boardToScreen(c,r), tr2=boardToScreen(c+1,r);
-                    const bl=boardToScreen(c,r+1), br=boardToScreen(c+1,r+1);
-                    p.beginShape(); p.noStroke(); p.fill(255,255,255,17);
-                    p.vertex(tl.x,tl.y); p.vertex(tr2.x,tr2.y);
-                    p.vertex(br.x,br.y); p.vertex(bl.x,bl.y);
-                    p.endShape(p.CLOSE);
+            drawBoard();
+
+            const newestIdx=vizLines.length-1;
+            // sort by alpha so bright lines render on top
+            const sorted=[...vizLines].map((l,i)=>({...l,_i:i})).sort((a,b)=>a.alpha-b.alpha);
+
+            for(const l of sorted){
+                if(l.alpha<0.01)continue;
+                const isN=(l._i===newestIdx);
+                if(isN){
+                    glowLine(l.x1,l.y1,l.x2,l.y2,l.alpha,l.isW);
+                    drawNode(l.x1,l.y1,l.alpha*.5,l.isW,9);
+                    drawNode(l.x2,l.y2,l.alpha,   l.isW,12);
+                    if(l.alpha>.25) drawLabel(l.label,l.mx,l.my,l.alpha);
+                } else {
+                    glowLine(l.x1,l.y1,l.x2,l.y2,l.alpha,l.isW);
+                    drawNode(l.x1,l.y1,l.alpha*.5,l.isW,9);
+                    drawNode(l.x2,l.y2,l.alpha,   l.isW,12);
+                    if(l.alpha>.2) drawLabel(l.label,l.mx,l.my,l.alpha);
                 }
             }
-            p.stroke(255,255,255,14); p.strokeWeight(1);
-            for(let i=0;i<=8;i++) {
-                const a=boardToScreen(i,0),b=boardToScreen(i,8); p.line(a.x,a.y,b.x,b.y);
-                const c2=boardToScreen(0,i),d=boardToScreen(8,i); p.line(c2.x,c2.y,d.x,d.y);
-            }
-            for(let c=0;c<=8;c++) for(let r=0;r<=8;r++) {
-                const pt=boardToScreen(c,r);
-                p.stroke(255,255,255,24); p.strokeWeight(1);
-                p.line(pt.x-5,pt.y,pt.x+5,pt.y); p.line(pt.x,pt.y-5,pt.x,pt.y+5);
-            }
-            const bk=W*0.03;
-            [[boardToScreen(0,0),1,1],[boardToScreen(8,0),-1,1],
-             [boardToScreen(0,8),1,-1],[boardToScreen(8,8),-1,-1]]
-                .forEach(([pt,sx,sy]) => {
-                    p.stroke(255,255,255,70); p.strokeWeight(2);
-                    p.line(pt.x,pt.y,pt.x+sx*bk,pt.y+sy*0.3*bk*0.4);
-                    p.line(pt.x,pt.y,pt.x+sx*0.15*bk,pt.y+sy*bk*0.55);
-                });
-            const FILES='abcdefgh';
-            p.textFont('monospace'); p.textSize(W*0.022); p.noStroke(); p.fill(255,255,255,80);
-            p.textAlign(p.CENTER,p.TOP);
-            for(let c=0;c<8;c++) { const pt=boardToScreen(c+0.5,8.5); p.text(FILES[c],pt.x,pt.y); }
-            p.textAlign(p.RIGHT,p.CENTER);
-            for(let r=0;r<8;r++) { const pt=boardToScreen(-0.3,r+0.5); p.text(8-r,pt.x,pt.y); }
-
-            fullMoveData.forEach(m => {
-                const from=cellCenter(m.fromCol,m.fromRow);
-                const to=cellCenter(m.toCol,m.toRow);
-                const isW=m.side==='white';
-                const alpha=isW?1.0:0.6, wm=isW?1:0.55;
-                const r=W*0.016;
-                p.stroke(255,255,255,alpha*10*wm); p.strokeWeight(18); p.line(from.x,from.y,to.x,to.y);
-                p.stroke(255,255,255,alpha*22*wm); p.strokeWeight(7);  p.line(from.x,from.y,to.x,to.y);
-                p.stroke(255,255,255,alpha*65*wm); p.strokeWeight(2.5);p.line(from.x,from.y,to.x,to.y);
-                p.stroke(255,255,255,alpha*210*wm);p.strokeWeight(0.8);p.line(from.x,from.y,to.x,to.y);
-                p.noFill();
-                p.stroke(255,255,255,alpha*80*wm); p.strokeWeight(1.5);p.circle(to.x,to.y,r*1.4);
-                p.noStroke(); p.fill(255,255,255,alpha*215*wm); p.circle(to.x,to.y,r*0.45);
-            });
-
-            const pairs=[];
-            for(let i=0;i<moveHistory.length;i+=2) {
-                const w=moveHistory[i]?.notation||'';
-                const b=moveHistory[i+1]?.notation||'';
-                pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
-            }
-            const fontSize=W*0.022;
-            const startY=H*0.72, colW=W*0.44, cols=2, rowH=fontSize*1.8;
-            const maxRows=Math.floor((H*0.26)/rowH);
-            p.stroke(255,255,255,35); p.strokeWeight(1);
-            p.line(W*0.06,startY-20,W*0.94,startY-20);
-            p.noStroke(); p.fill(255,255,255,90);
-            p.textFont('monospace'); p.textSize(W*0.018);
-            p.textAlign(p.LEFT,p.BOTTOM); p.text('MOVE LOG',W*0.06,startY-24);
-            p.textSize(fontSize); p.textAlign(p.LEFT,p.TOP);
-            pairs.forEach((txt,i) => {
-                const col=i%cols, row=Math.floor(i/cols);
-                if(row>=maxRows) return;
-                p.fill(255,255,255,140);
-                p.text(txt, W*0.06+col*colW, startY+row*rowH);
-            });
-
-            const link=document.createElement('a');
-            link.download='chess_game_journey.jpg';
-            link.href=p.canvas.toDataURL('image/jpeg',0.97);
-            link.click();
-            p.remove();
         };
     });
 }
 
+// ─────────────────────────────────────────────
+//  TIMELAPSE DURATION
+// ─────────────────────────────────────────────
+function getTimelapseDuration(){
+    const n=fullMoveData.length; if(n===0)return 5;
+    return Math.round(Math.min(10,Math.max(5,n*0.28)));
+}
+
+// ─────────────────────────────────────────────
+//  SHEET STATE
+// ─────────────────────────────────────────────
+let sheetMode='poster';
+let lastBlob=null, lastBlobType='image';
+let isRendering=false;
+
+function openSheet(mode){
+    sheetMode=mode;
+    resetSheetUI();
+    const dur=getTimelapseDuration();
+    const n=fullMoveData.length;
+    if(mode==='poster'){
+        document.getElementById('sheetTitle').textContent='Save Poster';
+        document.getElementById('sheetMeta').textContent='Choose a format';
+    } else {
+        document.getElementById('sheetTitle').textContent='Save Timelapse';
+        document.getElementById('sheetMeta').textContent= n===0
+            ? 'Play some moves first'
+            : `${n} move${n!==1?'s':''} · ~${dur} sec`;
+    }
+    document.getElementById('sheetBackdrop').classList.add('active');
+    document.getElementById('bottomSheet').classList.add('active');
+}
+function closeSheet(){
+    if(isRendering) return;
+    document.getElementById('sheetBackdrop').classList.remove('active');
+    document.getElementById('bottomSheet').classList.remove('active');
+}
+function resetSheetUI(){
+    document.getElementById('card916').classList.remove('selected','disabled');
+    document.getElementById('card45').classList.remove('selected','disabled');
+    document.getElementById('renderProgress').classList.remove('active');
+    document.getElementById('progressFill').style.width='0%';
+    document.getElementById('btnSheetShare').classList.remove('visible');
+    lastBlob=null;
+}
+
+function handleRatioSelect(ratio){
+    if(isRendering) return;
+    if(sheetMode==='poster'){
+        savePosterImage(ratio);
+    } else {
+        if(fullMoveData.length===0){ showToast('Play some moves first!'); return; }
+        saveTimelapse(ratio);
+    }
+    document.getElementById('card'+ratio).classList.add('selected');
+}
+
+// ─────────────────────────────────────────────
+//  SAVE POSTER IMAGE
+// ─────────────────────────────────────────────
+function savePosterImage(ratio){
+    const[W,H]=ratio==='916'?[1080,1920]:[1080,1350];
+    const off=document.createElement('canvas'); off.width=W; off.height=H;
+    const ctx=off.getContext('2d');
+    drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory);
+    off.toBlob(blob=>{
+        lastBlob=blob; lastBlobType='image';
+        triggerDownload(blob,`chess_poster_${ratio}.jpg`);
+        document.getElementById('btnSheetShare').classList.add('visible');
+        showToast('Poster saved!');
+    },'image/jpeg',0.97);
+}
+
+// ─────────────────────────────────────────────
+//  SAVE TIMELAPSE VIDEO  — 라인이 "그려지는" 애니메이션
+// ─────────────────────────────────────────────
+function saveTimelapse(ratio){
+    const[W,H]=ratio==='916'?[1080,1920]:[1080,1350];
+    const n=fullMoveData.length;
+    if(n===0){showToast('Play some moves first!');return;}
+
+    // 속도: 무브당 0.18초 그리기 + 0.06초 홀드 (기존보다 ~3배 빠름)
+    const PER_MOVE=0.18;
+    const HOLD=0.06;
+    const STEP_T=PER_MOVE+HOLD;
+    const durationSec=Math.min(12,Math.max(3, n*STEP_T));
+    const FPS=30;
+    const TOTAL_FRAMES=Math.ceil(durationSec*FPS);
+
+    const mimeType=
+        MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':
+        MediaRecorder.isTypeSupported('video/webm')?'video/webm':null;
+    if(!mimeType||!window.MediaRecorder){
+        showToast('Timelapse not supported on this device.');
+        return;
+    }
+
+    isRendering=true;
+    document.getElementById('card916').classList.add('disabled');
+    document.getElementById('card45').classList.add('disabled');
+    document.getElementById('renderProgress').classList.add('active');
+    document.getElementById('progressLabel').textContent='Rendering…';
+
+    const off=document.createElement('canvas'); off.width=W; off.height=H;
+    const ctx=off.getContext('2d');
+    ctx.lineCap='round';
+
+    const stream=off.captureStream(FPS);
+    const recorder=new MediaRecorder(stream,{mimeType,videoBitsPerSecond:10000000});
+    const chunks=[];
+    recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+    recorder.onstop=()=>{
+        const blob=new Blob(chunks,{type:'video/webm'});
+        lastBlob=blob; lastBlobType='video';
+        isRendering=false;
+        document.getElementById('renderProgress').classList.remove('active');
+        document.getElementById('card916').classList.remove('disabled');
+        document.getElementById('card45').classList.remove('disabled');
+        document.getElementById('btnSheetShare').classList.add('visible');
+        triggerDownload(blob,`chess_timelapse_${ratio}.webm`);
+        showToast('Timelapse saved!');
+    };
+
+    // ── geometry ──
+    const SS=W/1080;
+    const is916=(H/W)>1.6;
+    const MARGIN=W*0.05;
+    const TITLE_TOP=is916?H*0.10:H*0.08;
+    const TITLE_H=is916?H*0.055:H*0.07;
+    const BOARD_TOP=TITLE_TOP+TITLE_H+(is916?H*0.010:H*0.015);
+    const BOARD_H=is916?H*0.66:H*0.65;
+    const LOG_TOP=BOARD_TOP+BOARD_H+H*0.018;
+    const LOG_H=H-LOG_TOP-H*0.02;
+    const bScaleX=(W-MARGIN*2)/GW, bScaleY=BOARD_H/GH;
+    const bScale=Math.min(bScaleX,bScaleY);
+    const bOffX=(W-GW*bScale)/2;
+    const bOffY=BOARD_TOP+(BOARD_H-GH*bScale)/2;
+    function tbd(col,row){const p=gBoard(col,row);return{x:bOffX+p.x*bScale,y:bOffY+p.y*bScale};}
+    function tcl(c,r){const p=gCell(c,r);return{x:bOffX+p.x*bScale,y:bOffY+p.y*bScale};}
+
+    // ── static base draw ──
+    function drawStaticBase(histUpTo){
+        ctx.fillStyle='rgb(5,5,4)';ctx.fillRect(0,0,W,H);
+
+        // title — center aligned
+        const tFS=is916?49*SS:46*SS;
+        ctx.font=`300 ${tFS}px Geist,"Helvetica Neue",Arial,sans-serif`;
+        const t1='Your Game Journey ', t2=': STL';
+        const t1W=ctx.measureText(t1).width, t2W=ctx.measureText(t2).width;
+        const tX=(W-t1W-t2W)/2;
+
+        ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1*SS;ctx.lineCap='butt';
+        ctx.beginPath();ctx.moveTo(W*0.1,TITLE_TOP-H*0.014);ctx.lineTo(W*0.9,TITLE_TOP-H*0.014);ctx.stroke();
+
+        ctx.textBaseline='top';ctx.textAlign='left';
+        ctx.fillStyle='rgba(255,255,255,0.92)';ctx.fillText(t1,tX,TITLE_TOP);
+        ctx.fillStyle='rgba(255,255,255,0.38)';ctx.fillText(t2,tX+t1W,TITLE_TOP);
+
+        ctx.fillStyle='rgba(255,255,255,0.30)';
+        ctx.font=`${(is916?26:24)*SS}px monospace`;ctx.textAlign='center';ctx.textBaseline='top';
+        ctx.fillText(`${n} moves`,W/2,TITLE_TOP+tFS*1.25);
+
+        ctx.strokeStyle='rgba(255,255,255,0.10)';ctx.lineWidth=1*SS;
+        ctx.beginPath();ctx.moveTo(W*0.1,BOARD_TOP-H*0.012);ctx.lineTo(W*0.9,BOARD_TOP-H*0.012);ctx.stroke();
+        for(let c=0;c<8;c++)for(let r=0;r<8;r++)if((c+r)%2===0){
+            const tl=tbd(c,r),tr2=tbd(c+1,r),bl=tbd(c,r+1),br=tbd(c+1,r+1);
+            ctx.beginPath();ctx.moveTo(tl.x,tl.y);ctx.lineTo(tr2.x,tr2.y);ctx.lineTo(br.x,br.y);ctx.lineTo(bl.x,bl.y);
+            ctx.closePath();ctx.fillStyle='rgba(255,255,255,0.04)';ctx.fill();
+        }
+        ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1.5*bScale;ctx.lineCap='butt';
+        for(let i=0;i<=8;i++){
+            const a=tbd(i,0),b=tbd(i,8);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+            const a2=tbd(0,i),b2=tbd(8,i);ctx.beginPath();ctx.moveTo(a2.x,a2.y);ctx.lineTo(b2.x,b2.y);ctx.stroke();
+        }
+        const tk=12*bScale;
+        ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.lineWidth=1.5*bScale;
+        for(let c=0;c<=8;c++)for(let r=0;r<=8;r++){
+            const pt=tbd(c,r);
+            ctx.beginPath();ctx.moveTo(pt.x-tk,pt.y);ctx.lineTo(pt.x+tk,pt.y);ctx.stroke();
+            ctx.beginPath();ctx.moveTo(pt.x,pt.y-tk);ctx.lineTo(pt.x,pt.y+tk);ctx.stroke();
+        }
+        const bk2=92*bScale;
+        [[tbd(0,0),1,1],[tbd(8,0),-1,1],[tbd(0,8),1,-1],[tbd(8,8),-1,-1]].forEach(([pt,sx,sy])=>{
+            ctx.strokeStyle='rgba(255,255,255,0.55)';ctx.lineWidth=3*bScale;
+            ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(pt.x+sx*bk2,pt.y+sy*.12*bk2);ctx.stroke();
+            ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(pt.x+sx*.15*bk2,pt.y+sy*bk2*.55);ctx.stroke();
+        });
+        const cSz=Math.round(50*bScale);
+        ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font=`${cSz}px monospace`;
+        ctx.textAlign='center';ctx.textBaseline='top';
+        for(let c=0;c<8;c++){const pt=tbd(c+.5,8.24);ctx.fillText(FILES_VIZ[c],pt.x,pt.y);}
+        ctx.textAlign='right';ctx.textBaseline='middle';
+        for(let r=0;r<8;r++){const pt=tbd(-.18,r+.5);ctx.fillText(8-r,pt.x,pt.y);}
+        const vx=bOffX+GW*.5*bScale,vy=bOffY+GH*.1*bScale;
+        ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1.2*bScale;
+        for(let i=0;i<=8;i+=2){const nn=tbd(i,8);ctx.beginPath();ctx.moveTo(nn.x,nn.y);ctx.lineTo(vx,vy);ctx.stroke();}
+        ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1*SS;ctx.lineCap='butt';
+        ctx.beginPath();ctx.moveTo(MARGIN,LOG_TOP-H*0.010);ctx.lineTo(W-MARGIN,LOG_TOP-H*0.010);ctx.stroke();
+        if(histUpTo>0){
+            const sub=moveHistory.slice(0,histUpTo);
+            const pairs=[];for(let i=0;i<sub.length;i+=2){
+                const w=sub[i]?.notation||'',b=sub[i+1]?.notation||'';
+                pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
+            }
+            ctx.save();
+            ctx.beginPath();ctx.rect(0,LOG_TOP,W,H-LOG_TOP);ctx.clip();
+            ctx.fillStyle='rgba(255,255,255,0.28)';ctx.font=`${19*SS}px monospace`;
+            ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('MOVE LOG',MARGIN,LOG_TOP);
+            const fs=23*SS,rowH2=fs*1.55,cols=4,colW=(W-MARGIN*2)/cols,labelGap=26*SS;
+            ctx.font=`${fs}px monospace`;
+            pairs.forEach((txt,i)=>{
+                const col=i%cols,row=Math.floor(i/cols);
+                ctx.fillStyle='rgba(255,255,255,0.55)';ctx.textAlign='left';
+                ctx.fillText(txt,MARGIN+col*colW,LOG_TOP+labelGap+row*rowH2);
+            });
+            ctx.restore();
+        }
+    }
+
+    // ── draw line segment 0→t ──
+    function drawLineAt(from,to,t,isW,alpha){
+        if(t<=0)return;
+        const ex=from.x+(to.x-from.x)*t, ey=from.y+(to.y-from.y)*t;
+        const wm=isW?1:0.55;
+        ctx.lineCap='round';
+        [[36*bScale,alpha*0.039*wm],[15*bScale,alpha*0.086*wm],
+         [5.5*bScale,alpha*0.255*wm],[1.8*bScale,alpha*0.824*wm]].forEach(([lw,a])=>{
+            ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.lineWidth=lw;
+            ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(ex,ey);ctx.stroke();
+        });
+        const Rs=28*bScale;
+        ctx.strokeStyle=`rgba(255,255,255,${alpha*0.118*wm})`;ctx.lineWidth=7*bScale;
+        ctx.beginPath();ctx.arc(from.x,from.y,Rs*1.1,0,Math.PI*2);ctx.stroke();
+        ctx.strokeStyle=`rgba(255,255,255,${alpha*0.314*wm})`;ctx.lineWidth=2.4*bScale;
+        ctx.beginPath();ctx.arc(from.x,from.y,Rs*.7,0,Math.PI*2);ctx.stroke();
+        ctx.fillStyle=`rgba(255,255,255,${alpha*0.843*wm*.5})`;
+        ctx.beginPath();ctx.arc(from.x,from.y,Rs*.24,0,Math.PI*2);ctx.fill();
+        const Re=36*bScale;
+        ctx.strokeStyle=`rgba(255,255,255,${alpha*0.314*wm})`;ctx.lineWidth=2.4*bScale;
+        ctx.beginPath();ctx.arc(ex,ey,Re*.7,0,Math.PI*2);ctx.stroke();
+        ctx.fillStyle=`rgba(255,255,255,${alpha*0.843*wm})`;
+        ctx.beginPath();ctx.arc(ex,ey,Re*.24,0,Math.PI*2);ctx.fill();
+    }
+
+    // ── draw fully completed line with label ──
+    function drawLineFull(from,to,isW,alpha){
+        drawLineAt(from,to,1,isW,alpha);
+        const mx=(from.x+to.x)/2,my=(from.y+to.y)/2;
+        const lbl=FILES_VIZ[from._fc]+(8-from._fr)+'→'+FILES_VIZ[to._tc]+(8-to._tr);
+        const oa=alpha*Math.min(1,alpha*1.8);
+        const lblSize=Math.round(42*bScale);
+        ctx.font=`${lblSize}px monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillStyle=`rgba(0,0,0,${oa*0.627})`;ctx.fillText(lbl,mx+2*bScale,my+2*bScale);
+        ctx.fillStyle=`rgba(255,255,255,${Math.min(1,oa*1.18)})`;ctx.fillText(lbl,mx,my);
+    }
+
+    // ── precompute endpoints ──
+    const lineData=fullMoveData.map(m=>{
+        const from=tcl(m.fromCol,m.fromRow);
+        const to  =tcl(m.toCol,  m.toRow);
+        from._fc=m.fromCol;from._fr=m.fromRow;
+        to._tc=m.toCol;to._tr=m.toRow;
+        return{from,to,isW:m.side==='white'};
+    });
+
+    // ── render each frame by index (no rAF time-drift) ──
+    recorder.start(100);
+    let frameIdx=0;
+
+    function renderNextFrame(){
+        if(frameIdx>TOTAL_FRAMES){
+            // last hold frame then stop
+            drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory);
+            setTimeout(()=>recorder.stop(),300);
+            return;
+        }
+
+        const elapsed=frameIdx/FPS;  // virtual time in seconds
+        const progress=Math.min(1,frameIdx/TOTAL_FRAMES);
+        const globalT=elapsed/STEP_T;
+        const currentMoveIdx=Math.floor(globalT);
+        // eased draw progress (ease-out)
+        const rawT=(globalT%1)/(PER_MOVE/STEP_T);
+        const drawT=Math.min(1, rawT<1 ? 1-(1-rawT)*(1-rawT) : 1); // ease-out quad
+
+        const doneMoves=Math.min(currentMoveIdx,n);
+
+        drawStaticBase(doneMoves*2);
+
+        for(let i=0;i<doneMoves&&i<n;i++){
+            const age=doneMoves-1-i;
+            const a=Math.max(0.18,1-age*0.028);
+            drawLineFull(lineData[i].from,lineData[i].to,lineData[i].isW,a);
+        }
+        if(currentMoveIdx<n){
+            drawLineAt(lineData[currentMoveIdx].from,lineData[currentMoveIdx].to,drawT,lineData[currentMoveIdx].isW,1.0);
+        }
+
+        document.getElementById('progressFill').style.width=(progress*100)+'%';
+        document.getElementById('progressLabel').textContent=
+            `Rendering… ${Math.round(progress*100)}%`;
+
+        frameIdx++;
+        // 짧은 setTimeout으로 MediaRecorder에 프레임 전달 기회 부여
+        setTimeout(renderNextFrame, 1000/FPS);
+    }
+
+    // 첫 프레임 시작 전 잠깐 대기 (recorder 초기화)
+    setTimeout(renderNextFrame, 80);
+}
+
+// ─────────────────────────────────────────────
+//  SHARE
+// ─────────────────────────────────────────────
+async function shareLastContent(){
+    if(!lastBlob){showToast('Generate a file first.');return;}
+    const ext=lastBlobType==='video'?'webm':'jpg';
+    const mime=lastBlobType==='video'?'video/webm':'image/jpeg';
+    const file=new File([lastBlob],`chess_${sheetMode}.${ext}`,{type:mime});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+        try{
+            await navigator.share({files:[file],title:'Chess STL',text:'My chess game visualization'});
+        } catch(err){
+            if(err.name!=='AbortError') triggerDownload(lastBlob,`chess_${sheetMode}.${ext}`);
+        }
+    } else {
+        triggerDownload(lastBlob,`chess_${sheetMode}.${ext}`);
+        showToast('Saved to downloads.');
+    }
+}
+
+function triggerDownload(blob,filename){
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ─────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────
+let toastTimer=null;
+function showToast(msg){
+    const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+// ─────────────────────────────────────────────
+//  SYNC POSTER HEIGHT — ResizeObserver로 즉시 반응
+// ─────────────────────────────────────────────
+function syncPosterHeight(){
+    if(window.innerWidth <= 768){
+        document.querySelector('.poster-frame').style.height = '';
+        return;
+    }
+    const boardCol    = document.querySelector('.board-col');
+    const posterFrame = document.querySelector('.poster-frame');
+    const boardH      = boardCol.getBoundingClientRect().height;
+    if(boardH > 0){
+        const label  = document.querySelector('.poster-col-label');
+        const labelH = label ? label.getBoundingClientRect().height + 12 : 24;
+        posterFrame.style.height = (boardH - labelH) + 'px';
+    }
+}
+
+// ResizeObserver: board-col 크기 바뀔 때마다 즉시 동기화
+if(window.ResizeObserver){
+    const ro = new ResizeObserver(()=>syncPosterHeight());
+    ro.observe(document.querySelector('.board-col'));
+}
+// 창 리사이즈 fallback
+window.addEventListener('resize', syncPosterHeight);
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
 initBoard();
 createBoardUI();
-initViz();
+// 레이아웃 두 프레임 기다린 후 확정 — 폰트/이미지 로드 후 reflow 완료 보장
+requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    syncPosterHeight();
+    initViz();
+}));
 </script>
 </body>
 </html>

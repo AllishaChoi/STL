@@ -12,7 +12,11 @@
   --black:#0a0a0a; --cream:#f4f3ef; --white:#ffffff;
   --g1:#eceae4; --g2:#c8c6be; --g3:#8a8a82; --g4:#4a4a44;
   --light:300; --med:500;
+  --pad-x: 80px;
 }
+@media (max-width: 900px) { :root { --pad-x: 40px; } }
+@media (max-width: 600px) { :root { --pad-x: 24px; } }
+
 html { scroll-behavior:smooth; }
 body { background:var(--cream); color:var(--black); font-family:'Geist',sans-serif; font-weight:300; min-height:100vh; }
 body::before {
@@ -28,7 +32,7 @@ body::before {
 .bg-white  { background:var(--white); color:var(--black); }
 
 /* shared */
-.sec-hdr { padding:32px 80px; border-bottom:1px solid currentColor; display:flex; align-items:baseline; justify-content:space-between; }
+.sec-hdr { padding:32px var(--pad-x); border-bottom:1px solid currentColor; display:flex; align-items:baseline; justify-content:space-between; }
 .bg-cream .sec-hdr, .bg-white .sec-hdr { border-bottom-color:var(--black); }
 .bg-black .sec-hdr { border-bottom-color:rgba(244,243,239,0.2); }
 .sec-title { font-weight:var(--med); font-size:32px; letter-spacing:-0.02em; }
@@ -38,20 +42,28 @@ body::before {
 .bg-black .mono-sm { color:rgba(244,243,239,0.4); }
 
 /* ── HERO (cream) ── */
-.hero { padding:64px 80px 80px; border-bottom:1px solid var(--black); }
+.hero { padding:64px var(--pad-x) 80px; border-bottom:1px solid var(--black); }
+.hero-inner { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:64px; flex-wrap: wrap; gap: 40px; }
+.hero-left { flex:0 0 auto; }
 .hero-eyebrow { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); margin-bottom:20px; }
-.hero-top { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:end; margin-bottom:64px; }
 .hero-title { font-weight:var(--light); font-size:72px; letter-spacing:-0.03em; line-height:0.95; }
 .hero-title em { font-style:italic; font-weight:var(--light); }
-.hero-right { display:flex; flex-direction:column; gap:20px; }
+.hero-right { width: 440px; max-width: 100%; padding-top:12px; display:flex; flex-direction:column; gap:20px; }
 .hero-desc { font-family:'GeistMono',monospace; font-size:13px; letter-spacing:0.05em; line-height:1.6; color:var(--g3); }
-.hero-stats { display:flex; gap:40px; border-top:1px solid rgba(10,10,10,0.13); padding-top:40px; }
+.hero-stats { display:flex; gap:40px; border-top:1px solid rgba(10,10,10,0.13); padding-top:40px; flex-wrap: wrap; }
 .stat-num { font-size:48px; font-weight:400; letter-spacing:-0.02em; display:block; line-height:1; margin-bottom:6px; }
 .stat-lbl { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); }
 
+/* ── 로고 ── */
+.hero-logo { margin-top:4px; }
+.logo-img { height:28px; width:auto; filter:brightness(0); opacity:0.85; }
+@media (max-width: 900px) {
+  .logo-img { height:22px; }
+}
+
 /* ── CATCHPHRASE (black) ── */
 .catchphrase {
-  padding:64px 80px; border-bottom:1px solid rgba(244,243,239,0.15);
+  padding:64px var(--pad-x); border-bottom:1px solid rgba(244,243,239,0.15);
   display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
 }
 .catch-main { font-family:'GeistMono',monospace; font-weight:700; font-size:52px; letter-spacing:-0.01em; line-height:1.05; }
@@ -60,7 +72,7 @@ body::before {
 .catch-sub { font-family:'GeistMono',monospace; font-size:13px; letter-spacing:0.07em; line-height:1.8; color:rgba(244,243,239,0.52); text-transform:uppercase; }
 
 /* ── LOGO (white) ── */
-.logo-section { padding:64px 80px; border-bottom:1px solid var(--black); display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; }
+.logo-section { padding:64px var(--pad-x); border-bottom:1px solid var(--black); display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; }
 .logo-display { display:flex; gap:40px; align-items:flex-end; }
 .logo-piece { display:flex; flex-direction:column; align-items:center; gap:0; }
 .logo-piece img { height:148px; width:auto; display:block; margin-bottom:20px; }
@@ -106,7 +118,7 @@ body::before {
 
 /* ── EVENT (white) ── */
 .event-inner { display:grid; grid-template-columns:1fr 1fr; }
-.event-left { padding:64px 80px; border-right:1px solid var(--black); display:flex; flex-direction:column; gap:28px; }
+.event-left { padding:64px var(--pad-x); border-right:1px solid var(--black); display:flex; flex-direction:column; gap:28px; }
 .ev-eyebrow { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--g3); }
 .ev-title { font-weight:var(--light); font-size:52px; letter-spacing:-0.03em; line-height:0.95; }
 .ev-title em { font-style:italic; }
@@ -124,9 +136,111 @@ body::before {
 .prating { font-family:'GeistMono',monospace; font-size:11px; color:rgba(244,243,239,0.38); }
 .ev-foot { font-family:'GeistMono',monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:rgba(244,243,239,0.22); padding-top:20px; border-top:1px solid rgba(244,243,239,0.1); margin-top:20px; }
 
-/* ── FOOTER ── */
-.site-footer { padding:32px 80px; border-top:1px solid var(--black); display:flex; justify-content:space-between; align-items:center; }
-.fcopy { font-family:'GeistMono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g3); }
+/* ── NAV ROW ── */
+.nav-row { padding:32px var(--pad-x); border-top:1px solid var(--black); display:flex; justify-content:space-between; align-items:center; }
+.btn-nav { font-family:'GeistMono',monospace; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; padding:8px 22px; border:1px solid rgba(10,10,10,0.25); background:transparent; color:var(--g3); cursor:pointer; transition:all 0.2s; }
+.btn-nav:hover { border-color:var(--black); color:var(--black); background:var(--g1); }
+.btn-nav:active { transform:scale(0.98); }
+
+/* ═══════════════════════════════════
+   RESPONSIVE — Tablet (≤ 900px)
+═══════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Hero */
+  .hero { padding-top:48px; padding-bottom:56px; }
+  .hero-title { font-size:56px; }
+  .hero-inner { gap:32px; }
+  .hero-logo { position:fixed; top:16px; right:20px; z-index:1000; background:var(--cream); padding:6px 10px; border:1px solid rgba(10,10,10,0.12); }
+  .stat-num { font-size:36px; }
+
+  /* Catchphrase */
+  .catchphrase { grid-template-columns:1fr; gap:32px; padding-top:48px; padding-bottom:48px; }
+  .catch-main { font-size:38px; }
+
+  /* Logo section */
+  .logo-section { grid-template-columns:1fr; gap:48px; }
+  .logo-display { justify-content: center; }
+  .logo-piece img { height:100px; }
+  .logo-piece-letter { font-size:56px; }
+
+  /* History */
+  .history-grid { grid-template-columns:1fr; }
+  .history-left { border-right:none; border-bottom:1px solid rgba(244,243,239,0.15); padding:40px var(--pad-x); flex-direction:row; flex-wrap:wrap; align-items:center; gap:24px; }
+  .history-left-title { font-size:36px; }
+
+  /* Contact */
+  .contact-grid { grid-template-columns:1fr; }
+  .ccard { border-right:none; border-bottom:1px solid var(--black); padding:32px var(--pad-x); }
+  .ccard:last-child { border-bottom:none; }
+  .cbot { grid-template-columns:1fr; }
+  .cbcell { padding:24px var(--pad-x); }
+  .cbcell:first-child { border-right:none; border-bottom:1px solid var(--black); }
+
+  /* Event */
+  .event-inner { grid-template-columns:1fr; }
+  .event-left { border-right:none; border-bottom:1px solid var(--black); padding:48px var(--pad-x); }
+  .event-right { padding:48px var(--pad-x); }
+  .ev-title { font-size:40px; }
+
+  /* Sec header */
+  .sec-title { font-size:24px; }
+  .sec-hdr { padding:24px var(--pad-x); }
+}
+
+/* ═══════════════════════════════════
+   RESPONSIVE — Mobile (≤ 600px)
+═══════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Hero */
+  .hero { padding-top:40px; padding-bottom:48px; }
+  .hero-inner { flex-direction:column; gap:28px; margin-bottom:44px; }
+  .hero-title { font-size:44px; }
+  .hero-right { width: 100%; max-width: 100%; padding-top: 0; }
+  .hero-stats { gap:24px; }
+  .stat-num { font-size:30px; }
+
+  /* Catchphrase */
+  .catchphrase { padding:40px var(--pad-x); gap:24px; }
+  .catch-main { font-size:28px; }
+  .catch-sub { font-size:11px; }
+
+  /* Logo section */
+  .logo-section { padding:40px var(--pad-x); gap:36px; }
+  .logo-display { gap:20px; }
+  .logo-piece img { height:72px; }
+  .logo-piece-letter { font-size:40px; }
+  .logo-div { height:64px; margin-bottom:40px; }
+  .logo-info h3 { font-size:22px; }
+
+  /* History */
+  .history-left { padding:32px var(--pad-x); }
+  .history-left-title { font-size:30px; }
+  .trow { grid-template-columns:72px 1fr; }
+  .tyear { padding:16px 14px; font-size:10px; }
+  .tcontent { padding:16px 20px; }
+  .tevent { font-size:14px; }
+  .tdetail { font-size:13px; }
+
+  /* Contact */
+  .ccard { padding:28px var(--pad-x); }
+  .cvalue { font-size:15px; }
+  .cbcell { padding:20px var(--pad-x); }
+
+  /* Event */
+  .event-left { padding:40px var(--pad-x); gap:20px; }
+  .event-right { padding:40px var(--pad-x); }
+  .ev-title { font-size:34px; }
+  .ev-row { flex-direction:column; gap:4px; }
+  .ev-label { min-width:unset; }
+
+  /* Sec header */
+  .sec-title { font-size:20px; }
+  .sec-hdr { padding:20px var(--pad-x); }
+
+  /* Nav */
+  .nav-row { flex-direction:column; gap:12px; }
+  .btn-nav { width:100%; text-align:center; padding:12px; }
+}
 </style>
 </head>
 <body>
@@ -135,12 +249,17 @@ body::before {
 <!-- 01 HERO — cream -->
 <div class="bg-cream">
   <div class="hero">
-    <div class="hero-eyebrow">About STL</div>
-    <div class="hero-top">
-      <h1 class="hero-title">Saint<br>Louis<br><em>Chess Club</em></h1>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow">About STL</div>
+        <h1 class="hero-title">Saint<br>Louis<br><em>Chess Club</em></h1>
+      </div>
       <div class="hero-right">
         <p class="hero-desc">Founded in 2008, the Saint Louis Chess Club has grown into one of the most prestigious chess institutions in the world — hosting elite tournaments, nurturing talent, and building a community where the game is celebrated at every level.</p>
         <p class="hero-desc" style="color:#4a4a44;">Located in the heart of St. Louis, Missouri, the club serves as both a competitive arena and a cultural hub, welcoming grandmasters and beginners alike under the same roof.</p>
+      </div>
+      <div class="hero-logo">
+        <a href="index.html"><img src="logo.png" alt="STL" class="logo-img"></a>
       </div>
     </div>
     <div class="hero-stats">
@@ -233,7 +352,7 @@ body::before {
   <div class="sec-hdr"><h2 class="sec-title">Information</h2><span class="sec-idx">03 / 04</span></div>
   <div class="contact-grid">
     <div class="ccard"><div class="ctype">Call Us</div><div class="cvalue">+1 (314) 361 2437</div><div class="cnote">We're here for you Monday through Friday, 10am–5pm ET.</div></div>
-    <div class="ccard"><div class="ctype">Email Us</div><div class="cvalue">hello@stlcc.com</div><div class="cnote">Our inbox is always open. We respond to email in the order received.</div></div>
+    <div class="ccard"><div class="ctype">Email Us</div><div class="cvalue">info@saintlouiscc.com</div><div class="cnote">Our inbox is always open. We respond to email in the order received.</div></div>
     <div class="ccard"><div class="ctype">Visit Us</div><div class="cvalue">4663 Maryland Ave<br>St. Louis, MO 63108</div><div class="cnote">Central West End — open to the public. Members welcome daily.</div></div>
   </div>
   <div class="cbot">
@@ -274,12 +393,12 @@ body::before {
   </div>
 </div>
 
-<!-- FOOTER — cream -->
+<!-- NAV ROW — cream -->
 <div class="bg-cream">
-  <footer class="site-footer">
-    <span class="fcopy">Saint Louis Chess Club — About STL</span>
-    <span class="fcopy">©2026 · All Rights Reserved</span>
-  </footer>
+  <div class="nav-row">
+    <button class="btn-nav" onclick="window.location.href='index.html'">← Go Home</button>
+    <button class="btn-nav" onclick="window.location.href='website-chess-game.html'">Play Game →</button>
+  </div>
 </div>
 
 </div>
