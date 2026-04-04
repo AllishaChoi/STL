@@ -66,7 +66,6 @@
         /* ── BOARD ── */
         .main-columns { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:stretch; }
         .board-col { display:flex; flex-direction:column; gap:12px; }
-        /* poster-col stretches to match board-col, poster-frame fills remaining space */
         .poster-col { display:flex; flex-direction:column; gap:12px; }
         .board-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#555; text-transform:uppercase; }
         #chessboard {
@@ -89,17 +88,14 @@
 
         /* ── POSTER ── */
         .poster-col-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.05em; color:#555; text-transform:uppercase; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
-        /* poster-frame: no aspect-ratio — fills whatever height the board-col occupies */
         .poster-frame { width:100%; flex:1; min-height:0; background:#060605; border:1px solid rgba(255,255,255,0.15); position:relative; overflow:hidden; }
         #posterCanvas { position:absolute; top:0; left:0; width:100%; height:100%; }
 
-        /* ── EXPORT ROW (포스터/타임랩스 — 보드 바로 아래) ── */
-        .export-row {
-            display:flex; gap:12px; margin-top:24px;
-        }
+        /* ── EXPORT ROW ── */
+        .export-row { display:flex; gap:12px; margin-top:24px; }
         .export-row .btn-export { flex:1; padding:12px; text-align:center; }
 
-        /* ── NAV ROW (화면 맨 아래 full-width) ── */
+        /* ── NAV ROW ── */
         .nav-row {
             border-top:1px solid rgba(255,255,255,0.08);
             margin-top:64px; padding-top:28px;
@@ -145,24 +141,19 @@
         .ratio-card.selected { border-color:rgba(255,255,255,0.55); background:rgba(255,255,255,0.08); }
         .ratio-card.disabled { opacity:0.35; pointer-events:none; }
 
-        .ratio-box {
-            border:1px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.06);
-            flex-shrink:0;
-        }
+        .ratio-box { border:1px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.06); flex-shrink:0; }
         .ratio-box.r916 { width:44px; height:78px; }
         .ratio-box.r45  { width:48px; height:60px; }
 
         .ratio-label { font-family:'Geist Mono',monospace; font-size:15px; letter-spacing:-0.01em; color:#ddd; font-weight:500; }
         .ratio-type  { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#666; }
 
-        /* Render progress */
         .render-progress { display:none; flex-direction:column; align-items:center; gap:10px; margin-top:24px; }
         .render-progress.active { display:flex; }
         .progress-bar-track { width:100%; height:2px; background:rgba(255,255,255,0.1); border-radius:1px; overflow:hidden; }
         .progress-bar-fill { height:100%; background:rgba(255,255,255,0.5); border-radius:1px; width:0%; transition:width 0.1s linear; }
         .progress-label { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#666; }
 
-        /* Share + cancel */
         .sheet-bottom { margin-top:24px; display:flex; flex-direction:column; gap:10px; }
         .btn-sheet-share {
             width:100%; padding:13px; font-family:'Geist Mono',monospace; font-size:11px;
@@ -189,22 +180,59 @@
         }
         #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-        /* ── MOBILE ── */
-        @media (max-width:768px) {
+        /* ── MOBILE (430px 이하) ── */
+        @media (max-width:430px) {
             .container { padding:20px 16px 20px; }
 
             header { padding-bottom:20px; margin-bottom:20px; }
             .hero { gap:0; }
             .hero-left h1 { font-size:44px; }
             .hero-right { display:none; }
-            .hero-logo { margin-top:4px; }
+
+            /* 로고: 오른쪽 위 고정 */
+            .hero-logo {
+                position:fixed;
+                top:16px;
+                right:16px;
+                z-index:100;
+                margin-top:0;
+            }
             .logo-img { height:22px; }
 
-            .section-topbar { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:16px; }
+            .section-topbar {
+                flex-direction:column;
+                align-items:flex-start;
+                gap:10px;
+                margin-bottom:16px;
+            }
             .section-title { font-size:22px; }
-            /* 모바일: status + 버튼들 한 줄로 */
-            .inline-controls { gap:8px; flex-wrap:nowrap; width:100%; }
-            .status-group { gap:4px; }
+
+            /* inline-controls: 버튼들 → 첫 줄, status → 다음 줄 */
+            .inline-controls {
+                flex-direction:column;
+                align-items:flex-start;
+                gap:16px;
+                width:100%;
+                padding-bottom:4px;
+            }
+
+            /* 버튼 그룹 (New Game, Undo) */
+            .controls-btn-row {
+                display:flex;
+                gap:8px;
+            }
+
+            /* status 그룹 (Turn, Status) */
+            .controls-status-row {
+                display:flex;
+                align-items:center;
+                gap:12px;
+                flex-wrap:wrap;
+                padding-top:12px;                               /* 위 여백 추가 */
+                border-top:1px solid rgba(255,255,255,0.2);    /* 구분선 */
+                width:100%;
+          }
+
             .divider-v { display:none; }
             .inline-controls button { flex-shrink:0; padding:7px 12px; font-size:10px; }
 
@@ -249,18 +277,24 @@
         <div class="section-topbar">
             <h2 class="section-title">Interactive Board</h2>
             <div class="inline-controls">
-                <div class="status-group">
-                    <span class="status-label">Turn</span>
-                    <span class="status-value" id="turnVal">White</span>
+                <!-- 버튼 그룹: 모바일에서 첫 줄 -->
+                <div class="controls-btn-row">
+                    <button onclick="resetGame()">New Game</button>
+                    <button onclick="undoMove()">Undo</button>
                 </div>
                 <div class="divider-v"></div>
-                <div class="status-group">
-                    <span class="status-label">Status</span>
-                    <span class="status-value" id="statusVal">Ready to play</span>
+                <!-- status 그룹: 모바일에서 다음 줄 -->
+                <div class="controls-status-row">
+                    <div class="status-group">
+                        <span class="status-label">Turn</span>
+                        <span class="status-value" id="turnVal">White</span>
+                    </div>
+                    <div class="divider-v"></div>
+                    <div class="status-group">
+                        <span class="status-label">Status</span>
+                        <span class="status-value" id="statusVal">Ready to play</span>
+                    </div>
                 </div>
-                <div class="divider-v"></div>
-                <button onclick="resetGame()">New Game</button>
-                <button onclick="undoMove()">Undo</button>
             </div>
         </div>
 
@@ -279,14 +313,12 @@
             </div>
         </div>
 
-        <!-- 포스터 / 타임랩스: 보드 바로 아래 -->
         <div class="export-row">
             <button class="btn-export" onclick="openSheet('poster')">↓ Poster</button>
             <button class="btn-export" onclick="openSheet('timelapse')">▷ Timelapse</button>
         </div>
     </section>
 
-    <!-- 내비게이션: 화면 맨 아래 full-width -->
     <div class="nav-row">
         <button class="btn-nav" onclick="window.location.href='index.html'">← Go Home</button>
         <button class="btn-nav" onclick="window.location.href='website-famous-3-play.html'">Next Game →</button>
@@ -522,25 +554,20 @@ function undoMove(){ showToast('Start a new game to reset.'); }
 
 // ─────────────────────────────────────────────
 //  SHARED POSTER DRAW (raw Canvas 2D)
-//  ※ gBoard/gCell geometry (1728 space) 공유, logo 없음
 // ─────────────────────────────────────────────
 
 function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
     const count=(maxMoves!==undefined)?Math.min(maxMoves,movesData.length):movesData.length;
     const SS=W/1080;
 
-    // ── 레이아웃 존 — 9:16 vs 4:5 비율별 분기 ──
-    const is916 = (H/W) > 1.6;   // 9:16 ≈ 1.78, 4:5 = 1.25
+    const is916 = (H/W) > 1.6;
     const MARGIN    = W * 0.05;
-    const TITLE_TOP = is916 ? H * 0.10 : H * 0.08;   // 9:16은 상단 UI 공간 더 확보
+    const TITLE_TOP = is916 ? H * 0.10 : H * 0.08;
     const TITLE_H   = is916 ? H * 0.055 : H * 0.07;
-    const BOARD_TOP = TITLE_TOP + TITLE_H + (is916 ? H*0.010 : H*0.015); // 보드와 가깝게
+    const BOARD_TOP = TITLE_TOP + TITLE_H + (is916 ? H*0.010 : H*0.015);
     const BOARD_H   = is916 ? H * 0.66 : H * 0.65;
     const LOG_TOP   = BOARD_TOP + BOARD_H + H * 0.018;
-    const LOG_H     = H - LOG_TOP - H * 0.02;
 
-    // ── board geometry remapping: GW×GH → BOARD 존 내부 ──
-    // gBoard returns coords in GW×GH space; we map that into BOARD_TOP ~ BOARD_TOP+BOARD_H
     const bScaleX = (W - MARGIN*2) / GW;
     const bScaleY = BOARD_H / GH;
     const bScale  = Math.min(bScaleX, bScaleY);
@@ -550,14 +577,11 @@ function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
     function bd(col,row){ const p=gBoard(col,row); return{x:bOffX+p.x*bScale, y:bOffY+p.y*bScale}; }
     function cl(c,r){     const p=gCell(c,r);      return{x:bOffX+p.x*bScale, y:bOffY+p.y*bScale}; }
 
-    // ── Background ──
     ctx.fillStyle='rgb(5,5,4)'; ctx.fillRect(0,0,W,H);
 
-    // ── 타이틀 존 — center aligned, Instagram safe top margin ──
-    const titleFontSize = is916 ? 49*SS : 46*SS;   // 9:16은 3pt 더 크게
+    const titleFontSize = is916 ? 49*SS : 46*SS;
     ctx.font=`300 ${titleFontSize}px Geist, "Helvetica Neue", Arial, sans-serif`;
 
-    // "Your Game Journey" 와 ": STL" 합친 전체 너비 측정
     const t1 = 'Your Game Journey ';
     const t2 = ': STL';
     const t1W = ctx.measureText(t1).width;
@@ -565,41 +589,33 @@ function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
     const totalTitleW = t1W + t2W;
     const titleX = (W - totalTitleW) / 2;
 
-    // separator line 위
     ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1*SS; ctx.lineCap='butt';
     ctx.beginPath(); ctx.moveTo(W*0.1, TITLE_TOP-H*0.014); ctx.lineTo(W*0.9, TITLE_TOP-H*0.014); ctx.stroke();
 
-    // 타이틀 텍스트 센터
     ctx.textBaseline='top';
     ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.textAlign='left';
     ctx.fillText(t1, titleX, TITLE_TOP);
     ctx.fillStyle='rgba(255,255,255,0.38)';
     ctx.fillText(t2, titleX + t1W, TITLE_TOP);
 
-    // 무브 카운트 — 타이틀 아래 센터
     ctx.fillStyle='rgba(255,255,255,0.30)';
     ctx.font=`${(is916 ? 26 : 24)*SS}px monospace`;
     ctx.textAlign='center'; ctx.textBaseline='top';
     ctx.fillText(`${count} moves`, W/2, TITLE_TOP + titleFontSize*1.25);
 
-    // separator line 아래
     ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1*SS;
     ctx.beginPath(); ctx.moveTo(W*0.1, BOARD_TOP-H*0.012); ctx.lineTo(W*0.9, BOARD_TOP-H*0.012); ctx.stroke();
 
-    // ── 보드 그리기 ──
-    // alternating cell fill
     for(let c=0;c<8;c++) for(let r=0;r<8;r++) if((c+r)%2===0){
         const tl=bd(c,r),tr2=bd(c+1,r),bl=bd(c,r+1),br=bd(c+1,r+1);
         ctx.beginPath(); ctx.moveTo(tl.x,tl.y); ctx.lineTo(tr2.x,tr2.y); ctx.lineTo(br.x,br.y); ctx.lineTo(bl.x,bl.y);
         ctx.closePath(); ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fill();
     }
-    // grid lines
     ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1.5*bScale; ctx.lineCap='butt';
     for(let i=0;i<=8;i++){
         const a=bd(i,0),b=bd(i,8); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
         const a2=bd(0,i),b2=bd(8,i); ctx.beginPath(); ctx.moveTo(a2.x,a2.y); ctx.lineTo(b2.x,b2.y); ctx.stroke();
     }
-    // ticks
     const tk=12*bScale;
     ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=1.5*bScale;
     for(let c=0;c<=8;c++) for(let r=0;r<=8;r++){
@@ -607,26 +623,22 @@ function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
         ctx.beginPath(); ctx.moveTo(pt.x-tk,pt.y); ctx.lineTo(pt.x+tk,pt.y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(pt.x,pt.y-tk); ctx.lineTo(pt.x,pt.y+tk); ctx.stroke();
     }
-    // corner brackets
     const bk=92*bScale;
     [[bd(0,0),1,1],[bd(8,0),-1,1],[bd(0,8),1,-1],[bd(8,8),-1,-1]].forEach(([pt,sx,sy])=>{
         ctx.strokeStyle='rgba(255,255,255,0.55)'; ctx.lineWidth=3*bScale;
         ctx.beginPath(); ctx.moveTo(pt.x,pt.y); ctx.lineTo(pt.x+sx*bk,pt.y+sy*.12*bk); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(pt.x,pt.y); ctx.lineTo(pt.x+sx*.15*bk,pt.y+sy*bk*.55); ctx.stroke();
     });
-    // coord labels
     const coordSize=Math.round(50*bScale);
     ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font=`${coordSize}px monospace`;
     ctx.textAlign='center'; ctx.textBaseline='top';
     for(let c=0;c<8;c++){const pt=bd(c+.5,8.24);ctx.fillText(FILES_VIZ[c],pt.x,pt.y);}
     ctx.textAlign='right'; ctx.textBaseline='middle';
     for(let r=0;r<8;r++){const pt=bd(-.18,r+.5);ctx.fillText(8-r,pt.x,pt.y);}
-    // vanishing point lines
     const vx=bOffX+GW*.5*bScale, vy=bOffY+GH*.1*bScale;
     ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1.2*bScale;
     for(let i=0;i<=8;i+=2){const n=bd(i,8);ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(vx,vy);ctx.stroke();}
 
-    // ── 무브 라인 ──
     ctx.lineCap='round';
     for(let i=0;i<count;i++){
         const m=movesData[i];
@@ -634,7 +646,7 @@ function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
         const isW=m.side==='white', wm=isW?1:0.55;
         const age=count-1-i;
         const a=Math.max(0.18,1-age*0.028);
-        const LS=bScale; // line scale
+        const LS=bScale;
 
         ctx.strokeStyle=`rgba(255,255,255,${a*0.039*wm})`; ctx.lineWidth=36*LS;
         ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
@@ -667,11 +679,9 @@ function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
         }
     }
 
-    // ── separator before move log ──
     ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1*SS; ctx.lineCap='butt';
     ctx.beginPath(); ctx.moveTo(MARGIN,LOG_TOP-H*0.010); ctx.lineTo(W-MARGIN,LOG_TOP-H*0.010); ctx.stroke();
 
-    // ── 무브로그 존 (4컬럼) — maxRows 없이 전부 그리기, clip으로 캔버스 밖 방지 ──
     if(histData&&histData.length>0){
         const pairs=[]; for(let i=0;i<histData.length;i+=2){
             const w=histData[i]?.notation||'',b=histData[i+1]?.notation||'';
@@ -699,11 +709,10 @@ function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
 }
 
 // ─────────────────────────────────────────────
-//  P5 LIVE PREVIEW  (Long-Exposure board style)
+//  P5 LIVE PREVIEW
 // ─────────────────────────────────────────────
 let vizP5=null, vizLines=[], vizMoveIndex=0, vizNeedsUpdate=false;
 
-// ── Global board geometry in 1728×1728 virtual space ──
 const GW=1728, GH=1728;
 const G_BCX=GW*.5,  G_BCY=GH*.5;
 const G_BW =GW*.88, G_BTW=GW*.43;
@@ -734,7 +743,6 @@ function initViz(){
             SCALE=Math.min(frame.clientWidth/GW, frame.clientHeight/GH);
         }
 
-        // ── draw helpers ──
         function glowLine(x1,y1,x2,y2,alpha,isW){
             if(alpha<0.004)return;
             const wm=isW?1:.55;
@@ -761,7 +769,6 @@ function initViz(){
         }
 
         function drawBoard(){
-            // alternating cell fill — opacity 높임 (왼쪽 보드 수준)
             for(let c=0;c<8;c++) for(let r=0;r<8;r++){
                 if((c+r)%2===0){
                     const tl=gBoard(c,r),tr=gBoard(c+1,r),bl=gBoard(c,r+1),br=gBoard(c+1,r+1);
@@ -770,20 +777,17 @@ function initViz(){
                     p.endShape(p.CLOSE);
                 }
             }
-            // grid lines
             p.stroke(255,255,255,28);p.strokeWeight(.8);
             for(let i=0;i<=8;i++){
                 const a=gBoard(i,0),b=gBoard(i,8);p.line(a.x,a.y,b.x,b.y);
                 const c=gBoard(0,i),d=gBoard(8,i);p.line(c.x,c.y,d.x,d.y);
             }
-            // intersection ticks
             for(let c=0;c<=8;c++) for(let r=0;r<=8;r++){
                 const pt=gBoard(c,r);
                 p.stroke(255,255,255,45);p.strokeWeight(.8);
                 p.line(pt.x-4,pt.y,pt.x+4,pt.y);
                 p.line(pt.x,pt.y-4,pt.x,pt.y+4);
             }
-            // corner brackets
             const bk=32;
             [[gBoard(0,0),1,1],[gBoard(8,0),-1,1],[gBoard(0,8),1,-1],[gBoard(8,8),-1,-1]]
                 .forEach(([pt,sx,sy])=>{
@@ -791,13 +795,11 @@ function initViz(){
                     p.line(pt.x,pt.y,pt.x+sx*bk,pt.y+sy*.12*bk);
                     p.line(pt.x,pt.y,pt.x+sx*.15*bk,pt.y+sy*bk*.55);
                 });
-            // coord labels — GW 기준 고정 크기 (SCALE 곱하면 너무 작아짐)
             p.textFont('monospace');p.textSize(50);p.noStroke();p.fill(255,255,255,180);
             p.textAlign(p.CENTER,p.TOP);
             for(let c=0;c<8;c++){const pt=gBoard(c+.5,8.3);p.text(FILES_VIZ[c],pt.x,pt.y);}
             p.textAlign(p.RIGHT,p.CENTER);
             for(let r=0;r<8;r++){const pt=gBoard(-.25,r+.5);p.text(8-r,pt.x,pt.y);}
-            // vanishing point perspective lines
             p.stroke(255,255,255,14);p.strokeWeight(.6);
             for(let i=0;i<=8;i+=2){const n=gBoard(i,8);p.line(n.x,n.y,G_VPX,G_VPY);}
         }
@@ -809,7 +811,6 @@ function initViz(){
             const cv=p.createCanvas(GW,GH);
             cv.parent(frame);
             canvas.style.display='none';
-            // scale canvas element to fit frame
             cv.canvas.style.width =CW+'px';
             cv.canvas.style.height=CH+'px';
             p.frameRate(30);p.strokeCap(p.ROUND);
@@ -819,13 +820,11 @@ function initViz(){
             syncPosterHeight();
             setupScale();
             const CW=Math.round(GW*SCALE), CH=Math.round(GH*SCALE);
-            // keep internal resolution at GW×GH, only change display size
             vizP5.canvas.style.width =CW+'px';
             vizP5.canvas.style.height=CH+'px';
         };
 
         p.draw=function(){
-            // ingest new moves
             if(vizNeedsUpdate&&vizMoveIndex<fullMoveData.length){
                 while(vizMoveIndex<fullMoveData.length){
                     const m=fullMoveData[vizMoveIndex];
@@ -847,7 +846,6 @@ function initViz(){
                     `${vizMoveIndex} move${vizMoveIndex!==1?'s':''}`;
             }
 
-            // age & fade
             vizLines.forEach(l=>{
                 l.age++;
                 if(l.alpha<l.target) l.alpha=Math.min(l.target,l.alpha+.08);
@@ -857,23 +855,14 @@ function initViz(){
             drawBoard();
 
             const newestIdx=vizLines.length-1;
-            // sort by alpha so bright lines render on top
             const sorted=[...vizLines].map((l,i)=>({...l,_i:i})).sort((a,b)=>a.alpha-b.alpha);
 
             for(const l of sorted){
                 if(l.alpha<0.01)continue;
-                const isN=(l._i===newestIdx);
-                if(isN){
-                    glowLine(l.x1,l.y1,l.x2,l.y2,l.alpha,l.isW);
-                    drawNode(l.x1,l.y1,l.alpha*.5,l.isW,9);
-                    drawNode(l.x2,l.y2,l.alpha,   l.isW,12);
-                    if(l.alpha>.25) drawLabel(l.label,l.mx,l.my,l.alpha);
-                } else {
-                    glowLine(l.x1,l.y1,l.x2,l.y2,l.alpha,l.isW);
-                    drawNode(l.x1,l.y1,l.alpha*.5,l.isW,9);
-                    drawNode(l.x2,l.y2,l.alpha,   l.isW,12);
-                    if(l.alpha>.2) drawLabel(l.label,l.mx,l.my,l.alpha);
-                }
+                glowLine(l.x1,l.y1,l.x2,l.y2,l.alpha,l.isW);
+                drawNode(l.x1,l.y1,l.alpha*.5,l.isW,9);
+                drawNode(l.x2,l.y2,l.alpha,   l.isW,12);
+                if(l.alpha>.2) drawLabel(l.label,l.mx,l.my,l.alpha);
             }
         };
     });
@@ -953,14 +942,13 @@ function savePosterImage(ratio){
 }
 
 // ─────────────────────────────────────────────
-//  SAVE TIMELAPSE VIDEO  — 라인이 "그려지는" 애니메이션
+//  SAVE TIMELAPSE VIDEO
 // ─────────────────────────────────────────────
 function saveTimelapse(ratio){
     const[W,H]=ratio==='916'?[1080,1920]:[1080,1350];
     const n=fullMoveData.length;
     if(n===0){showToast('Play some moves first!');return;}
 
-    // 속도: 무브당 0.18초 그리기 + 0.06초 홀드 (기존보다 ~3배 빠름)
     const PER_MOVE=0.18;
     const HOLD=0.06;
     const STEP_T=PER_MOVE+HOLD;
@@ -1002,7 +990,6 @@ function saveTimelapse(ratio){
         showToast('Timelapse saved!');
     };
 
-    // ── geometry ──
     const SS=W/1080;
     const is916=(H/W)>1.6;
     const MARGIN=W*0.05;
@@ -1011,7 +998,6 @@ function saveTimelapse(ratio){
     const BOARD_TOP=TITLE_TOP+TITLE_H+(is916?H*0.010:H*0.015);
     const BOARD_H=is916?H*0.66:H*0.65;
     const LOG_TOP=BOARD_TOP+BOARD_H+H*0.018;
-    const LOG_H=H-LOG_TOP-H*0.02;
     const bScaleX=(W-MARGIN*2)/GW, bScaleY=BOARD_H/GH;
     const bScale=Math.min(bScaleX,bScaleY);
     const bOffX=(W-GW*bScale)/2;
@@ -1019,28 +1005,21 @@ function saveTimelapse(ratio){
     function tbd(col,row){const p=gBoard(col,row);return{x:bOffX+p.x*bScale,y:bOffY+p.y*bScale};}
     function tcl(c,r){const p=gCell(c,r);return{x:bOffX+p.x*bScale,y:bOffY+p.y*bScale};}
 
-    // ── static base draw ──
     function drawStaticBase(histUpTo){
         ctx.fillStyle='rgb(5,5,4)';ctx.fillRect(0,0,W,H);
-
-        // title — center aligned
         const tFS=is916?49*SS:46*SS;
         ctx.font=`300 ${tFS}px Geist,"Helvetica Neue",Arial,sans-serif`;
         const t1='Your Game Journey ', t2=': STL';
         const t1W=ctx.measureText(t1).width, t2W=ctx.measureText(t2).width;
         const tX=(W-t1W-t2W)/2;
-
         ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1*SS;ctx.lineCap='butt';
         ctx.beginPath();ctx.moveTo(W*0.1,TITLE_TOP-H*0.014);ctx.lineTo(W*0.9,TITLE_TOP-H*0.014);ctx.stroke();
-
         ctx.textBaseline='top';ctx.textAlign='left';
         ctx.fillStyle='rgba(255,255,255,0.92)';ctx.fillText(t1,tX,TITLE_TOP);
         ctx.fillStyle='rgba(255,255,255,0.38)';ctx.fillText(t2,tX+t1W,TITLE_TOP);
-
         ctx.fillStyle='rgba(255,255,255,0.30)';
         ctx.font=`${(is916?26:24)*SS}px monospace`;ctx.textAlign='center';ctx.textBaseline='top';
         ctx.fillText(`${n} moves`,W/2,TITLE_TOP+tFS*1.25);
-
         ctx.strokeStyle='rgba(255,255,255,0.10)';ctx.lineWidth=1*SS;
         ctx.beginPath();ctx.moveTo(W*0.1,BOARD_TOP-H*0.012);ctx.lineTo(W*0.9,BOARD_TOP-H*0.012);ctx.stroke();
         for(let c=0;c<8;c++)for(let r=0;r<8;r++)if((c+r)%2===0){
@@ -1098,7 +1077,6 @@ function saveTimelapse(ratio){
         }
     }
 
-    // ── draw line segment 0→t ──
     function drawLineAt(from,to,t,isW,alpha){
         if(t<=0)return;
         const ex=from.x+(to.x-from.x)*t, ey=from.y+(to.y-from.y)*t;
@@ -1123,7 +1101,6 @@ function saveTimelapse(ratio){
         ctx.beginPath();ctx.arc(ex,ey,Re*.24,0,Math.PI*2);ctx.fill();
     }
 
-    // ── draw fully completed line with label ──
     function drawLineFull(from,to,isW,alpha){
         drawLineAt(from,to,1,isW,alpha);
         const mx=(from.x+to.x)/2,my=(from.y+to.y)/2;
@@ -1135,7 +1112,6 @@ function saveTimelapse(ratio){
         ctx.fillStyle=`rgba(255,255,255,${Math.min(1,oa*1.18)})`;ctx.fillText(lbl,mx,my);
     }
 
-    // ── precompute endpoints ──
     const lineData=fullMoveData.map(m=>{
         const from=tcl(m.fromCol,m.fromRow);
         const to  =tcl(m.toCol,  m.toRow);
@@ -1144,25 +1120,22 @@ function saveTimelapse(ratio){
         return{from,to,isW:m.side==='white'};
     });
 
-    // ── render each frame by index (no rAF time-drift) ──
     recorder.start(100);
     let frameIdx=0;
 
     function renderNextFrame(){
         if(frameIdx>TOTAL_FRAMES){
-            // last hold frame then stop
             drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory);
             setTimeout(()=>recorder.stop(),300);
             return;
         }
 
-        const elapsed=frameIdx/FPS;  // virtual time in seconds
+        const elapsed=frameIdx/FPS;
         const progress=Math.min(1,frameIdx/TOTAL_FRAMES);
         const globalT=elapsed/STEP_T;
         const currentMoveIdx=Math.floor(globalT);
-        // eased draw progress (ease-out)
         const rawT=(globalT%1)/(PER_MOVE/STEP_T);
-        const drawT=Math.min(1, rawT<1 ? 1-(1-rawT)*(1-rawT) : 1); // ease-out quad
+        const drawT=Math.min(1, rawT<1 ? 1-(1-rawT)*(1-rawT) : 1);
 
         const doneMoves=Math.min(currentMoveIdx,n);
 
@@ -1182,11 +1155,9 @@ function saveTimelapse(ratio){
             `Rendering… ${Math.round(progress*100)}%`;
 
         frameIdx++;
-        // 짧은 setTimeout으로 MediaRecorder에 프레임 전달 기회 부여
         setTimeout(renderNextFrame, 1000/FPS);
     }
 
-    // 첫 프레임 시작 전 잠깐 대기 (recorder 초기화)
     setTimeout(renderNextFrame, 80);
 }
 
@@ -1226,10 +1197,10 @@ function showToast(msg){
 }
 
 // ─────────────────────────────────────────────
-//  SYNC POSTER HEIGHT — ResizeObserver로 즉시 반응
+//  SYNC POSTER HEIGHT
 // ─────────────────────────────────────────────
 function syncPosterHeight(){
-    if(window.innerWidth <= 768){
+    if(window.innerWidth <= 430){
         document.querySelector('.poster-frame').style.height = '';
         return;
     }
@@ -1243,12 +1214,10 @@ function syncPosterHeight(){
     }
 }
 
-// ResizeObserver: board-col 크기 바뀔 때마다 즉시 동기화
 if(window.ResizeObserver){
     const ro = new ResizeObserver(()=>syncPosterHeight());
     ro.observe(document.querySelector('.board-col'));
 }
-// 창 리사이즈 fallback
 window.addEventListener('resize', syncPosterHeight);
 
 // ─────────────────────────────────────────────
@@ -1256,7 +1225,6 @@ window.addEventListener('resize', syncPosterHeight);
 // ─────────────────────────────────────────────
 initBoard();
 createBoardUI();
-// 레이아웃 두 프레임 기다린 후 확정 — 폰트/이미지 로드 후 reflow 완료 보장
 requestAnimationFrame(()=>requestAnimationFrame(()=>{
     syncPosterHeight();
     initViz();
