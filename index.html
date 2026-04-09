@@ -15,41 +15,49 @@ body{
 }
 canvas{position:fixed;inset:0;z-index:0;}
 .grain{
-  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.04;
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.03;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .logo{
-  position:fixed;top:24px;left:28px;
+  position:fixed;top:24px;right:28px;
   z-index:40;pointer-events:none;
 }
 .logo img{height:32px;width:auto;opacity:0.82;}
 
+/* Phase 1: cream */
 #overlay{
   position:fixed;inset:0;z-index:100;
   pointer-events:none;opacity:0;
-  background:#C3BBAF;transition:opacity 0.18s;
+  background:#C3BBAF;
+}
+/* Phase 2: dark checker canvas — drawn on top of cream */
+#overlay2{
+  position:fixed;inset:0;z-index:101;
+  pointer-events:none;opacity:0;
 }
 
-/* ── Hit targets (invisible tap/hover zones) ── */
+/* ── Hit targets ── */
 .hs-hit{
   position:fixed;z-index:30;
-  width:64px;height:64px;
+  width:40px;height:40px;
   transform:translate(-50%,-50%);
   cursor:pointer;
 }
 
-/* ── Cards: fully independent fixed layer ── */
+/* ── Cards ── */
 .hs-card{
   position:fixed;z-index:35;
-  width:220px;
+  /* desktop: height = 70vh, width = 70vh*(4/3) for 4:3 landscape */
+  width:calc(45vh * 4 / 3);
   background:rgba(5,5,3,0.97);
   border:1px solid rgba(195,187,175,0.17);
-  padding:22px 22px 20px;
+  padding:0;
   pointer-events:none;
   opacity:0;
   transform:translateY(8px);
   transition:opacity 0.28s, transform 0.42s cubic-bezier(0.16,1,0.3,1);
   backdrop-filter:blur(10px);
+  overflow:hidden;
 }
 .hs-card.visible{
   opacity:1;
@@ -57,48 +65,46 @@ canvas{position:fixed;inset:0;z-index:0;}
   pointer-events:all;
 }
 
-.card-header{
-  display:flex;align-items:flex-start;
-  justify-content:space-between;
-  margin-bottom:12px;gap:8px;
+.card-img{
+  width:100%;
+  /* desktop: 4:3 landscape (card height = 70vh, image fills it minus footer ~52px) */
+  aspect-ratio:4/3;
+  display:block;
+  object-fit:cover;
+  object-position:top left;
+  background:rgba(195,187,175,0.06);
 }
-.card-title{
-  font-size:15px;font-weight:500;
-  letter-spacing:-0.02em;line-height:1.2;
-  color:rgba(195,187,175,0.95);
-  flex:1;
-}
+
 .card-close{
-  flex-shrink:0;
-  width:22px;height:22px;
+  position:absolute;
+  top:10px;right:10px;
+  width:36px;height:36px;
   display:none;
   align-items:center;justify-content:center;
-  background:rgba(195,187,175,0.08);
-  border:1px solid rgba(195,187,175,0.18);
-  color:rgba(195,187,175,0.55);
-  font-size:11px;line-height:1;
+  background:rgba(195,187,175,0.22);
+  border:1px solid rgba(195,187,175,0.55);
+  color:rgba(195,187,175,1);
+  font-size:15px;line-height:1;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   pointer-events:all;
-  transition:background 0.15s,color 0.15s;
+  transition:background 0.15s;
+  z-index:2;
 }
 .card-close:active{
-  background:rgba(195,187,175,0.22);
-  color:rgba(195,187,175,1);
+  background:rgba(195,187,175,0.45);
 }
-.card-rule{width:100%;height:1px;background:rgba(195,187,175,0.12);margin-bottom:12px;}
-.card-desc{
-  font-family:'GeistMono',monospace;
-  font-size:12px;color:rgba(195,187,175,0.52);
-  line-height:1.65;margin-bottom:18px;
+
+.card-foot{
+  padding:14px 16px;
 }
 .card-btn{
-  display:inline-block;
+  display:block;width:100%;text-align:center;
   font-family:'GeistMono',monospace;
   font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
   color:rgba(195,187,175,0.7);
   border:1px solid rgba(195,187,175,0.28);
-  padding:9px 16px;
+  padding:10px 16px;
   text-decoration:none;
   cursor:pointer;
   pointer-events:all;
@@ -111,13 +117,29 @@ canvas{position:fixed;inset:0;z-index:0;}
   color:#C3BBAF;border-color:rgba(195,187,175,0.55);
 }
 
-/* mobile */
-@media (hover:none),(max-width:768px){
+/* ── Mobile overrides ── */
+@media (hover:none),(max-width:430px){
   body{cursor:default;}
   .card-close{display:flex;}
-  .hs-card{width:min(260px, calc(100vw - 28px));}
-  .card-title{font-size:14px;}
-  .card-desc{font-size:11px;margin-bottom:14px;}
+  .hs-card{
+    width:clamp(260px, 70vw, calc(100vw - 28px));
+    /* fixed center of screen — no JS positioning */
+    left:50% !important;
+    top:50% !important;
+    right:auto !important;
+    bottom:auto !important;
+    transform:translate(-50%, -50%) scale(0.96);
+    opacity:0;
+    max-height:80vh;
+    overflow-y:auto;
+  }
+  .hs-card.visible{
+    transform:translate(-50%, -50%) scale(1);
+    opacity:1;
+  }
+  .card-img{
+    aspect-ratio:3/4;
+  }
 }
 </style>
 </head>
@@ -125,155 +147,205 @@ canvas{position:fixed;inset:0;z-index:0;}
 <canvas id="grid"></canvas>
 <div class="grain"></div>
 <div id="overlay"></div>
+<canvas id="overlay2"></canvas>
 <div class="logo"><img src="logo.png" alt="Chess STL"></div>
 
-<!-- Hit zones (just invisible tap areas, no children) -->
 <div class="hs-hit" id="hit0"></div>
 <div class="hs-hit" id="hit1"></div>
 <div class="hs-hit" id="hit2"></div>
 <div class="hs-hit" id="hit3"></div>
 
-<!-- Cards: completely separate from hit zones -->
 <div class="hs-card" id="card0">
-  <div class="card-header">
-    <div class="card-title">Play Chess Game</div>
-    <button class="card-close" id="close0" type="button">✕</button>
+  <button class="card-close" id="close0" type="button">✕</button>
+  <img class="card-img" src="1.jpg" alt="">
+  <div class="card-foot">
+    <a href="website-chess-game.html" class="card-btn" data-hs="0">VIEW &gt;</a>
   </div>
-  <div class="card-rule"></div>
-  <div class="card-desc">Challenge an intelligent computer opponent.</div>
-  <a href="website-chess-game.html" class="card-btn" data-hs="0">VIEW &gt;</a>
 </div>
 
 <div class="hs-card" id="card1">
-  <div class="card-header">
-    <div class="card-title">Chess Long Exposure</div>
-    <button class="card-close" id="close1" type="button">✕</button>
+  <button class="card-close" id="close1" type="button">✕</button>
+  <img class="card-img" src="2.jpg" alt="">
+  <div class="card-foot">
+    <a href="website-famous-3-play.html" class="card-btn" data-hs="1">VIEW &gt;</a>
   </div>
-  <div class="card-rule"></div>
-  <div class="card-desc">Three legendary matches, 1851–1858, as continuous-flow posters.</div>
-  <a href="website-famous-3-play.html" class="card-btn" data-hs="1">VIEW &gt;</a>
 </div>
 
 <div class="hs-card" id="card2">
-  <div class="card-header">
-    <div class="card-title">Chess Strategy Reference</div>
-    <button class="card-close" id="close2" type="button">✕</button>
+  <button class="card-close" id="close2" type="button">✕</button>
+  <img class="card-img" src="3.jpg" alt="">
+  <div class="card-foot">
+    <a href="website-strategy.html" class="card-btn" data-hs="2">VIEW &gt;</a>
   </div>
-  <div class="card-rule"></div>
-  <div class="card-desc">Essential openings, patterns, and endgame techniques.</div>
-  <a href="website-strategy.html" class="card-btn" data-hs="2">VIEW &gt;</a>
 </div>
 
 <div class="hs-card" id="card3">
-  <div class="card-header">
-    <div class="card-title">About STL</div>
-    <button class="card-close" id="close3" type="button">✕</button>
+  <button class="card-close" id="close3" type="button">✕</button>
+  <img class="card-img" src="4.jpg" alt="">
+  <div class="card-foot">
+    <a href="website-about-stl.html" class="card-btn" data-hs="3">VIEW &gt;</a>
   </div>
-  <div class="card-rule"></div>
-  <div class="card-desc">The studio behind Chess STL and its visual research.</div>
-  <a href="website-about-stl.html" class="card-btn" data-hs="3">VIEW &gt;</a>
 </div>
 
 <script>
 const canvas  = document.getElementById('grid');
 const ctx     = canvas.getContext('2d');
 const overlay = document.getElementById('overlay');
+const ov2     = document.getElementById('overlay2');
+const ctx2    = ov2.getContext('2d');
 
 const CELL=48, HOVER_R=72, MOUSE_R=180;
 const CR=195, CG=187, CB=175;
 let W, H, mx=-9999, my=-9999;
 
 const isMobile = () =>
-  window.matchMedia('(hover:none)').matches || window.innerWidth <= 768;
+  window.matchMedia('(hover:none)').matches || window.innerWidth <= 430;
 
-/* ── 핫스팟 좌표 프랙션 ──
-   모바일: 번개 ⚡ 지그재그 — x·y 모두 겹치지 않음
-*/
 const HS_DESKTOP = [
-  {fx:0.22, fy:0.35},
-  {fx:0.48, fy:0.60},
-  {fx:0.72, fy:0.27},
-  {fx:0.84, fy:0.68},
+  {fx:0.20, fy:0.34},
+  {fx:0.47, fy:0.62},
+  {fx:0.71, fy:0.26},
+  {fx:0.83, fy:0.71},
 ];
 const HS_MOBILE = [
-  {fx:0.25, fy:0.21},   // 좌  / 상
-  {fx:0.70, fy:0.39},   // 우  / 중상
-  {fx:0.28, fy:0.60},   // 좌  / 중하
-  {fx:0.68, fy:0.78},   // 우  / 하
+  {fx:0.25, fy:0.21},
+  {fx:0.70, fy:0.39},
+  {fx:0.28, fy:0.60},
+  {fx:0.68, fy:0.78},
 ];
 
-/* runtime state */
-let points   = [];          // [{x,y}]  — canvas diamond positions
-const hsAlpha= [0,0,0,0];   // glow alpha per hotspot
-let waveAnim = null;
-const WAVE_SPEED = 3.2;
+let points = [];
+const hsAlpha = [0,0,0,0];
+let transAnim = null;
 
 const hits  = [0,1,2,3].map(i=>document.getElementById('hit'+i));
 const cards = [0,1,2,3].map(i=>document.getElementById('card'+i));
+
+const cardHoverFlags = [false,false,false,false];
+const hitHoverFlags  = [false,false,false,false];
 
 function snapToGrid(px,py){
   return {x:Math.round(px/CELL)*CELL, y:Math.round(py/CELL)*CELL};
 }
 
-/* ── 카드 위치: fixed, 완전히 뷰포트 안에 들어오도록 ── */
-function placeCard(cardEl, px, py){
-  const MARGIN = 14;
-  const LOGO_B = 76;
-  const cw = cardEl.offsetWidth  || (isMobile() ? Math.min(260, W-28) : 220);
-  const ch = cardEl.offsetHeight || 185;
-
-  // 가로: 오른쪽 공간 있으면 오른쪽, 없으면 왼쪽
-  let left = px + 20;
-  if (left + cw > W - MARGIN) left = px - cw - 20;
-  left = Math.max(MARGIN, Math.min(left, W - cw - MARGIN));
-
-  // 세로: 아래 공간 있으면 아래, 없으면 위
-  let top = py + 20;
-  if (top + ch > H - MARGIN) top = py - ch - 20;
-  top = Math.max(LOGO_B, Math.min(top, H - ch - MARGIN));
-
-  cardEl.style.left = left + 'px';
-  cardEl.style.top  = top  + 'px';
+/* Snap all hotspots and resolve any grid collisions by nudging duplicates */
+function snapAllUnique(fracs){
+  const used = new Set();
+  return fracs.map(f=>{
+    let p = snapToGrid(f.fx*W, f.fy*H);
+    const key = ()=> `${p.x},${p.y}`;
+    /* If this cell is taken, try neighbouring cells in expanding spiral */
+    if(used.has(key())){
+      const offsets = [
+        [1,0],[-1,0],[0,1],[0,-1],
+        [1,1],[-1,1],[1,-1],[-1,-1],
+        [2,0],[-2,0],[0,2],[0,-2]
+      ];
+      for(const [dc,dr] of offsets){
+        const candidate = {x:p.x+dc*CELL, y:p.y+dr*CELL};
+        const ck = `${candidate.x},${candidate.y}`;
+        if(!used.has(ck)){ p=candidate; break; }
+      }
+    }
+    used.add(key());
+    return p;
+  });
 }
 
-/* ── 데스크탑 카드 위치 (핫스팟 근처) ── */
-function placeCardDesktop(cardEl, px, py){
-  const side = px > W * 0.6 ? 'right' : 'left';
-  const vert = py > H * 0.58 ? 'bottom' : 'top';
-  const OFF  = 14;
+/* ── Mobile: center horizontally, place vertically so card fully fits ── */
+function placeCardMobile(cardEl, py){
+  /* horizontal: CSS handles left:50% translateX(-50%) */
+  const TOP_SAFE = 80;
+  const BOT_SAFE = 14;
 
-  cardEl.style.left   = side==='left'  ? (px + OFF)+'px' : 'auto';
-  cardEl.style.right  = side==='right' ? (W - px + OFF)+'px' : 'auto';
-  cardEl.style.top    = vert==='top'   ? (py + OFF)+'px' : 'auto';
-  cardEl.style.bottom = vert==='bottom'? (H - py + OFF)+'px' : 'auto';
+  /* Estimate card height from CSS definition:
+     card width = clamp(260, 70vw, W-28), image = 3/4 aspect, footer = 52px */
+  const cardW = Math.min(Math.max(260, W * 0.70), W - 28);
+  const estimatedH = Math.round(cardW * (3/4)) + 52;
+  /* Use actual height if card is already rendered, else use estimate */
+  const cardH = cardEl.offsetHeight > 50 ? cardEl.offsetHeight : estimatedH;
+
+  /* Cap so card never overflows screen */
+  const maxH = H - TOP_SAFE - BOT_SAFE;
+  const finalH = Math.min(cardH, maxH);
+  if(finalH < cardH){
+    cardEl.style.maxHeight = finalH + 'px';
+    cardEl.style.overflowY = 'auto';
+  } else {
+    cardEl.style.maxHeight = '';
+    cardEl.style.overflowY = '';
+  }
+
+  /* Prefer below diamond; flip above if it clips bottom */
+  let top = py + 28;
+  if(top + finalH > H - BOT_SAFE) top = py - finalH - 28;
+  /* Hard clamp — always inside safe area */
+  top = Math.max(TOP_SAFE, Math.min(top, H - finalH - BOT_SAFE));
+
+  cardEl.style.top    = top + 'px';
+  cardEl.style.right  = 'auto';
+  cardEl.style.bottom = 'auto';
+}
+
+/* ── Desktop: anchor near diamond, fully inside viewport ── */
+function placeCardDesktop(cardEl, px, py){
+  const cardW = cardEl.offsetWidth  > 10 ? cardEl.offsetWidth  : Math.round(H*0.70*4/3);
+  const cardH = cardEl.offsetHeight > 10 ? cardEl.offsetHeight : Math.round(H*0.70) + 52;
+  const MARGIN = 14;
+  const TOP_SAFE = 76;
+  const OFF = 14;
+
+  /* horizontal */
+  let left, right;
+  if(px > W * 0.6){
+    /* anchor right side */
+    right = W - px + OFF;
+    left  = W - right - cardW;
+  } else {
+    left  = px + OFF;
+    right = 'auto';
+  }
+  left = Math.max(MARGIN, Math.min(left, W - cardW - MARGIN));
+
+  /* vertical */
+  let top;
+  if(py > H * 0.58){
+    top = py - cardH - OFF;
+  } else {
+    top = py + OFF;
+  }
+  top = Math.max(TOP_SAFE, Math.min(top, H - cardH - MARGIN));
+
+  cardEl.style.left   = left + 'px';
+  cardEl.style.right  = 'auto';
+  cardEl.style.top    = top  + 'px';
+  cardEl.style.bottom = 'auto';
 }
 
 function buildLayout(){
   const fracs = isMobile() ? HS_MOBILE : HS_DESKTOP;
-  points = fracs.map((f,i)=>{
-    const p = snapToGrid(f.fx*W, f.fy*H);
-
-    // hit zone position (centered on diamond)
+  const snapped = snapAllUnique(fracs);
+  points = snapped.map((p,i)=>{
     hits[i].style.left = p.x+'px';
     hits[i].style.top  = p.y+'px';
-
-    // card position
-    if(isMobile()) placeCard(cards[i], p.x, p.y);
-    else           placeCardDesktop(cards[i], p.x, p.y);
-
+    /* hit zone sized to match actual diamond — index 0 is bigger */
+    const hitSize = i===0 ? 48 : 36;
+    hits[i].style.width  = hitSize+'px';
+    hits[i].style.height = hitSize+'px';
+    if(!isMobile()) placeCardDesktop(cards[i], p.x, p.y);
     return p;
   });
 }
 
 function resize(){
-  W = canvas.width  = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+  W = canvas.width = window.innerWidth;
+  H = canvas.height= window.innerHeight;
+  ov2.width = W; ov2.height = H;
   makeNoise();
   buildLayout();
 }
 window.addEventListener('resize', resize);
 
-/* ── Mouse tracking ── */
 document.addEventListener('mousemove', e=>{
   mx=e.clientX; my=e.clientY;
   refreshCells(mx,my);
@@ -283,15 +355,15 @@ document.addEventListener('mousemove', e=>{
 let lastMX=-9999, lastMY=-9999, moveAccum=0;
 const cellState={};
 const LERP_SPEED=0.04;
-function getCellState(k){if(!cellState[k])cellState[k]={cur:0,tgt:0};return cellState[k];}
+function getCellState(k){ if(!cellState[k]) cellState[k]={cur:0,tgt:0}; return cellState[k]; }
 
 function refreshCells(mxx,myy){
   moveAccum+=Math.hypot(mxx-lastMX,myy-lastMY);
-  if(moveAccum<18)return;
+  if(moveAccum<18) return;
   moveAccum=0;
-  const cols=Math.ceil(W/CELL)+2,rows=Math.ceil(H/CELL)+2;
+  const cols=Math.ceil(W/CELL)+2, rows=Math.ceil(H/CELL)+2;
   for(let r=-1;r<=rows;r++) for(let c=-1;c<=cols;c++){
-    const ccx=c*CELL+CELL*.5,ccy=r*CELL+CELL*.5;
+    const ccx=c*CELL+CELL*.5, ccy=r*CELL+CELL*.5;
     const d=Math.hypot(mxx-ccx,myy-ccy);
     if(d<MOUSE_R){
       const s=getCellState(`${c},${r}`);
@@ -302,12 +374,12 @@ function refreshCells(mxx,myy){
 
 let noisePattern=null;
 function makeNoise(){
-  const sz=64,oc=document.createElement('canvas');
+  const sz=64, oc=document.createElement('canvas');
   oc.width=oc.height=sz;
-  const oc2=oc.getContext('2d'),id=oc2.createImageData(sz,sz);
+  const oc2=oc.getContext('2d'), id=oc2.createImageData(sz,sz);
   for(let i=0;i<sz*sz*4;i+=4){
     const v=Math.random()*255|0;
-    id.data[i]=v;id.data[i+1]=v;id.data[i+2]=v;
+    id.data[i]=v; id.data[i+1]=v; id.data[i+2]=v;
     id.data[i+3]=Math.random()*28|0;
   }
   oc2.putImageData(id,0,0);
@@ -318,24 +390,52 @@ function cellRandom(col,row,seed){
   const n=Math.sin(col*127.1+row*311.7+seed*7919)*43758.5453;
   return n-Math.floor(n);
 }
-function lerp(a,b,t){return a+(b-a)*t;}
+function lerp(a,b,t){ return a+(b-a)*t; }
 
-/* ── Wave ── */
-function startWave(idx,url){
-  if(waveAnim)return;
-  waveAnim={ox:points[idx].x,oy:points[idx].y,url,startTime:performance.now(),navigated:false};
+/* ── Two-phase page transition ──
+   Phase 1: cream cells radiate from click point drawn on canvas (original style)
+   Phase 2: dark tiles sweep edge→center, single color + border lines
+*/
+function startWave(idx, url){
+  if(transAnim) return;
+
+  const ox = points[idx].x, oy = points[idx].y;
+
+  /* Phase 2: tiles sorted by distance FROM ORIGIN (same as cream wave).
+     Farthest tiles first → wave sweeps from edges inward toward origin,
+     which is the inverse of the cream wave — cream expands OUT, dark fills IN. */
+  const cols = Math.ceil(W/CELL)+2;
+  const rows = Math.ceil(H/CELL)+2;
+  let tiles = [];
+  for(let row=-1; row<=rows; row++) for(let col=-1; col<=cols; col++){
+    const tx=col*CELL+CELL*.5, ty=row*CELL+CELL*.5;
+    const distFromOrigin = Math.hypot(tx-ox, ty-oy);
+    tiles.push({col, row, distFromOrigin});
+  }
+  /* descending: farthest from origin first → fills from edges back to click point */
+  tiles.sort((a,b)=> b.distFromOrigin - a.distFromOrigin);
+
+  transAnim = {
+    ox, oy, url,
+    startTime: performance.now(),
+    phase: 1,           /* 1=cream wave on canvas, 2=dark tile fill on ov2 */
+    phase2Start: 0,
+    tiles,
+    navigated: false,
+  };
 }
 
-/* ── Tap / hover open logic ── */
-let openIdx=-1;
-const cardHoverFlags=[false,false,false,false];
+/* ── Card open/close — original logic ── */
+let openIdx = -1;
+function isCardActive(i){
+  return cardHoverFlags[i] || hitHoverFlags[i] || openIdx===i;
+}
 
 function openCard(i){
-  if(openIdx===i){closeCards();return;}
+  if(openIdx===i){ closeCards(); return; }
   closeCards();
   openIdx=i;
-  // re-place card right before showing (layout may have changed)
-  if(isMobile()) placeCard(cards[i], points[i].x, points[i].y);
+  if(!isMobile()) placeCardDesktop(cards[i], points[i].x, points[i].y);
   cards[i].classList.add('visible');
 }
 function closeCards(){
@@ -345,44 +445,47 @@ function closeCards(){
 
 /* Hit zone events */
 hits.forEach((hit,i)=>{
-  // desktop hover
+  /* desktop hover */
   hit.addEventListener('mouseenter',()=>{
-    if(isMobile())return;
-    cardHoverFlags[i]=true;
+    if(isMobile()) return;
+    hitHoverFlags[i]=true;
     placeCardDesktop(cards[i], points[i].x, points[i].y);
     cards[i].classList.add('visible');
   });
   hit.addEventListener('mouseleave',()=>{
-    if(isMobile())return;
-    // delay so mouse can enter card
+    if(isMobile()) return;
+    hitHoverFlags[i]=false;
     setTimeout(()=>{
-      if(!cardHoverFlags[i]) cards[i].classList.remove('visible');
+      if(!cardHoverFlags[i] && !hitHoverFlags[i]) cards[i].classList.remove('visible');
     },80);
   });
 
-  // mobile tap
+  /* mobile tap */
   hit.addEventListener('click',e=>{
-    if(!isMobile())return;
+    if(!isMobile()) return;
     e.stopPropagation();
     openCard(i);
   });
 });
 
-/* Card hover (desktop) */
+/* Card hover (desktop only) */
 cards.forEach((card,i)=>{
-  card.addEventListener('mouseenter',()=>{ cardHoverFlags[i]=true; });
+  card.addEventListener('mouseenter',()=>{
+    if(isMobile()) return;
+    cardHoverFlags[i]=true;
+  });
   card.addEventListener('mouseleave',()=>{
+    if(isMobile()) return;
     cardHoverFlags[i]=false;
     if(!isMobile()) cards[i].classList.remove('visible');
   });
-  // stop propagation so background-click doesn't close
   card.addEventListener('click',e=>e.stopPropagation());
 });
 
-/* X buttons */
+/* X close buttons */
 ;[0,1,2,3].forEach(i=>{
   const btn=document.getElementById('close'+i);
-  function doClose(e){e.stopPropagation();e.preventDefault();closeCards();}
+  function doClose(e){ e.stopPropagation(); e.preventDefault(); closeCards(); }
   btn.addEventListener('click',   doClose);
   btn.addEventListener('touchend',doClose,{passive:false});
 });
@@ -390,71 +493,132 @@ cards.forEach((card,i)=>{
 /* VIEW buttons */
 document.querySelectorAll('.card-btn').forEach(btn=>{
   btn.addEventListener('click',e=>{
-    e.preventDefault();e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     startWave(parseInt(btn.dataset.hs), btn.getAttribute('href'));
   });
 });
 
-/* Background tap closes cards */
-document.addEventListener('click',()=>{ if(isMobile()&&openIdx>=0) closeCards(); });
+/* Cards only close via X button on mobile */
 
 /* ── Draw ── */
 function draw(){
   ctx.clearRect(0,0,W,H);
   const cols=Math.ceil(W/CELL)+2, rows=Math.ceil(H/CELL)+2;
 
-  /* update hotspot glow alpha */
+  /* hotspot glow */
   points.forEach((p,i)=>{
     const distM  = Math.hypot(mx-p.x, my-p.y);
-    const isHover= (!isMobile() && distM<HOVER_R) || cardHoverFlags[i] || (openIdx===i);
-    hsAlpha[i]   = lerp(hsAlpha[i], isHover?1:0, 0.07);
+    const active = (!isMobile()&&distM<HOVER_R) || isCardActive(i);
+    hsAlpha[i]   = lerp(hsAlpha[i], active?1:0, 0.07);
   });
 
-  /* wave */
-  let waveFront=-1,maxDist=0;
-  if(waveAnim){
-    waveFront=(performance.now()-waveAnim.startTime)*WAVE_SPEED;
-    maxDist=Math.max(
-      Math.hypot(waveAnim.ox,    waveAnim.oy),
-      Math.hypot(W-waveAnim.ox,  waveAnim.oy),
-      Math.hypot(waveAnim.ox,    H-waveAnim.oy),
-      Math.hypot(W-waveAnim.ox,  H-waveAnim.oy)
-    );
+  /* ── Transition rendering ── */
+  if(transAnim){
+    const now = performance.now();
+
+    if(transAnim.phase===1){
+      /* Phase 1: cream wave radiates outward — drawn directly on canvas like original */
+      const WAVE_SPEED = 3.2;
+      const waveFront = (now - transAnim.startTime) * WAVE_SPEED;
+      const maxDist = Math.max(
+        Math.hypot(transAnim.ox,   transAnim.oy),
+        Math.hypot(W-transAnim.ox, transAnim.oy),
+        Math.hypot(transAnim.ox,   H-transAnim.oy),
+        Math.hypot(W-transAnim.ox, H-transAnim.oy)
+      );
+
+      /* draw cream cells on main canvas — same loop as grid cells, but wave-driven */
+      for(let row=-1;row<=rows;row++) for(let col=-1;col<=cols;col++){
+        const cx=col*CELL, cy=row*CELL;
+        const ccx=cx+CELL*.5, ccy=cy+CELL*.5;
+        const df = Math.hypot(ccx-transAnim.ox, ccy-transAnim.oy);
+        const waveA = Math.min(1,Math.max(0,(waveFront-df)/(CELL*2.5)))**0.7;
+        if(waveA<0.008) continue;
+        /* cream fill */
+        ctx.fillStyle=`rgba(${CR},${CG},${CB},${waveA*0.96})`;
+        ctx.fillRect(cx+.5,cy+.5,CELL-1,CELL-1);
+        /* cream grid lines on top */
+        ctx.strokeStyle=`rgba(${CR},${CG},${CB},${waveA*0.3})`;
+        ctx.lineWidth=0.5;
+        ctx.strokeRect(cx+.5,cy+.5,CELL-1,CELL-1);
+      }
+
+      /* once wave fully covers screen → phase 2 */
+      if(waveFront > maxDist + CELL*3){
+        /* lock overlay solid so no flash */
+        overlay.style.opacity='1';
+        transAnim.phase=2;
+        transAnim.phase2Start=now;
+        ov2.style.opacity='1';
+      }
+
+    } else if(transAnim.phase===2){
+      /* Phase 2: dark tiles sweep edge→center on ov2 canvas.
+         Single dark color + 1px border lines for tile feel. Fast: ~350ms total. */
+      const elapsed = now - transAnim.phase2Start;
+      const N = transAnim.tiles.length;
+      const TOTAL_SWEEP  = 350;  /* ms for wave front across all tiles */
+      const TILE_FADE    = 60;   /* ms each tile takes to appear */
+      const TILE_INTERVAL = TOTAL_SWEEP / N;
+
+      ctx2.clearRect(0,0,W,H);
+      let allDone = true;
+
+      transAnim.tiles.forEach((tile,idx)=>{
+        const tileStart   = idx * TILE_INTERVAL;
+        const tileElapsed = elapsed - tileStart;
+        if(tileElapsed<=0){ allDone=false; return; }
+
+        const a = Math.min(1, tileElapsed / TILE_FADE);
+        if(a<1) allDone=false;
+
+        const tx = tile.col*CELL, ty = tile.row*CELL;
+
+        /* single dark fill */
+        ctx2.fillStyle = `rgba(6,6,5,${a})`;
+        ctx2.fillRect(tx, ty, CELL, CELL);
+
+        /* tile border — cream at low alpha so grid pattern shows */
+        if(a > 0.3){
+          ctx2.strokeStyle = `rgba(${CR},${CG},${CB},${(a-0.3)*0.18})`;
+          ctx2.lineWidth = 0.5;
+          ctx2.strokeRect(tx+0.5, ty+0.5, CELL-1, CELL-1);
+        }
+      });
+
+      if(!transAnim.navigated && allDone){
+        transAnim.navigated=true;
+        setTimeout(()=>{ window.location.href=transAnim.url; },40);
+      }
+    }
   }
 
-  /* cells */
+  /* ── Grid cells ── */
   for(let row=-1;row<=rows;row++) for(let col=-1;col<=cols;col++){
-    const cx=col*CELL,cy=row*CELL;
-    const ccx=cx+CELL*.5,ccy=cy+CELL*.5;
+    const cx=col*CELL, cy=row*CELL;
+    const ccx=cx+CELL*.5, ccy=cy+CELL*.5;
     const s=getCellState(`${col},${row}`);
     if(Math.hypot(mx-ccx,my-ccy)>MOUSE_R) s.tgt=lerp(s.tgt,0,0.02);
     s.cur=lerp(s.cur,s.tgt,LERP_SPEED);
 
     let hsMax=0;
     points.forEach((p,hi)=>{
-      const a=hsAlpha[hi];if(a<0.005)return;
-      const hc=Math.round(p.x/CELL),hr=Math.round(p.y/CELL);
-      const RANGE=3.2+a*4.0;
-      const cd=Math.sqrt((col-hc)**2+(row-hr)**2);if(cd>RANGE)return;
+      const a=hsAlpha[hi]; if(a<0.005) return;
+      const hc=Math.round(p.x/CELL), hr=Math.round(p.y/CELL);
+      const RANGE = hi===0 ? (4.5+a*4.5) : (3.2+a*4.0);
+      const cd=Math.sqrt((col-hc)**2+(row-hr)**2); if(cd>RANGE) return;
       const dF=Math.max(0,1-cd/RANGE)**2;
       const rand=cellRandom(col+hi*1000,row+hi*500,hi);
       const cb2=cd<1.5?0.18*a:0;
       hsMax=Math.max(hsMax,(rand*dF*0.78+cb2)*a);
     });
 
-    let waveA=0;
-    if(waveAnim){
-      const df=Math.hypot(ccx-waveAnim.ox,ccy-waveAnim.oy);
-      waveA=Math.min(1,Math.max(0,(waveFront-df)/(CELL*2.5)))**0.7;
-    }
     const base=Math.min(0.72,s.cur+hsMax);
-    const total=waveA>0?Math.max(base,waveA*0.96):base;
-    if(total<0.008)continue;
-
-    ctx.fillStyle=`rgba(${CR},${CG},${CB},${total})`;
+    if(base<0.008) continue;
+    ctx.fillStyle=`rgba(${CR},${CG},${CB},${base})`;
     ctx.fillRect(cx+.5,cy+.5,CELL-1,CELL-1);
-    if(noisePattern&&total>0.04){
-      ctx.save();ctx.globalAlpha=total*.55;
+    if(noisePattern&&base>0.04){
+      ctx.save(); ctx.globalAlpha=base*.55;
       ctx.fillStyle=noisePattern;
       ctx.fillRect(cx+.5,cy+.5,CELL-1,CELL-1);
       ctx.restore();
@@ -462,35 +626,46 @@ function draw(){
   }
 
   /* grid lines */
-  ctx.strokeStyle=`rgba(${CR},${CG},${CB},0.08)`;ctx.lineWidth=.5;
-  for(let i=0;i<=rows;i++){ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(W,i*CELL);ctx.stroke();}
-  for(let j=0;j<=cols;j++){ctx.beginPath();ctx.moveTo(j*CELL,0);ctx.lineTo(j*CELL,H);ctx.stroke();}
+  ctx.strokeStyle=`rgba(${CR},${CG},${CB},0.08)`; ctx.lineWidth=.5;
+  for(let i=0;i<=rows;i++){ ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(W,i*CELL);ctx.stroke(); }
+  for(let j=0;j<=cols;j++){ ctx.beginPath();ctx.moveTo(j*CELL,0);ctx.lineTo(j*CELL,H);ctx.stroke(); }
 
-  /* diamonds */
-  const BASE_D=3.6, HS_D=BASE_D*1.44;
-  const mScale=isMobile()?2.6:1.0;
+  /* ── Diamonds ── */
+  const BASE_D=3.6;
   for(let i=0;i<=rows;i++) for(let j=0;j<=cols;j++){
-    const x=j*CELL,y=i*CELL;
+    const x=j*CELL, y=i*CELL;
     let hi=-1;
-    points.forEach((p,k)=>{ if(p.x===x&&p.y===y) hi=k; });
-    ctx.save();ctx.translate(x,y);ctx.rotate(Math.PI/4);
-    if(hi>=0){
+    for(let k=0;k<points.length;k++){ if(points[k].x===x&&points[k].y===y){hi=k;break;} }
+    ctx.save(); ctx.translate(x,y); ctx.rotate(Math.PI/4);
+
+    if(hi===0){
+      /* Play Chess: ~2× base with halo */
+      const a=hsAlpha[0];
+      const sz = BASE_D*2.0 + a*2.2;
+      const al = Math.min(1, 0.72+a*0.25);
+      ctx.fillStyle=`rgba(${CR},${CG},${CB},${0.09+a*0.14})`;
+      ctx.fillRect(-sz/2,-sz/2,sz*2.0,sz*2.0); ctx.fillRect(-sz,  -sz,sz*2.0,sz*2.0);
+      ctx.fillStyle=`rgba(${CR},${CG},${CB},${0.22+a*0.18})`;
+      ctx.fillRect(-sz*1.38/2,-sz*1.38/2,sz*1.38,sz*1.38);
+      ctx.fillStyle=`rgba(${CR},${CG},${CB},${al})`;
+      ctx.fillRect(-sz/2,-sz/2,sz,sz);
+
+    } else if(hi>=1){
+      /* other hotspots: halo */
       const a=hsAlpha[hi];
-      const size=(HS_D+a*2.16)*mScale;
+      const sz = BASE_D*1.44 + a*2.16;
+      ctx.fillStyle=`rgba(${CR},${CG},${CB},${0.06+a*0.12})`;
+      ctx.fillRect(-sz*1.9/2,-sz*1.9/2,sz*1.9,sz*1.9);
+      ctx.fillStyle=`rgba(${CR},${CG},${CB},${0.16+a*0.18})`;
+      ctx.fillRect(-sz*1.35/2,-sz*1.35/2,sz*1.35,sz*1.35);
       ctx.fillStyle=`rgba(${CR},${CG},${CB},${0.52+a*0.44})`;
-      ctx.fillRect(-size/2,-size/2,size,size);
+      ctx.fillRect(-sz/2,-sz/2,sz,sz);
+
     } else {
       ctx.fillStyle=`rgba(${CR},${CG},${CB},0.15)`;
       ctx.fillRect(-BASE_D/2,-BASE_D/2,BASE_D,BASE_D);
     }
     ctx.restore();
-  }
-
-  /* navigate */
-  if(waveAnim&&!waveAnim.navigated&&waveFront>maxDist+CELL*3){
-    waveAnim.navigated=true;
-    overlay.style.opacity='1';
-    setTimeout(()=>{ window.location.href=waveAnim.url; },130);
   }
 
   requestAnimationFrame(draw);

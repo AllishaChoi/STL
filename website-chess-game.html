@@ -81,6 +81,9 @@
         .piece { width:70%; height:70%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Geist',sans-serif; font-size:clamp(11px,1.8vw,22px); font-weight:600; border:2px solid transparent; }
         .piece.white { background:#fff; color:#000; border-color:rgba(255,255,255,0.6); }
         .piece.black { background:#1a1a18; color:#fff; border-color:rgba(255,255,255,0.25); }
+        .piece-img { width:100%; height:100%; object-fit:cover; display:block; user-select:none; }
+        .piece-img.white { filter:none; }
+        .piece-img.black { filter:brightness(0) invert(1) opacity(0.45); }
         .moves-strip { border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.02); padding:14px 18px; overflow-y:auto; min-height:60px; max-height:120px; }
         .moves-list { font-family:'Geist Mono',monospace; font-size:11px; line-height:1.8; color:#666; display:flex; flex-wrap:wrap; gap:0 14px; }
         .move-entry { display:flex; gap:4px; white-space:nowrap; }
@@ -189,7 +192,6 @@
             .hero-left h1 { font-size:44px; }
             .hero-right { display:none; }
 
-            /* 로고: 오른쪽 위 고정 */
             .hero-logo {
                 position:fixed;
                 top:16px;
@@ -207,7 +209,6 @@
             }
             .section-title { font-size:22px; }
 
-            /* inline-controls: 버튼들 → 첫 줄, status → 다음 줄 */
             .inline-controls {
                 flex-direction:column;
                 align-items:flex-start;
@@ -216,20 +217,18 @@
                 padding-bottom:4px;
             }
 
-            /* 버튼 그룹 (New Game, Undo) */
             .controls-btn-row {
                 display:flex;
                 gap:8px;
             }
 
-            /* status 그룹 (Turn, Status) */
             .controls-status-row {
                 display:flex;
                 align-items:center;
                 gap:12px;
                 flex-wrap:wrap;
-                padding-top:12px;                               /* 위 여백 추가 */
-                border-top:1px solid rgba(255,255,255,0.2);    /* 구분선 */
+                padding-top:12px;
+                border-top:1px solid rgba(255,255,255,0.2);
                 width:100%;
           }
 
@@ -277,13 +276,11 @@
         <div class="section-topbar">
             <h2 class="section-title">Interactive Board</h2>
             <div class="inline-controls">
-                <!-- 버튼 그룹: 모바일에서 첫 줄 -->
                 <div class="controls-btn-row">
                     <button onclick="resetGame()">New Game</button>
                     <button onclick="undoMove()">Undo</button>
                 </div>
                 <div class="divider-v"></div>
-                <!-- status 그룹: 모바일에서 다음 줄 -->
                 <div class="controls-status-row">
                     <div class="status-group">
                         <span class="status-label">Turn</span>
@@ -364,6 +361,48 @@
 <script>
 
 // ─────────────────────────────────────────────
+//  LOGO IMAGE — base64 인라인 (CORS 문제 없음)
+// ─────────────────────────────────────────────
+const LOGO_B64 = 'data:image/jpeg;base64,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';
+let _cachedLogoImg = null;
+let _logoLoadPromise = null;
+
+function getLogoImage() {
+    if (_cachedLogoImg) return Promise.resolve(_cachedLogoImg);
+    if (_logoLoadPromise) return _logoLoadPromise;
+    _logoLoadPromise = new Promise((resolve) => {
+        const img = new Image();
+        img.onload  = () => { _cachedLogoImg = img; resolve(img); };
+        img.onerror = () => { resolve(null); };
+        img.src = LOGO_B64;
+    });
+    return _logoLoadPromise;
+}
+
+// 페이지 로드 시 미리 캐싱 시작
+getLogoImage();
+
+// ─────────────────────────────────────────────
+//  PIECE IMAGE CONSTANTS (파일 경로)
+// ─────────────────────────────────────────────
+const PIECE_KING   = 'king.png';
+const PIECE_QUEEN  = 'queen.png';
+const PIECE_ROOK   = 'rook.png';
+const PIECE_BISHOP = 'bishop.png';
+const PIECE_KNIGHT = 'knight.png';
+const PIECE_PAWN   = 'pawn.png';
+
+// 피스 문자 → 이미지 경로 직접 매핑
+const PIECE_SRC = {
+    K: PIECE_KING,   k: PIECE_KING,
+    Q: PIECE_QUEEN,  q: PIECE_QUEEN,
+    R: PIECE_ROOK,   r: PIECE_ROOK,
+    B: PIECE_BISHOP, b: PIECE_BISHOP,
+    N: PIECE_KNIGHT, n: PIECE_KNIGHT,
+    P: PIECE_PAWN,   p: PIECE_PAWN
+};
+
+// ─────────────────────────────────────────────
 //  CHESS GAME STATE
 // ─────────────────────────────────────────────
 let board = [];
@@ -399,9 +438,19 @@ function createBoardUI() {
         sq.onclick=()=>handleSquareClick(row,col);
         const piece=board[row][col];
         if(piece){
-            const p=document.createElement('div');
-            p.className='piece '+(piece===piece.toUpperCase()?'black':'white');
-            p.textContent=pieceSymbols[piece.toUpperCase()]; sq.appendChild(p);
+            const isBlack = piece===piece.toUpperCase();
+            const src = PIECE_SRC[piece];
+            if(src){
+                const pi=document.createElement('img');
+                pi.src=src;
+                pi.className='piece-img '+(isBlack?'black':'white');
+                pi.draggable=false;
+                sq.appendChild(pi);
+            } else {
+                const p=document.createElement('div');
+                p.className='piece '+(isBlack?'black':'white');
+                p.textContent=pieceSymbols[piece.toUpperCase()]; sq.appendChild(p);
+            }
         }
         el.appendChild(sq);
     }
@@ -553,156 +602,205 @@ function resetGame(){
 function undoMove(){ showToast('Start a new game to reset.'); }
 
 // ─────────────────────────────────────────────
+//  HEADER DRAW HELPER
+//  로고 → 선 → 제목 → 무브수 → 선  레이아웃을 그리는 공통 함수
+//  logoImg: HTMLImageElement | null
+//  반환값: BOARD_TOP (보드가 시작될 Y 좌표)
+// ─────────────────────────────────────────────
+function drawExportHeader(ctx, W, H, count, logoImg) {
+    const SS = W / 1080;
+    const is916 = (H / W) > 1.6;
+    const MARGIN = W * 0.1;
+
+    // ── 1. 로고 ──────────────────────────────
+    // 상단에서 적절한 여백을 두고 로고를 중앙 정렬로 그린다
+    const LOGO_TOP    = is916 ? H * 0.090 : H * 0.080;
+    const LOGO_HEIGHT = is916 ? H * 0.040 : H * 0.046; // 로고 렌더 높이
+
+    if (logoImg) {
+        const aspect   = logoImg.naturalWidth / logoImg.naturalHeight;
+        const logoW    = LOGO_HEIGHT * aspect;
+        const logoX    = (W - logoW) / 2;
+        ctx.save();
+        ctx.globalAlpha = 0.90;
+        ctx.drawImage(logoImg, logoX, LOGO_TOP, logoW, LOGO_HEIGHT);
+        ctx.restore();
+    }
+
+    // ── 2. 선 (로고 아래) ────────────────────
+    const LINE1_Y = LOGO_TOP + LOGO_HEIGHT + (is916 ? H * 0.022 : H * 0.020);
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth   = 1 * SS;
+    ctx.lineCap     = 'butt';
+    ctx.beginPath();
+    ctx.moveTo(MARGIN, LINE1_Y);
+    ctx.lineTo(W - MARGIN, LINE1_Y);
+    ctx.stroke();
+
+    // ── 3. 제목 ──────────────────────────────
+    const TITLE_TOP  = LINE1_Y + (is916 ? H * 0.022 : H * 0.020);
+    const titleFS    = is916 ? 52 * SS : 48 * SS;
+    ctx.font         = `300 ${titleFS}px Geist, "Helvetica Neue", Arial, sans-serif`;
+    ctx.textBaseline = 'top';
+    ctx.textAlign    = 'center';
+    ctx.fillStyle    = 'rgba(255,255,255,0.92)';
+    ctx.fillText('YOUR GAME JOURNEY', W / 2, TITLE_TOP);
+
+    // ── 4. 무브 수 ───────────────────────────
+    const MOVE_TOP = TITLE_TOP + titleFS * 1.50;
+    const moveFS   = is916 ? 24 * SS : 22 * SS;
+    ctx.font       = `${moveFS}px monospace`;
+    ctx.fillStyle  = 'rgba(255,255,255,0.30)';
+    ctx.textAlign  = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`${count} MOVES`, W / 2, MOVE_TOP);
+
+    // ── 5. 선 (제목 블록 아래) ───────────────
+    const LINE2_Y = MOVE_TOP + moveFS * 1.6 + (is916 ? H * 0.018 : H * 0.016);
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth   = 1 * SS;
+    ctx.lineCap     = 'butt';
+    ctx.beginPath();
+    ctx.moveTo(MARGIN, LINE2_Y);
+    ctx.lineTo(W - MARGIN, LINE2_Y);
+    ctx.stroke();
+
+    // 보드가 시작할 Y 반환
+    const BOARD_TOP = LINE2_Y + (is916 ? H * 0.014 : H * 0.012);
+    return BOARD_TOP;
+}
+
+// ─────────────────────────────────────────────
 //  SHARED POSTER DRAW (raw Canvas 2D)
 // ─────────────────────────────────────────────
+function drawPosterToCanvas(ctx, W, H, movesData, histData, maxMoves, logoImg) {
+    const count = (maxMoves !== undefined) ? Math.min(maxMoves, movesData.length) : movesData.length;
+    const SS    = W / 1080;
+    const is916 = (H / W) > 1.6;
+    const MARGIN = W * 0.05;
 
-function drawPosterToCanvas(ctx,W,H,movesData,histData,maxMoves){
-    const count=(maxMoves!==undefined)?Math.min(maxMoves,movesData.length):movesData.length;
-    const SS=W/1080;
+    // 배경
+    ctx.fillStyle = 'rgb(5,5,4)';
+    ctx.fillRect(0, 0, W, H);
 
-    const is916 = (H/W) > 1.6;
-    const MARGIN    = W * 0.05;
-    const TITLE_TOP = is916 ? H * 0.10 : H * 0.08;
-    const TITLE_H   = is916 ? H * 0.055 : H * 0.07;
-    const BOARD_TOP = TITLE_TOP + TITLE_H + (is916 ? H*0.010 : H*0.015);
-    const BOARD_H   = is916 ? H * 0.66 : H * 0.65;
-    const LOG_TOP   = BOARD_TOP + BOARD_H + H * 0.018;
+    // 헤더 그리기 (로고→선→제목→무브→선)
+    const BOARD_TOP = drawExportHeader(ctx, W, H, count, logoImg || _cachedLogoImg);
 
-    const bScaleX = (W - MARGIN*2) / GW;
+    // 보드 높이 / 로그 위치 계산
+    const remainH  = H - BOARD_TOP;
+    const BOARD_H  = remainH * (is916 ? 0.72 : 0.70);
+    const LOG_TOP  = BOARD_TOP + BOARD_H + H * 0.018;
+
+    const bScaleX = (W - MARGIN * 2) / GW;
     const bScaleY = BOARD_H / GH;
     const bScale  = Math.min(bScaleX, bScaleY);
     const bOffX   = (W - GW * bScale) / 2;
     const bOffY   = BOARD_TOP + (BOARD_H - GH * bScale) / 2;
 
-    function bd(col,row){ const p=gBoard(col,row); return{x:bOffX+p.x*bScale, y:bOffY+p.y*bScale}; }
-    function cl(c,r){     const p=gCell(c,r);      return{x:bOffX+p.x*bScale, y:bOffY+p.y*bScale}; }
+    function bd(col, row) { const p = gBoard(col, row); return { x: bOffX + p.x * bScale, y: bOffY + p.y * bScale }; }
+    function cl(c, r)     { const p = gCell(c, r);      return { x: bOffX + p.x * bScale, y: bOffY + p.y * bScale }; }
 
-    ctx.fillStyle='rgb(5,5,4)'; ctx.fillRect(0,0,W,H);
-
-    const titleFontSize = is916 ? 49*SS : 46*SS;
-    ctx.font=`300 ${titleFontSize}px Geist, "Helvetica Neue", Arial, sans-serif`;
-
-    const t1 = 'Your Game Journey ';
-    const t2 = ': STL';
-    const t1W = ctx.measureText(t1).width;
-    const t2W = ctx.measureText(t2).width;
-    const totalTitleW = t1W + t2W;
-    const titleX = (W - totalTitleW) / 2;
-
-    ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1*SS; ctx.lineCap='butt';
-    ctx.beginPath(); ctx.moveTo(W*0.1, TITLE_TOP-H*0.014); ctx.lineTo(W*0.9, TITLE_TOP-H*0.014); ctx.stroke();
-
-    ctx.textBaseline='top';
-    ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.textAlign='left';
-    ctx.fillText(t1, titleX, TITLE_TOP);
-    ctx.fillStyle='rgba(255,255,255,0.38)';
-    ctx.fillText(t2, titleX + t1W, TITLE_TOP);
-
-    ctx.fillStyle='rgba(255,255,255,0.30)';
-    ctx.font=`${(is916 ? 26 : 24)*SS}px monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='top';
-    ctx.fillText(`${count} moves`, W/2, TITLE_TOP + titleFontSize*1.25);
-
-    ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1*SS;
-    ctx.beginPath(); ctx.moveTo(W*0.1, BOARD_TOP-H*0.012); ctx.lineTo(W*0.9, BOARD_TOP-H*0.012); ctx.stroke();
-
-    for(let c=0;c<8;c++) for(let r=0;r<8;r++) if((c+r)%2===0){
-        const tl=bd(c,r),tr2=bd(c+1,r),bl=bd(c,r+1),br=bd(c+1,r+1);
-        ctx.beginPath(); ctx.moveTo(tl.x,tl.y); ctx.lineTo(tr2.x,tr2.y); ctx.lineTo(br.x,br.y); ctx.lineTo(bl.x,bl.y);
-        ctx.closePath(); ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fill();
+    // ── 체스보드 ──
+    for (let c = 0; c < 8; c++) for (let r = 0; r < 8; r++) if ((c + r) % 2 === 0) {
+        const tl = bd(c, r), tr2 = bd(c + 1, r), bl = bd(c, r + 1), br = bd(c + 1, r + 1);
+        ctx.beginPath(); ctx.moveTo(tl.x, tl.y); ctx.lineTo(tr2.x, tr2.y); ctx.lineTo(br.x, br.y); ctx.lineTo(bl.x, bl.y);
+        ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
     }
-    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1.5*bScale; ctx.lineCap='butt';
-    for(let i=0;i<=8;i++){
-        const a=bd(i,0),b=bd(i,8); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-        const a2=bd(0,i),b2=bd(8,i); ctx.beginPath(); ctx.moveTo(a2.x,a2.y); ctx.lineTo(b2.x,b2.y); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1.5 * bScale; ctx.lineCap = 'butt';
+    for (let i = 0; i <= 8; i++) {
+        const a = bd(i, 0), b = bd(i, 8); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        const a2 = bd(0, i), b2 = bd(8, i); ctx.beginPath(); ctx.moveTo(a2.x, a2.y); ctx.lineTo(b2.x, b2.y); ctx.stroke();
     }
-    const tk=12*bScale;
-    ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=1.5*bScale;
-    for(let c=0;c<=8;c++) for(let r=0;r<=8;r++){
-        const pt=bd(c,r);
-        ctx.beginPath(); ctx.moveTo(pt.x-tk,pt.y); ctx.lineTo(pt.x+tk,pt.y); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(pt.x,pt.y-tk); ctx.lineTo(pt.x,pt.y+tk); ctx.stroke();
+    const tk = 12 * bScale;
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1.5 * bScale;
+    for (let c = 0; c <= 8; c++) for (let r = 0; r <= 8; r++) {
+        const pt = bd(c, r);
+        ctx.beginPath(); ctx.moveTo(pt.x - tk, pt.y); ctx.lineTo(pt.x + tk, pt.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pt.x, pt.y - tk); ctx.lineTo(pt.x, pt.y + tk); ctx.stroke();
     }
-    const bk=92*bScale;
-    [[bd(0,0),1,1],[bd(8,0),-1,1],[bd(0,8),1,-1],[bd(8,8),-1,-1]].forEach(([pt,sx,sy])=>{
-        ctx.strokeStyle='rgba(255,255,255,0.55)'; ctx.lineWidth=3*bScale;
-        ctx.beginPath(); ctx.moveTo(pt.x,pt.y); ctx.lineTo(pt.x+sx*bk,pt.y+sy*.12*bk); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(pt.x,pt.y); ctx.lineTo(pt.x+sx*.15*bk,pt.y+sy*bk*.55); ctx.stroke();
+    const bk = 92 * bScale;
+    [[bd(0,0),1,1],[bd(8,0),-1,1],[bd(0,8),1,-1],[bd(8,8),-1,-1]].forEach(([pt, sx, sy]) => {
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 3 * bScale;
+        ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(pt.x + sx * bk, pt.y + sy * .12 * bk); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(pt.x + sx * .15 * bk, pt.y + sy * bk * .55); ctx.stroke();
     });
-    const coordSize=Math.round(50*bScale);
-    ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font=`${coordSize}px monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='top';
-    for(let c=0;c<8;c++){const pt=bd(c+.5,8.24);ctx.fillText(FILES_VIZ[c],pt.x,pt.y);}
-    ctx.textAlign='right'; ctx.textBaseline='middle';
-    for(let r=0;r<8;r++){const pt=bd(-.18,r+.5);ctx.fillText(8-r,pt.x,pt.y);}
-    const vx=bOffX+GW*.5*bScale, vy=bOffY+GH*.1*bScale;
-    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1.2*bScale;
-    for(let i=0;i<=8;i+=2){const n=bd(i,8);ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(vx,vy);ctx.stroke();}
+    const coordSize = Math.round(50 * bScale);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font = `${coordSize}px monospace`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (let c = 0; c < 8; c++) { const pt = bd(c + .5, 8.24); ctx.fillText(FILES_VIZ[c], pt.x, pt.y); }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (let r = 0; r < 8; r++) { const pt = bd(-.18, r + .5); ctx.fillText(8 - r, pt.x, pt.y); }
+    const vx = bOffX + GW * .5 * bScale, vy = bOffY + GH * .1 * bScale;
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1.2 * bScale;
+    for (let i = 0; i <= 8; i += 2) { const n = bd(i, 8); ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(vx, vy); ctx.stroke(); }
 
-    ctx.lineCap='round';
-    for(let i=0;i<count;i++){
-        const m=movesData[i];
-        const from=cl(m.fromCol,m.fromRow), to=cl(m.toCol,m.toRow);
-        const isW=m.side==='white', wm=isW?1:0.55;
-        const age=count-1-i;
-        const a=Math.max(0.18,1-age*0.028);
-        const LS=bScale;
+    // ── 무브 라인 ──
+    ctx.lineCap = 'round';
+    for (let i = 0; i < count; i++) {
+        const m = movesData[i];
+        const from = cl(m.fromCol, m.fromRow), to = cl(m.toCol, m.toRow);
+        const isW = m.side === 'white', wm = isW ? 1 : 0.55;
+        const age = count - 1 - i;
+        const a   = Math.max(0.18, 1 - age * 0.028);
+        const LS  = bScale;
 
-        ctx.strokeStyle=`rgba(255,255,255,${a*0.039*wm})`; ctx.lineWidth=36*LS;
-        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
-        ctx.strokeStyle=`rgba(255,255,255,${a*0.086*wm})`; ctx.lineWidth=15*LS;
-        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
-        ctx.strokeStyle=`rgba(255,255,255,${a*0.255*wm})`; ctx.lineWidth=5.5*LS;
-        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
-        ctx.strokeStyle=`rgba(255,255,255,${a*0.824*wm})`; ctx.lineWidth=1.8*LS;
-        ctx.beginPath(); ctx.moveTo(from.x,from.y); ctx.lineTo(to.x,to.y); ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,255,${a*0.039*wm})`; ctx.lineWidth = 36 * LS;
+        ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,255,${a*0.086*wm})`; ctx.lineWidth = 15 * LS;
+        ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,255,${a*0.255*wm})`; ctx.lineWidth = 5.5 * LS;
+        ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,255,${a*0.824*wm})`; ctx.lineWidth = 1.8 * LS;
+        ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke();
 
-        const Rs=28*LS, Re=36*LS;
-        [[from,Rs],[to,Re]].forEach(([pt,R],idx)=>{
-            const aa=idx===0?a*.5:a;
-            ctx.strokeStyle=`rgba(255,255,255,${aa*0.118*wm})`; ctx.lineWidth=7*LS;
-            ctx.beginPath(); ctx.arc(pt.x,pt.y,R*1.1,0,Math.PI*2); ctx.stroke();
-            ctx.strokeStyle=`rgba(255,255,255,${aa*0.314*wm})`; ctx.lineWidth=2.4*LS;
-            ctx.beginPath(); ctx.arc(pt.x,pt.y,R*.7,0,Math.PI*2); ctx.stroke();
-            ctx.fillStyle=`rgba(255,255,255,${aa*0.843*wm})`;
-            ctx.beginPath(); ctx.arc(pt.x,pt.y,R*.24,0,Math.PI*2); ctx.fill();
+        const Rs = 28 * LS, Re = 36 * LS;
+        [[from, Rs], [to, Re]].forEach(([pt, R], idx) => {
+            const aa = idx === 0 ? a * .5 : a;
+            ctx.strokeStyle = `rgba(255,255,255,${aa*0.118*wm})`; ctx.lineWidth = 7 * LS;
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, R * 1.1, 0, Math.PI * 2); ctx.stroke();
+            ctx.strokeStyle = `rgba(255,255,255,${aa*0.314*wm})`; ctx.lineWidth = 2.4 * LS;
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, R * .7, 0, Math.PI * 2); ctx.stroke();
+            ctx.fillStyle = `rgba(255,255,255,${aa*0.843*wm})`;
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, R * .24, 0, Math.PI * 2); ctx.fill();
         });
 
-        if(a>0.2){
-            const mx=(from.x+to.x)/2, my=(from.y+to.y)/2;
-            const lbl=FILES_VIZ[m.fromCol]+(8-m.fromRow)+'→'+FILES_VIZ[m.toCol]+(8-m.toRow);
-            const oa=a*Math.min(1,a*1.8);
-            const lblSize=Math.round(42*LS);
-            ctx.font=`${lblSize}px monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
-            ctx.fillStyle=`rgba(0,0,0,${oa*0.627})`; ctx.fillText(lbl,mx+2*LS,my+2*LS);
-            ctx.fillStyle=`rgba(255,255,255,${Math.min(1,oa*1.18)})`; ctx.fillText(lbl,mx,my);
+        if (a > 0.2) {
+            const mx = (from.x + to.x) / 2, my = (from.y + to.y) / 2;
+            const lbl = FILES_VIZ[m.fromCol] + (8 - m.fromRow) + '→' + FILES_VIZ[m.toCol] + (8 - m.toRow);
+            const oa  = a * Math.min(1, a * 1.8);
+            const lblSize = Math.round(42 * LS);
+            ctx.font = `${lblSize}px monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillStyle = `rgba(0,0,0,${oa*0.627})`; ctx.fillText(lbl, mx + 2 * LS, my + 2 * LS);
+            ctx.fillStyle = `rgba(255,255,255,${Math.min(1,oa*1.18)})`; ctx.fillText(lbl, mx, my);
         }
     }
 
-    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1*SS; ctx.lineCap='butt';
-    ctx.beginPath(); ctx.moveTo(MARGIN,LOG_TOP-H*0.010); ctx.lineTo(W-MARGIN,LOG_TOP-H*0.010); ctx.stroke();
+    // ── 무브 로그 ──
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1 * SS; ctx.lineCap = 'butt';
+    ctx.beginPath(); ctx.moveTo(MARGIN, LOG_TOP - H * 0.010); ctx.lineTo(W - MARGIN, LOG_TOP - H * 0.010); ctx.stroke();
 
-    if(histData&&histData.length>0){
-        const pairs=[]; for(let i=0;i<histData.length;i+=2){
-            const w=histData[i]?.notation||'',b=histData[i+1]?.notation||'';
-            pairs.push(`${Math.floor(i/2)+1}.${w}${b?' '+b:''}`);
+    if (histData && histData.length > 0) {
+        const pairs = [];
+        for (let i = 0; i < histData.length; i += 2) {
+            const w = histData[i]?.notation || '', b = histData[i+1]?.notation || '';
+            pairs.push(`${Math.floor(i/2)+1}.${w}${b ? ' ' + b : ''}`);
         }
         ctx.save();
-        ctx.rect(0, LOG_TOP, W, H-LOG_TOP); ctx.clip();
+        ctx.rect(0, LOG_TOP, W, H - LOG_TOP); ctx.clip();
 
-        ctx.fillStyle='rgba(255,255,255,0.28)';
-        ctx.font=`${19*SS}px monospace`;
-        ctx.textAlign='left'; ctx.textBaseline='top';
+        ctx.fillStyle = 'rgba(255,255,255,0.28)';
+        ctx.font = `${19*SS}px monospace`;
+        ctx.textAlign = 'left'; ctx.textBaseline = 'top';
         ctx.fillText('MOVE LOG', MARGIN, LOG_TOP);
 
-        const fs=23*SS, rowH=fs*1.55, cols=4, colW=(W-MARGIN*2)/cols;
-        const labelGap=26*SS;
-        ctx.font=`${fs}px monospace`; ctx.textBaseline='top';
-        pairs.forEach((txt,i)=>{
-            const col=i%cols, row=Math.floor(i/cols);
-            ctx.fillStyle='rgba(255,255,255,0.55)';
-            ctx.textAlign='left';
-            ctx.fillText(txt, MARGIN+col*colW, LOG_TOP+labelGap+row*rowH);
+        const fs = 23 * SS, rowH = fs * 1.55, cols = 4, colW = (W - MARGIN * 2) / cols;
+        const labelGap = 26 * SS;
+        ctx.font = `${fs}px monospace`; ctx.textBaseline = 'top';
+        pairs.forEach((txt, i) => {
+            const col = i % cols, row = Math.floor(i / cols);
+            ctx.fillStyle = 'rgba(255,255,255,0.55)';
+            ctx.textAlign = 'left';
+            ctx.fillText(txt, MARGIN + col * colW, LOG_TOP + labelGap + row * rowH);
         });
         ctx.restore();
     }
@@ -930,15 +1028,17 @@ function handleRatioSelect(ratio){
 // ─────────────────────────────────────────────
 function savePosterImage(ratio){
     const[W,H]=ratio==='916'?[1080,1920]:[1080,1350];
-    const off=document.createElement('canvas'); off.width=W; off.height=H;
-    const ctx=off.getContext('2d');
-    drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory);
-    off.toBlob(blob=>{
-        lastBlob=blob; lastBlobType='image';
-        triggerDownload(blob,`chess_poster_${ratio}.jpg`);
-        document.getElementById('btnSheetShare').classList.add('visible');
-        showToast('Poster saved!');
-    },'image/jpeg',0.97);
+    getLogoImage().then(logoImg => {
+        const off=document.createElement('canvas'); off.width=W; off.height=H;
+        const ctx=off.getContext('2d');
+        drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory,undefined,logoImg);
+        off.toBlob(blob=>{
+            lastBlob=blob; lastBlobType='image';
+            triggerDownload(blob,`chess_poster_${ratio}.jpg`);
+            document.getElementById('btnSheetShare').classList.add('visible');
+            showToast('Poster saved!');
+        },'image/jpeg',0.97);
+    });
 }
 
 // ─────────────────────────────────────────────
@@ -993,35 +1093,67 @@ function saveTimelapse(ratio){
     const SS=W/1080;
     const is916=(H/W)>1.6;
     const MARGIN=W*0.05;
-    const TITLE_TOP=is916?H*0.10:H*0.08;
-    const TITLE_H=is916?H*0.055:H*0.07;
-    const BOARD_TOP=TITLE_TOP+TITLE_H+(is916?H*0.010:H*0.015);
-    const BOARD_H=is916?H*0.66:H*0.65;
-    const LOG_TOP=BOARD_TOP+BOARD_H+H*0.018;
+
+    // 타임랩스용 레이아웃 상수 — drawExportHeader와 동일한 비율로 계산
+    const LOGO_TOP    = is916 ? H*0.090 : H*0.080;
+    const LOGO_HEIGHT = is916 ? H*0.040 : H*0.046;
+    const LINE1_Y     = LOGO_TOP + LOGO_HEIGHT + (is916 ? H*0.022 : H*0.020);
+    const TITLE_TOP   = LINE1_Y + (is916 ? H*0.022 : H*0.020);
+    const titleFS     = is916 ? 52*SS : 48*SS;
+    const moveFS      = is916 ? 24*SS : 22*SS;
+    const MOVE_TOP    = TITLE_TOP + titleFS * 1.50;
+    const LINE2_Y     = MOVE_TOP + moveFS * 1.6 + (is916 ? H*0.018 : H*0.016);
+    const BOARD_TOP   = LINE2_Y + (is916 ? H*0.014 : H*0.012);
+
+    const remainH  = H - BOARD_TOP;
+    const BOARD_H  = remainH * (is916 ? 0.72 : 0.70);
+    const LOG_TOP  = BOARD_TOP + BOARD_H + H*0.018;
+
     const bScaleX=(W-MARGIN*2)/GW, bScaleY=BOARD_H/GH;
     const bScale=Math.min(bScaleX,bScaleY);
     const bOffX=(W-GW*bScale)/2;
     const bOffY=BOARD_TOP+(BOARD_H-GH*bScale)/2;
+
     function tbd(col,row){const p=gBoard(col,row);return{x:bOffX+p.x*bScale,y:bOffY+p.y*bScale};}
     function tcl(c,r){const p=gCell(c,r);return{x:bOffX+p.x*bScale,y:bOffY+p.y*bScale};}
 
+    const logoImg = _cachedLogoImg; // base64이므로 동기 로드 완료
+
     function drawStaticBase(histUpTo){
         ctx.fillStyle='rgb(5,5,4)';ctx.fillRect(0,0,W,H);
-        const tFS=is916?49*SS:46*SS;
-        ctx.font=`300 ${tFS}px Geist,"Helvetica Neue",Arial,sans-serif`;
-        const t1='Your Game Journey ', t2=': STL';
-        const t1W=ctx.measureText(t1).width, t2W=ctx.measureText(t2).width;
-        const tX=(W-t1W-t2W)/2;
-        ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1*SS;ctx.lineCap='butt';
-        ctx.beginPath();ctx.moveTo(W*0.1,TITLE_TOP-H*0.014);ctx.lineTo(W*0.9,TITLE_TOP-H*0.014);ctx.stroke();
-        ctx.textBaseline='top';ctx.textAlign='left';
-        ctx.fillStyle='rgba(255,255,255,0.92)';ctx.fillText(t1,tX,TITLE_TOP);
-        ctx.fillStyle='rgba(255,255,255,0.38)';ctx.fillText(t2,tX+t1W,TITLE_TOP);
+
+        // ── 로고 ──
+        if (logoImg) {
+            const aspect  = logoImg.naturalWidth / logoImg.naturalHeight;
+            const logoW   = LOGO_HEIGHT * aspect;
+            const logoX   = (W - logoW) / 2;
+            ctx.save();
+            ctx.globalAlpha = 0.90;
+            ctx.drawImage(logoImg, logoX, LOGO_TOP, logoW, LOGO_HEIGHT);
+            ctx.restore();
+        }
+
+        // ── 선1 ──
+        ctx.strokeStyle='rgba(255,255,255,0.45)';ctx.lineWidth=1*SS;ctx.lineCap='butt';
+        ctx.beginPath();ctx.moveTo(W*0.1,LINE1_Y);ctx.lineTo(W*0.9,LINE1_Y);ctx.stroke();
+
+        // ── 제목 ──
+        ctx.font=`300 ${titleFS}px Geist,"Helvetica Neue",Arial,sans-serif`;
+        ctx.textBaseline='top';ctx.textAlign='center';
+        ctx.fillStyle='rgba(255,255,255,0.92)';
+        ctx.fillText('YOUR GAME JOURNEY', W/2, TITLE_TOP);
+
+        // ── 무브 수 ──
+        ctx.font=`${moveFS}px monospace`;
         ctx.fillStyle='rgba(255,255,255,0.30)';
-        ctx.font=`${(is916?26:24)*SS}px monospace`;ctx.textAlign='center';ctx.textBaseline='top';
-        ctx.fillText(`${n} moves`,W/2,TITLE_TOP+tFS*1.25);
-        ctx.strokeStyle='rgba(255,255,255,0.10)';ctx.lineWidth=1*SS;
-        ctx.beginPath();ctx.moveTo(W*0.1,BOARD_TOP-H*0.012);ctx.lineTo(W*0.9,BOARD_TOP-H*0.012);ctx.stroke();
+        ctx.textAlign='center';ctx.textBaseline='top';
+        ctx.fillText(`${n} MOVES`, W/2, MOVE_TOP);
+
+        // ── 선2 ──
+        ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=1*SS;
+        ctx.beginPath();ctx.moveTo(W*0.1,LINE2_Y);ctx.lineTo(W*0.9,LINE2_Y);ctx.stroke();
+
+        // ── 체스보드 ──
         for(let c=0;c<8;c++)for(let r=0;r<8;r++)if((c+r)%2===0){
             const tl=tbd(c,r),tr2=tbd(c+1,r),bl=tbd(c,r+1),br=tbd(c+1,r+1);
             ctx.beginPath();ctx.moveTo(tl.x,tl.y);ctx.lineTo(tr2.x,tr2.y);ctx.lineTo(br.x,br.y);ctx.lineTo(bl.x,bl.y);
@@ -1056,6 +1188,7 @@ function saveTimelapse(ratio){
         for(let i=0;i<=8;i+=2){const nn=tbd(i,8);ctx.beginPath();ctx.moveTo(nn.x,nn.y);ctx.lineTo(vx,vy);ctx.stroke();}
         ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1*SS;ctx.lineCap='butt';
         ctx.beginPath();ctx.moveTo(MARGIN,LOG_TOP-H*0.010);ctx.lineTo(W-MARGIN,LOG_TOP-H*0.010);ctx.stroke();
+
         if(histUpTo>0){
             const sub=moveHistory.slice(0,histUpTo);
             const pairs=[];for(let i=0;i<sub.length;i+=2){
@@ -1125,7 +1258,8 @@ function saveTimelapse(ratio){
 
     function renderNextFrame(){
         if(frameIdx>TOTAL_FRAMES){
-            drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory);
+            // 마지막 프레임: 로고 포함된 최종 포스터로 마무리
+            drawPosterToCanvas(ctx,W,H,fullMoveData,moveHistory,undefined,logoImg);
             setTimeout(()=>recorder.stop(),300);
             return;
         }
